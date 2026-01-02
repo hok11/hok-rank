@@ -22,9 +22,10 @@ class SkinSystem:
         self.load_data()
 
     def _get_base_score(self, x):
-        """(原版算法) 理论曲线公式: y = 288/sqrt(x) - 88"""
+        """(新版算法) 理论曲线公式: y = 282/sqrt(x) - 82"""
         if x <= 0: return 200
-        val = (288 / math.sqrt(x)) - 88
+        # 修改点：288 -> 282, 88 -> 82
+        val = (282 / math.sqrt(x)) - 82
         return max(val, 0)
 
     def load_data(self):
@@ -105,7 +106,8 @@ class SkinSystem:
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
             algo_1 = old_top1_score / 0.6
-            algo_2 = (288 / math.sqrt(1.25)) - 88
+            # 修改点：同步更新这里的比较参数 288->282, 88->82
+            algo_2 = (282 / math.sqrt(1.25)) - 82
             algo_3 = price * growth * 15
 
             final_score = max(algo_1, algo_2, algo_3)
@@ -248,7 +250,7 @@ class SkinSystem:
             pass
 
     def generate_html(self):
-        """生成网页：单榜单(Total) + 英文标题 + 日期"""
+        """生成网页：Total榜 + 英文标题 + 日期 + UI修复(前三行白色框)"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -263,7 +265,6 @@ class SkinSystem:
 
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
-        /* 标题头 */
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
@@ -289,8 +290,20 @@ class SkinSystem:
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
+        /* 1. 修复行背景色：只针对 tbody，避免表头变色 */
+        tbody tr:nth-child(1) td,
+        tbody tr:nth-child(2) td,
+        tbody tr:nth-child(3) td {
+            background-color: var(--row-green);
+        }
         tr.rerun-row td { background-color: var(--row-purple); }
+
+        /* 2. 修复卡片样式：前三行数据中的框强制白色背景 */
+        tbody tr:nth-child(-n+3) .bg-up,
+        tbody tr:nth-child(-n+3) .bg-price {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
@@ -335,7 +348,7 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新：[Total Only] + [New Title] + [Date]")
+            print("📄 网页文件已更新 (UI修复 + 新算法)")
         except FileNotFoundError:
             print("❌ 错误：找不到 index.html 路径")
 
@@ -357,7 +370,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 45)
-        print("👑 王者荣耀榜单 V19.0 (Total Only)")
+        print("👑 王者荣耀榜单 V19.1 (新算法 282/82)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 45)
         print("1. 添加皮肤 (自动插值)")

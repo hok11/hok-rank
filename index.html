@@ -12,7 +12,6 @@
 
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
-        /* 标题头 */
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
@@ -38,8 +37,20 @@
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
+        /* 1. 修复行背景色：只针对 tbody，避免表头变色 */
+        tbody tr:nth-child(1) td,
+        tbody tr:nth-child(2) td,
+        tbody tr:nth-child(3) td {
+            background-color: var(--row-green);
+        }
         tr.rerun-row td { background-color: var(--row-purple); }
+
+        /* 2. 修复卡片样式：前三行数据中的框强制白色背景 */
+        tbody tr:nth-child(-n+3) .bg-up,
+        tbody tr:nth-child(-n+3) .bg-price {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
@@ -47,7 +58,7 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 02:37</p>
+            <p>Last updated: 2026-01-03 02:48</p>
         </div>
         <table>
             <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
