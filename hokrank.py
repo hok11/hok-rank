@@ -89,19 +89,16 @@ class SkinSystem:
         self._migrate_data_structure()
 
     def _get_list_price_by_quality(self, q_code):
-        # 🔥 价格修正：
-        # 3.5 (传限): 178.8
-        # 4   (传说): 168.8 (降价)
-        # 6   (勇者): 48.8
+        # 🔥 价格映射修正版 (V19.33)
         mapping = {
             0: 800.0,
             1: 400.0,
             2: 600.0,
             3: 200.0,
-            3.5: 178.8,
-            4: 168.8,
+            3.5: 178.8,  # 传说限定
+            4: 168.8,  # 传说 (修正：原代码这里错写成了48.8)
             5: 88.8,
-            6: 48.8
+            6: 48.8  # 勇者 (修正：原代码这里错写成了178.8)
         }
         return mapping.get(q_code, 0.0)
 
@@ -110,12 +107,17 @@ class SkinSystem:
         return round(rank_score * (real_price / list_price), 1)
 
     def _migrate_data_structure(self):
-        """确保所有数据都有 on_leaderboard 字段"""
+        """确保数据结构完整，并应用新的价格体系"""
         if not self.all_skins: return
         for skin in self.all_skins:
+            # 刷新价格：强制重新获取 List Price (修复历史数据中的错误价格)
+            skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
+
             if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
-            if 'list_price' not in skin: skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
+
+            # 重新计算 Real Score (因为 List Price 变了，分数也要刷新)
             skin['real_score'] = self._calculate_real_score(skin['score'], skin['list_price'], skin['real_price'])
+
             if 'price' in skin: del skin['price']
 
             if 'on_leaderboard' not in skin:
@@ -124,7 +126,6 @@ class SkinSystem:
         self.save_data()
 
     def _get_base_score(self, x):
-        """基础公式：282/sqrt(x) - 82"""
         if x <= 0: return 200
         val = (282 / math.sqrt(x)) - 82
         return max(val, 0)
@@ -164,10 +165,6 @@ class SkinSystem:
         return data
 
     def get_active_leaderboard(self):
-        """
-        🔥 获取【真实在榜】的皮肤
-        条件：on_leaderboard 为 True
-        """
         active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
         active.sort(key=lambda x: x['score'], reverse=True)
         return active[:LEADERBOARD_CAPACITY]
@@ -188,10 +185,7 @@ class SkinSystem:
             g_val = skin.get('growth', 0)
             growth_str = f"+{g_val}%" if g_val > 0 else (f"{g_val}%" if g_val < 0 else "--")
 
-            # 🔥 PyCharm 专属标签
             status_str = "[🔥在榜]" if skin.get('on_leaderboard') else "[❌退榜]"
-
-            # 品质显示优化 (支持 3.5)
             q_val = skin['quality']
             q_str = str(q_val) if isinstance(q_val, float) else str(q_val)
 
@@ -200,9 +194,6 @@ class SkinSystem:
         print("=" * 94 + "\n")
 
     def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
-        """
-        🔥 升级版算法：支持断层补位
-        """
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
             return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
@@ -238,10 +229,8 @@ class SkinSystem:
             raw = input("输入: ").split()
             if len(raw) < 2: return
 
-            # 🔥 支持输入小数品质 (如 3.5)
             try:
                 q_code = float(raw[0])
-                # 如果是整数(如 4.0)，转回 int 看起来干净点
                 if q_code.is_integer(): q_code = int(q_code)
             except:
                 print("❌ 品质代码必须是数字")
@@ -359,11 +348,13 @@ class SkinSystem:
                         elif opt == '3':
                             item['real_price'] = val
                         elif opt == '5':
+                            # 🔥 自动更新价格：修改品质时自动同步 List Price
                             item['quality'] = val if not val.is_integer() else int(val)
                             item['list_price'] = self._get_list_price_by_quality(item['quality'])
                         else:
                             print("❌ 无效序号"); continue
 
+                        # 自动重算 real_score
                         if opt in ['1', '3', '5']:
                             item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
                                                                             item['real_price'])
@@ -378,22 +369,25 @@ class SkinSystem:
             pass
 
     def manage_status_ui(self):
+        """仅用于 New <-> Rerun 状态切换"""
         self.print_console_table()
         active_view = self.get_total_skins()
         try:
             idx = int(input("输入序号修改标签: ")) - 1
             if 0 <= idx < len(active_view):
                 target = active_view[idx]
-                op = input("设为: 1-复刻  2-新增  3-历史: ")
+                op = input("设为: 1-复刻  2-新增: ")
                 if op == '1':
-                    target['is_rerun'] = True; target['is_new'] = False
+                    target['is_rerun'] = True;
+                    target['is_new'] = False
+                    print("✅ 已设为 [复刻]")
                 elif op == '2':
-                    target['is_rerun'] = False; target['is_new'] = True
-                elif op == '3':
-                    target['is_rerun'] = False; target['is_new'] = False
+                    target['is_rerun'] = False;
+                    target['is_new'] = True
+                    print("✅ 已设为 [新增]")
+
                 self.save_data();
-                self.generate_html();
-                print(f"✅ 标签已更新")
+                self.generate_html()
         except:
             pass
 
@@ -405,9 +399,6 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 CSS 更新：
-        # 1. 新增 .bg-sky (3.5传说限定 - 淡蓝)
-        # 2. 修改 .bg-darkblue (2典藏 - 深蓝)
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -471,7 +462,6 @@ class SkinSystem:
                 {% elif skin.quality == 1 %}{% set row_bg = '#f3e8ff' %}  {# 1紫 #}
                 {% elif skin.quality == 0 %}{% set row_bg = '#fef9c3' %}  {# 0金 #}
                 {% endif %}
-                {# 4和6保持白色，不加背景 #}
 
                 <tr>
                     <td class="rank-col">{{ loop.index }}</td>
@@ -533,7 +523,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.31 (定价修正版)")
+        print("👑 王者荣耀榜单 V19.33 (价格修复版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
