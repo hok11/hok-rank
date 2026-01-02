@@ -6,6 +6,7 @@ from datetime import datetime
 from jinja2 import Template
 
 # ================= ⚠️ 配置区域 =================
+# 请确保这些路径和你电脑上的一致
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
 GIT_EXECUTABLE_PATH = r"D:\Git\bin\git.exe"
 GITHUB_USERNAME = "hok11"
@@ -78,7 +79,7 @@ class SkinSystem:
         data.sort(key=lambda x: x['score'], reverse=True)
         return data
 
-    # --- 控制台打印 (你要的新功能) ---
+    # --- 控制台打印 ---
     def print_console_table(self, view_type="new"):
         if view_type == "new":
             data = self.get_active_skins()
@@ -98,7 +99,7 @@ class SkinSystem:
             print(f"{i + 1:<4} {status:<6} {skin['name']:<12} {skin['score']:<8} {growth_str:<8} {price_str}")
         print("=" * 60 + "\n")
 
-    # --- 核心算法：插值计算 (完全回归旧逻辑) ---
+    # --- 核心算法 ---
     def calculate_insertion_score(self, rank_input, active_list, price=0, growth=0):
         # 1. 榜首算法
         if rank_input == 1:
@@ -137,8 +138,7 @@ class SkinSystem:
 
     # --- 交互功能 ---
     def add_skin_ui(self):
-        print("\n>>> 添加新皮肤 (自动加入新品榜 & 总榜)")
-        # 先打印当前榜单供参考
+        print("\n>>> 添加新皮肤")
         self.print_console_table("new")
         active_list = self.get_active_skins()
 
@@ -169,7 +169,8 @@ class SkinSystem:
                     price = float(input("售价 (RMB): "))
                     growth = float(input("次日涨幅 (%): "))
                 except:
-                    price = 0; growth = 0
+                    price = 0;
+                    growth = 0
             else:
                 extra = input("选填 [涨幅 售价] (回车跳过): ").split()
                 if len(extra) >= 1: growth = float(extra[0])
@@ -187,13 +188,10 @@ class SkinSystem:
             }
             self.all_skins.append(new_skin)
 
-            # === 自动挤出逻辑 (保留在总榜) ===
-            # 获取最新的 Active 列表（按分数排序）
+            # 自动挤出逻辑
             current_active = self.get_active_skins()
             if len(current_active) > 10:
-                # 找到 Active 里分数最低的那个 (列表最后一个)
                 last_skin = current_active[-1]
-                # 修改标记
                 last_skin['is_new'] = False
                 print(f"\n📉 榜单已满，[{last_skin['name']}] 自动退榜 (保留在总榜)")
 
@@ -213,7 +211,7 @@ class SkinSystem:
             idx = int(input("输入要【手动退榜】的序号: ")) - 1
             if 0 <= idx < len(active_view):
                 target = active_view[idx]
-                target['is_new'] = False  # 核心：只改标记
+                target['is_new'] = False
                 self.save_data()
                 self.generate_html()
                 print(f"✅ {target['name']} 已退榜 (保留在总榜)")
@@ -226,8 +224,6 @@ class SkinSystem:
         print("\n1. 修改 Active 榜")
         print("2. 修改 Total 榜")
         choice = input("选: ")
-
-        # 显示列表
         view_type = "new" if choice == "1" else "total"
         self.print_console_table(view_type)
         target_list = self.get_active_skins() if choice == '1' else self.get_total_skins()
@@ -252,78 +248,57 @@ class SkinSystem:
             pass
 
     def generate_html(self):
-        """生成网页"""
+        """生成网页：单榜单(Total) + 英文标题 + 日期"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honor of Kings Data</title>
+    <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
-        :root { --header-bg: linear-gradient(90deg, #d68bfb 0%, #faa6d9 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
+        :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
+
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: #111; }
-        .chart-header.total-header { background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); color: white; }
-        .chart-header.total-header h1 { color: white; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 5px; color: #000; letter-spacing: -0.5px; }
-        .chart-header p { font-size: 12px; font-weight: 600; opacity: 0.7; text-transform: uppercase; }
+
+        /* 标题头 */
+        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
+        .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
+
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th { text-align: center; padding: 12px 8px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
         td { padding: 10px 8px; vertical-align: middle; text-align: center; }
+
         .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
         .quality-col { width: 90px; }
         .quality-icon { height: 28px; width: auto; display: block; margin: 0 auto; mix-blend-mode: multiply; filter: contrast(1.1); }
+
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: #eee; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
+
         .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
+
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
+
         tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
         tr.rerun-row td { background-color: var(--row-purple); }
-        tr:nth-child(-n+3) .bg-up { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .footer { background: #333; color: white; text-align: center; padding: 10px; font-weight: 700; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="chart-card">
-        <div class="chart-header">
-            <h1>Active Skin Board</h1>
-            <p>Current Ranking</p>
-        </div>
-        <table>
-            <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
-            <tbody>
-                {% for skin in new_skins %}
-                <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
-                    <td class="rank-col">{{ loop.index }}</td>
-                    <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
-                    <td>
-                        <div class="song-col">
-                            <img src="https://via.placeholder.com/48/{{ 'E9D5FF' if skin.is_rerun else 'DCFCE7' }}/555555?text={{ skin.name[0] }}" class="album-art">
-                            <div class="song-info"><span class="song-title">{{ skin.name }}</span><span class="artist-name">{{ '★ 限定复刻' if skin.is_rerun else 'Active' }}</span></div>
-                        </div>
-                    </td>
-                    <td class="points-col">{{ skin.score }}</td>
-                    <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.price > 0 else 'bg-none' }}">{% if skin.price > 0 %}¥{{ skin.price }}{% else %}--{% endif %}</div></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
 
     <div class="chart-card">
-        <div class="chart-header total-header">
-            <h1>All-Time History</h1>
-            <p>Total Archive</p>
+        <div class="chart-header">
+            <h1>Honor of Kings Skin Revenue Prediction</h1>
+            <p>Last updated: {{ update_time }}</p>
         </div>
         <table>
             <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
@@ -347,14 +322,12 @@ class SkinSystem:
         </table>
     </div>
 
-    <div class="footer" style="background:transparent; color:#888;">Updated: {{ update_time }}</div>
 </body>
 </html>
         """
 
         t = Template(html_template)
         html_content = t.render(
-            new_skins=self.get_active_skins(),
             total_skins=self.get_total_skins(),
             update_time=datetime.now().strftime("%Y-%m-%d %H:%M")
         )
@@ -362,9 +335,9 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新")
+            print("📄 网页文件已更新：[Total Only] + [New Title] + [Date]")
         except FileNotFoundError:
-            pass
+            print("❌ 错误：找不到 index.html 路径")
 
     def deploy_to_github(self):
         print("\n🚀 正在连接 GitHub...")
@@ -384,15 +357,15 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 45)
-        print("👑 王者荣耀榜单 V18.2 (完整修复版)")
-        print(f"📊 当前: 新品榜 {len(app.get_active_skins())} | 总库存 {len(app.all_skins)}")
+        print("👑 王者荣耀榜单 V19.0 (Total Only)")
+        print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 45)
-        print("1. 添加皮肤 (自动插值算法 & 自动退榜)")
-        print("2. 删除皮肤 (彻底删除)")
-        print("3. 修改数据")
+        print("1. 添加皮肤 (自动插值)")
+        print("2. 修改数据")
+        print("3. 手动退榜")
         print("4. >>> 发布到互联网 <<<")
-        print("5. 手动退榜")
-        print("6. 👀 查看榜单 (新品/总榜)")
+        print("5. 强制刷新HTML (不改数据)")
+        print("6. 查看榜单")
         print("0. 退出")
         print("=" * 45)
         cmd = input("指令: ").strip()
@@ -400,15 +373,14 @@ if __name__ == "__main__":
         if cmd == '1':
             app.add_skin_ui()
         elif cmd == '2':
-            app.remove_skin_ui()  # 注意: 原代码未定义此函数，若需要请补充或忽略
-        elif cmd == '3':
             app.modify_data_ui()
+        elif cmd == '3':
+            app.manage_status_ui()
         elif cmd == '4':
             app.deploy_to_github()
         elif cmd == '5':
-            app.manage_status_ui()
+            app.generate_html()
         elif cmd == '6':
-            app.print_console_table("new")
             app.print_console_table("total")
         elif cmd == '0':
             break
