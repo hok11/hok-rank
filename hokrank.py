@@ -85,27 +85,20 @@ class SkinSystem:
         self.load_data()
         self._migrate_data_structure()
 
-    def _get_default_list_price(self, q_code):
-        """根据品质代码获取【默认】定价"""
+    def _get_list_price_by_quality(self, q_code):
         mapping = {0: 800.0, 1: 400.0, 2: 600.0, 3: 200.0, 6: 178.8, 5: 88.8, 4: 48.8}
         return mapping.get(q_code, 0.0)
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
-        """计算实际点数。如果缺失实际价格，则返回 None (即 --)"""
-        # 核心逻辑修改：如果没有实际价格，或者定价为0，则无法计算实际点数
-        if real_price <= 0 or list_price <= 0:
-            return None
+        if real_price <= 0 or list_price <= 0: return None
         return round(rank_score * (real_price / list_price), 1)
 
     def _migrate_data_structure(self):
         if not self.all_skins: return
         for skin in self.all_skins:
             if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
-            if 'list_price' not in skin: skin['list_price'] = self._get_default_list_price(skin['quality'])
-
-            # 重新计算 (处理 None)
+            if 'list_price' not in skin: skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
             skin['real_score'] = self._calculate_real_score(skin['score'], skin['list_price'], skin['real_price'])
-
             if 'price' in skin: del skin['price']
         self.save_data()
 
@@ -148,27 +141,29 @@ class SkinSystem:
         return data
 
     def print_console_table(self):
+        """控制台打印 - 已加回涨幅显示"""
         data = self.get_total_skins()
         print(f"\n====== 🏆 历史总榜 (Total History) ======")
-        print(f"{'No.':<4} {'Q':<2} {'名字':<10} {'RankPts':<8} {'RealPts':<8} {'ListP':<8} {'RealP'}")
-        print("-" * 75)
+        # 增加了 Growth 列
+        print(f"{'No.':<4} {'Q':<2} {'名字':<12} {'RankPts':<8} {'RealPts':<8} {'Growth':<8} {'ListP':<8} {'RealP'}")
+        print("-" * 85)
         for i, skin in enumerate(data):
-            # 处理显示逻辑
             real_pts_str = str(skin.get('real_score')) if skin.get('real_score') else "--"
             list_p_str = f"¥{skin.get('list_price', 0)}"
             real_p_str = f"¥{skin.get('real_price', 0)}" if skin.get('real_price', 0) > 0 else "--"
 
+            # 涨幅显示逻辑
+            g_val = skin.get('growth', 0)
+            growth_str = f"+{g_val}%" if g_val > 0 else "--"
+
             print(
-                f"{i + 1:<4} {skin['quality']:<2} {skin['name']:<10} {skin['score']:<8} {real_pts_str:<8} {list_p_str:<8} {real_p_str}")
-        print("=" * 75 + "\n")
+                f"{i + 1:<4} {skin['quality']:<2} {skin['name']:<12} {skin['score']:<8} {real_pts_str:<8} {growth_str:<8} {list_p_str:<8} {real_p_str}")
+        print("=" * 85 + "\n")
 
     def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
-        """榜首算法 (如果real_price缺失，则按定价预估或给低保分，这里暂用0处理榜首逻辑)"""
-        # 注意：如果real_price是0，榜首算法的第三项(销量预估)会是0，这符合逻辑
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
             return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
-
         prev_idx = rank_input - 2
         prev_score = 200 if prev_idx < 0 else active_list[prev_idx]['score']
         if rank_input - 1 >= len(active_list):
@@ -183,42 +178,33 @@ class SkinSystem:
         active_list = self.get_total_skins()
         try:
             print("格式: 品质代码 名字 [非0=复刻]")
-            print("品质: 0珍无双/1无双/2典藏/3珍传说/6传说/5史诗/4勇者")
             raw = input("输入: ").split()
             if len(raw) < 2: return
             q_code = int(raw[0]);
             name = raw[1]
             is_rerun = (len(raw) >= 3 and raw[2] != '0')
             is_new = not is_rerun
-
             rank = int(input(f"排名 (1-{len(active_list) + 1}): "))
             if rank < 1: rank = 1
             if rank > len(active_list) + 1: rank = len(active_list) + 1
 
-            # --- 1. 定价逻辑 (允许手动修改) ---
-            default_list_p = self._get_default_list_price(q_code)
-            list_p_input = input(f"定价 (默认 {default_list_p}, 回车确认): ")
-            if list_p_input.strip():
-                list_price = float(list_p_input)
-            else:
-                list_price = default_list_p
+            list_p = self._get_list_price_by_quality(q_code)
+            list_p_input = input(f"定价 (默认 {list_p}, 回车确认): ")
+            if list_p_input.strip(): list_p = float(list_p_input)
 
-            # --- 2. 实际价格与涨幅 ---
-            real_price = 0.0
+            real_p = 0.0;
             growth = 0.0
-
             if rank == 1:
                 rp_in = input("实际价格 (Real Price): ")
-                real_price = float(rp_in) if rp_in else 0.0
+                real_p = float(rp_in) if rp_in else 0.0
                 growth = float(input("涨幅 (Growth %): "))
             else:
-                extra = input("选填 [涨幅 实际价格] (回车跳过即为空): ").split()
+                extra = input("选填 [涨幅 实际价格]: ").split()
                 if len(extra) >= 1: growth = float(extra[0])
-                if len(extra) >= 2: real_price = float(extra[1])
+                if len(extra) >= 2: real_p = float(extra[1])
 
-            # 计算
-            rank_score = round(self.calculate_insertion_score(rank, active_list, real_price, growth), 1)
-            real_score = self._calculate_real_score(rank_score, list_price, real_price)
+            rank_score = round(self.calculate_insertion_score(rank, active_list, real_p, growth), 1)
+            real_score = self._calculate_real_score(rank_score, list_p, real_p)
 
             self.all_skins.append({
                 "quality": q_code, "name": name,
@@ -226,18 +212,18 @@ class SkinSystem:
                 "score": rank_score,
                 "real_score": real_score,
                 "growth": growth,
-                "list_price": list_price,
-                "real_price": real_price,
+                "list_price": list_p,
+                "real_price": real_p,
                 "local_img": None
             })
             self.save_data();
             self.generate_html()
-            print(f"✅ 添加成功! RankPts:{rank_score} | RealPts:{real_score if real_score else '--'}")
+            print(f"✅ 添加成功")
         except ValueError:
             print("❌ 输入错误")
 
     def modify_data_ui(self):
-        print("\n1. 修改数据")
+        print("\n1. 修改数据 (快捷模式)")
         print("2. 删除数据")
         c = input("选: ")
         self.print_console_table()
@@ -245,45 +231,52 @@ class SkinSystem:
         try:
             idx = int(input("输入序号: ")) - 1
             if 0 <= idx < len(target_list):
-                item = target_list[idx]
                 if c == '2':
                     del self.all_skins[idx]
+                    self.save_data();
+                    self.generate_html()
                     print("🗑️ 已删除")
-                else:
-                    print(f"当前: {item['name']} Q:{item['quality']} RankPts:{item['score']}")
+                    return
 
-                    # 修改品质
-                    new_q = input("新品质代码 (回车跳过): ")
-                    if new_q: item['quality'] = int(new_q)
+                item = target_list[idx]
+                while True:
+                    print(f"\n当前: {item['name']}")
+                    print(f"1. 排位点数: {item['score']}")
+                    print(f"2. 涨幅: {item['growth']}%")
+                    print(f"3. 实际价格: {item.get('real_price', 0)}")
+                    print(f"4. 定价: {item.get('list_price', 0)}")
+                    print(f"5. 品质: {item['quality']}")
 
-                    # 修改定价 (显示当前值)
-                    curr_list_p = item.get('list_price', self._get_default_list_price(item['quality']))
-                    new_list_p = input(f"新定价 (当前 {curr_list_p}, 回车跳过): ")
-                    if new_list_p:
-                        item['list_price'] = float(new_list_p)
-                    else:
-                        item['list_price'] = curr_list_p  # 确保有值
+                    raw = input("输入 [序号] [数值] (直接回车退出): ").strip()
+                    if not raw: break
+                    parts = raw.split()
+                    if len(parts) < 2: print("❌ 格式错误"); continue
 
-                    # 修改Rank分
-                    new_s = input("新排位点数 (RankPts): ")
-                    if new_s: item['score'] = float(new_s)
+                    try:
+                        opt, val = parts[0], float(parts[1])
+                        if opt == '1':
+                            item['score'] = val
+                        elif opt == '2':
+                            item['growth'] = val
+                        elif opt == '3':
+                            item['real_price'] = val
+                        elif opt == '4':
+                            item['list_price'] = val
+                        elif opt == '5':
+                            item['quality'] = int(val)
+                        else:
+                            print("❌ 无效序号"); continue
 
-                    # 修改涨幅
-                    new_g = input(f"新涨幅 (Growth): ")
-                    if new_g: item['growth'] = float(new_g)
-
-                    # 修改实际价格
-                    curr_real_p = item.get('real_price', 0)
-                    new_p = input(f"新实际价格 (当前 {curr_real_p}, 输入0为缺失): ")
-                    if new_p: item['real_price'] = float(new_p)
-
-                    # 重新计算实际分
-                    item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
-                                                                    item['real_price'])
+                        if opt in ['1', '3', '4']:
+                            item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
+                                                                            item['real_price'])
+                        print("✅ 已暂存")
+                    except ValueError:
+                        print("❌ 数值错误")
 
                 self.save_data();
                 self.generate_html()
-                print("✅ 更新成功")
+                print("💾 保存成功并刷新网页")
         except:
             pass
 
@@ -317,7 +310,7 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        """生成网页 V19.16 (支持缺失数据 -- 显示)"""
+        """生成网页 V19.19"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -329,10 +322,10 @@ class SkinSystem:
         :root {
             --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
             --percent-green: #bbf7d0;
-            --row-green: #bbf7d0;  /* 3 珍品传说 */
-            --row-blue: #bfdbfe;   /* 2 荣耀典藏 */
-            --row-purple: #e9d5ff; /* 1 无双 */
-            --row-gold: #fde68a;   /* 0 珍品无双 */
+            --row-green: #bbf7d0;
+            --row-blue: #bfdbfe;
+            --row-purple: #e9d5ff;
+            --row-gold: #fde68a;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
@@ -352,29 +345,19 @@ class SkinSystem:
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-
-        /* 数据列 */
         .data-col { font-weight: 700; font-size: 15px; width: 80px; }
         .real-pts { color: #6366f1; } 
-        .missing-data { color: #ccc; font-weight: 400; } /* 缺失数据样式 */
-
+        .missing-data { color: #ccc; font-weight: 400; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
-
-        /* 颜色逻辑 */
         tr.q-normal td { background-color: #ffffff; }
         tr.q-green td { background-color: var(--row-green); }
         tr.q-blue td { background-color: var(--row-blue); }
         tr.q-purple td { background-color: var(--row-purple); }
         tr.q-gold td { background-color: var(--row-gold); }
-
-        tr:not(.q-normal) .bg-up,
-        tr:not(.q-normal) .bg-price {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        tr:not(.q-normal) .bg-up, tr:not(.q-normal) .bg-price { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -386,13 +369,8 @@ class SkinSystem:
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th><th>Qual</th>
-                    <th style="text-align:left; padding-left:20px;">Skin Name</th>
-                    <th>Rank Pts</th>
-                    <th>Real Pts</th>
-                    <th>Growth</th>
-                    <th>List Price</th>
-                    <th>Real Price</th>
+                    <th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:20px;">Skin Name</th>
+                    <th>Rank Pts</th><th>Real Pts</th><th>Growth</th><th>List Price</th><th>Real Price</th>
                 </tr>
             </thead>
             <tbody>
@@ -403,7 +381,6 @@ class SkinSystem:
                 {% elif skin.quality == 1 %}{% set q_class = 'q-purple' %}
                 {% elif skin.quality == 0 %}{% set q_class = 'q-gold' %}
                 {% endif %}
-
                 <tr class="{{ q_class }}">
                     <td class="rank-col">{{ loop.index }}</td>
                     <td class="quality-col">
@@ -417,7 +394,6 @@ class SkinSystem:
                             {% elif skin.quality == 1 %}{% set placeholder_bg = 'e9d5ff' %}
                             {% elif skin.quality == 0 %}{% set placeholder_bg = 'fde68a' %}
                             {% endif %}
-
                             {% if skin.local_img %}
                                 <img src="./{{ skin.local_img }}" class="album-art">
                             {% else %}
@@ -432,20 +408,10 @@ class SkinSystem:
                         </div>
                     </td>
                     <td class="data-col">{{ skin.score }}</td>
-
-                    <td class="data-col real-pts">
-                        {% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}
-                    </td>
-
+                    <td class="data-col real-pts">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
                     <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
-
                     <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥{{ skin.list_price }}</div></td>
-
-                    <td style="width: 80px; padding-right:10px;">
-                        <div class="box-style {{ 'bg-price' if skin.real_price > 0 else 'bg-none' }}">
-                            {% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}
-                        </div>
-                    </td>
+                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.real_price > 0 else 'bg-none' }}">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -482,11 +448,11 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.16 (支持缺失数据 -- 版)")
+        print("👑 王者荣耀榜单 V19.19 (修复控制台涨幅显示)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
-        print("1. 添加皮肤 (定价可修改/价格可选填)")
-        print("2. 修改数据")
+        print("1. 添加皮肤")
+        print("2. 修改数据 (快捷指令)")
         print("3. 修改标签")
         print("4. >>> 发布到互联网 <<<")
         print("5. 强制刷新HTML")

@@ -43,21 +43,21 @@
     "growth": 0.0,
     "is_new": true,
     "local_img": "skin_avatars/曹操-万灵伏威.jpg",
-    "real_price": 0.0,
+    "real_price": 99.0,
     "list_price": 48.8,
-    "real_score": null
+    "real_score": 119.7
   },
   {
     "quality": 5,
     "name": "安琪拉-糖果风暴",
     "is_rerun": false,
     "score": 44.1,
-    "growth": 0.0,
+    "growth": 4.2,
     "is_new": true,
     "local_img": "skin_avatars/安琪拉-糖果风暴.jpg",
-    "real_price": 0.0,
+    "real_price": 6.0,
     "list_price": 88.8,
-    "real_score": null
+    "real_score": 3.0
   },
   {
     "quality": 6,
@@ -67,9 +67,9 @@
     "growth": 0.0,
     "is_new": true,
     "local_img": "skin_avatars/孙权-径山谋武.jpg",
-    "real_price": 0.0,
+    "real_price": 6.0,
     "list_price": 178.8,
-    "real_score": null
+    "real_score": 1.1
   },
   {
     "quality": 6,
@@ -79,9 +79,9 @@
     "growth": 0.0,
     "is_new": true,
     "local_img": "skin_avatars/蚩姹-极光幻客.jpg",
-    "real_price": 0.0,
+    "real_price": 6.0,
     "list_price": 178.8,
-    "real_score": null
+    "real_score": 0.8
   },
   {
     "quality": 4,
