@@ -21,121 +21,59 @@ class SkinCrawler:
         self.save_dir = os.path.join(data_path, "skin_avatars")
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
-
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/plain, */*; q=0.01',
-            'Referer': 'https://image.baidu.com/search/index',
+            'Accept': 'text/plain, */*; q=0.01', 'Referer': 'https://image.baidu.com/search/index',
             'Accept-Language': 'zh-CN,zh;q=0.9',
         }
 
     def fetch_images(self, skin_list):
-        print("\n🕷️ 正在启动百度图片搜索 (纯净关键词版)...")
+        print("\n🕷️ 正在启动百度图片搜索...")
         count = 0
-
         for skin in skin_list:
-            # 1. 检查本地文件 (你删了就会触发下载)
-            if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])):
-                continue
-
-            # 2. 🔥 核心修改：只保留 [皮肤名 英雄名]
+            if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])): continue
             parts = skin['name'].split('-')
-            if len(parts) >= 2:
-                # 翻转：把独特的皮肤名放在前面，权重更高
-                # 例如：曜-山海·苍雷引 -> "山海·苍雷引 曜"
-                search_name = f"{parts[1]} {parts[0]}"
-            else:
-                search_name = skin['name']
-
-            # ❌ 已移除 "王者荣耀" 和 "头像"
-            keyword = search_name
-
-            # 3. 百度图片 API
+            keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
             params = {
-                "tn": "resultjson_com",
-                "logid": "8388656667592781395",
-                "ipn": "rj",
-                "ct": "201326592",
-                "is": "",
+                "tn": "resultjson_com", "logid": "8388656667592781395", "ipn": "rj", "ct": "201326592", "is": "",
                 "fp": "result",
-                "queryWord": keyword,
-                "cl": "2",
-                "lm": "-1",
-                "ie": "utf-8",
-                "oe": "utf-8",
-                "adpicid": "",
-                "st": "-1",
+                "queryWord": keyword, "cl": "2", "lm": "-1", "ie": "utf-8", "oe": "utf-8", "adpicid": "", "st": "-1",
                 "z": "",
-                "ic": "",
-                "hd": "",
-                "latest": "",
-                "copyright": "",
-                "word": keyword,
-                "s": "",
-                "se": "",
-                "tab": "",
+                "ic": "", "hd": "", "latest": "", "copyright": "", "word": keyword, "s": "", "se": "", "tab": "",
                 "width": "",
-                "height": "",
-                "face": "0",
-                "istype": "2",
-                "qc": "",
-                "nc": "1",
-                "fr": "",
-                "expermode": "",
-                "force": "",
-                "pn": "0",
-                "rn": "1",
-                "gsm": "1e",
+                "height": "", "face": "0", "istype": "2", "qc": "", "nc": "1", "fr": "", "expermode": "", "force": "",
+                "pn": "0", "rn": "1", "gsm": "1e",
             }
-
             try:
-                # 4. 请求 API
                 resp = requests.get(url, headers=self.headers, params=params, timeout=5)
-
                 try:
                     data = resp.json()
                 except:
                     try:
                         data = json.loads(resp.text.replace(r"\'", r"'"))
                     except:
-                        print(f"   ⚠️ API 解析失败: {skin['name']}")
                         continue
-
-                # 提取图片
                 if 'data' in data and len(data['data']) > 0 and 'thumbURL' in data['data'][0]:
                     img_url = data['data'][0]['thumbURL']
                     if not img_url:
                         if 'replaceUrl' in data['data'][0] and len(data['data'][0]['replaceUrl']) > 0:
                             img_url = data['data'][0]['replaceUrl'][0]['ObjURL']
                         else:
-                            print(f"   💨 API 返回空地址: {skin['name']}")
                             continue
-
                     print(f"   🔍 搜索 [{keyword}] -> 成功!")
-
-                    # 5. 下载
                     img_resp = requests.get(img_url, headers=self.headers, timeout=10)
-
-                    # 6. 保存
                     safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
                     file_name = f"{safe_name}.jpg"
                     file_path = os.path.join(self.save_dir, file_name)
-
                     with open(file_path, 'wb') as f:
                         f.write(img_resp.content)
-
                     skin['local_img'] = f"skin_avatars/{file_name}"
                     count += 1
                     print(f"   ✅ 已下载: {file_name}")
-
                     time.sleep(random.uniform(0.5, 1.5))
-                else:
-                    print(f"   💨 未搜索到图片: {skin['name']} (关键词: {keyword})")
-
-            except Exception as e:
-                print(f"   ❌ 错误 {skin['name']}: {e}")
-
+            except Exception:
+                pass
         return count
 
 
@@ -145,17 +83,30 @@ class SkinSystem:
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
-        self._fix_initial_status()
+        self._migrate_data_structure()
 
-    def _fix_initial_status(self):
+    def _get_default_list_price(self, q_code):
+        """根据品质代码获取【默认】定价"""
+        mapping = {0: 800.0, 1: 400.0, 2: 600.0, 3: 200.0, 6: 178.8, 5: 88.8, 4: 48.8}
+        return mapping.get(q_code, 0.0)
+
+    def _calculate_real_score(self, rank_score, list_price, real_price):
+        """计算实际点数。如果缺失实际价格，则返回 None (即 --)"""
+        # 核心逻辑修改：如果没有实际价格，或者定价为0，则无法计算实际点数
+        if real_price <= 0 or list_price <= 0:
+            return None
+        return round(rank_score * (real_price / list_price), 1)
+
+    def _migrate_data_structure(self):
         if not self.all_skins: return
-        rerun_indices = {1, 2, 7, 8, 9}
-        for i, skin in enumerate(self.all_skins):
-            if i >= 10: break
-            if i in rerun_indices:
-                skin['is_rerun'] = True; skin['is_new'] = False
-            else:
-                skin['is_rerun'] = False; skin['is_new'] = True
+        for skin in self.all_skins:
+            if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
+            if 'list_price' not in skin: skin['list_price'] = self._get_default_list_price(skin['quality'])
+
+            # 重新计算 (处理 None)
+            skin['real_score'] = self._calculate_real_score(skin['score'], skin['list_price'], skin['real_price'])
+
+            if 'price' in skin: del skin['price']
         self.save_data()
 
     def _get_base_score(self, x):
@@ -191,29 +142,33 @@ class SkinSystem:
         except FileNotFoundError:
             print(f"❌ 错误：找不到路径 {LOCAL_REPO_PATH}")
 
-    # --- 视图逻辑 ---
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: x['score'], reverse=True)
         return data
 
-    def print_console_table(self, view_type="total"):
+    def print_console_table(self):
         data = self.get_total_skins()
         print(f"\n====== 🏆 历史总榜 (Total History) ======")
-        print(f"{'No.':<4} {'图片':<6} {'名字':<12} {'点数':<8} {'价格'}")
-        print("-" * 60)
+        print(f"{'No.':<4} {'Q':<2} {'名字':<10} {'RankPts':<8} {'RealPts':<8} {'ListP':<8} {'RealP'}")
+        print("-" * 75)
         for i, skin in enumerate(data):
-            # 检查文件实际存在性
-            has_img = skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img']))
-            img_status = "🖼️ 有" if has_img else "❌ 无"
-            price_str = f"¥{skin['price']}" if skin['price'] > 0 else "--"
-            print(f"{i + 1:<4} {img_status:<6} {skin['name']:<12} {skin['score']:<8} {price_str}")
-        print("=" * 60 + "\n")
+            # 处理显示逻辑
+            real_pts_str = str(skin.get('real_score')) if skin.get('real_score') else "--"
+            list_p_str = f"¥{skin.get('list_price', 0)}"
+            real_p_str = f"¥{skin.get('real_price', 0)}" if skin.get('real_price', 0) > 0 else "--"
 
-    def calculate_insertion_score(self, rank_input, active_list, price=0, growth=0):
+            print(
+                f"{i + 1:<4} {skin['quality']:<2} {skin['name']:<10} {skin['score']:<8} {real_pts_str:<8} {list_p_str:<8} {real_p_str}")
+        print("=" * 75 + "\n")
+
+    def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
+        """榜首算法 (如果real_price缺失，则按定价预估或给低保分，这里暂用0处理榜首逻辑)"""
+        # 注意：如果real_price是0，榜首算法的第三项(销量预估)会是0，这符合逻辑
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
-            return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, price * growth * 15)
+            return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
+
         prev_idx = rank_input - 2
         prev_score = 200 if prev_idx < 0 else active_list[prev_idx]['score']
         if rank_input - 1 >= len(active_list):
@@ -228,47 +183,141 @@ class SkinSystem:
         active_list = self.get_total_skins()
         try:
             print("格式: 品质代码 名字 [非0=复刻]")
+            print("品质: 0珍无双/1无双/2典藏/3珍传说/6传说/5史诗/4勇者")
             raw = input("输入: ").split()
             if len(raw) < 2: return
             q_code = int(raw[0]);
             name = raw[1]
             is_rerun = (len(raw) >= 3 and raw[2] != '0')
             is_new = not is_rerun
+
             rank = int(input(f"排名 (1-{len(active_list) + 1}): "))
             if rank < 1: rank = 1
             if rank > len(active_list) + 1: rank = len(active_list) + 1
-            p = 0.0;
-            g = 0.0
-            if rank == 1:
-                p = float(input("售价: ")); g = float(input("涨幅: "))
+
+            # --- 1. 定价逻辑 (允许手动修改) ---
+            default_list_p = self._get_default_list_price(q_code)
+            list_p_input = input(f"定价 (默认 {default_list_p}, 回车确认): ")
+            if list_p_input.strip():
+                list_price = float(list_p_input)
             else:
-                extra = input("选填 [涨幅 售价]: ").split()
-                if len(extra) >= 1: g = float(extra[0])
-                if len(extra) >= 2: p = float(extra[1])
-            new_score = self.calculate_insertion_score(rank, active_list, p, g)
+                list_price = default_list_p
+
+            # --- 2. 实际价格与涨幅 ---
+            real_price = 0.0
+            growth = 0.0
+
+            if rank == 1:
+                rp_in = input("实际价格 (Real Price): ")
+                real_price = float(rp_in) if rp_in else 0.0
+                growth = float(input("涨幅 (Growth %): "))
+            else:
+                extra = input("选填 [涨幅 实际价格] (回车跳过即为空): ").split()
+                if len(extra) >= 1: growth = float(extra[0])
+                if len(extra) >= 2: real_price = float(extra[1])
+
+            # 计算
+            rank_score = round(self.calculate_insertion_score(rank, active_list, real_price, growth), 1)
+            real_score = self._calculate_real_score(rank_score, list_price, real_price)
+
             self.all_skins.append({
                 "quality": q_code, "name": name,
                 "is_rerun": is_rerun, "is_new": is_new,
-                "score": round(new_score, 1), "growth": g, "price": p,
+                "score": rank_score,
+                "real_score": real_score,
+                "growth": growth,
+                "list_price": list_price,
+                "real_price": real_price,
                 "local_img": None
             })
             self.save_data();
             self.generate_html()
-            print(f"✅ 添加成功")
+            print(f"✅ 添加成功! RankPts:{rank_score} | RealPts:{real_score if real_score else '--'}")
+        except ValueError:
+            print("❌ 输入错误")
+
+    def modify_data_ui(self):
+        print("\n1. 修改数据")
+        print("2. 删除数据")
+        c = input("选: ")
+        self.print_console_table()
+        target_list = self.get_total_skins()
+        try:
+            idx = int(input("输入序号: ")) - 1
+            if 0 <= idx < len(target_list):
+                item = target_list[idx]
+                if c == '2':
+                    del self.all_skins[idx]
+                    print("🗑️ 已删除")
+                else:
+                    print(f"当前: {item['name']} Q:{item['quality']} RankPts:{item['score']}")
+
+                    # 修改品质
+                    new_q = input("新品质代码 (回车跳过): ")
+                    if new_q: item['quality'] = int(new_q)
+
+                    # 修改定价 (显示当前值)
+                    curr_list_p = item.get('list_price', self._get_default_list_price(item['quality']))
+                    new_list_p = input(f"新定价 (当前 {curr_list_p}, 回车跳过): ")
+                    if new_list_p:
+                        item['list_price'] = float(new_list_p)
+                    else:
+                        item['list_price'] = curr_list_p  # 确保有值
+
+                    # 修改Rank分
+                    new_s = input("新排位点数 (RankPts): ")
+                    if new_s: item['score'] = float(new_s)
+
+                    # 修改涨幅
+                    new_g = input(f"新涨幅 (Growth): ")
+                    if new_g: item['growth'] = float(new_g)
+
+                    # 修改实际价格
+                    curr_real_p = item.get('real_price', 0)
+                    new_p = input(f"新实际价格 (当前 {curr_real_p}, 输入0为缺失): ")
+                    if new_p: item['real_price'] = float(new_p)
+
+                    # 重新计算实际分
+                    item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
+                                                                    item['real_price'])
+
+                self.save_data();
+                self.generate_html()
+                print("✅ 更新成功")
         except:
-            print("❌ 错误")
+            pass
+
+    def manage_status_ui(self):
+        self.print_console_table()
+        active_view = self.get_total_skins()
+        try:
+            idx = int(input("输入序号修改标签: ")) - 1
+            if 0 <= idx < len(active_view):
+                target = active_view[idx]
+                op = input("设为: 1-复刻  2-新增  3-历史: ")
+                if op == '1':
+                    target['is_rerun'] = True; target['is_new'] = False
+                elif op == '2':
+                    target['is_rerun'] = False; target['is_new'] = True
+                elif op == '3':
+                    target['is_rerun'] = False; target['is_new'] = False
+                self.save_data();
+                self.generate_html()
+                print(f"✅ 标签已更新")
+        except:
+            pass
 
     def run_crawler_ui(self):
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0:
-            self.save_data()
+            self.save_data();
             self.generate_html()
-            print(f"\n🎉 成功抓取并更新了 {count} 张新图片！")
+            print(f"\n🎉 更新了 {count} 张图片！")
         else:
-            print("\n⚠️ 没有发现新图片，或已全部存在。")
+            print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        """生成网页 V19.12"""
+        """生成网页 V19.16 (支持缺失数据 -- 显示)"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -277,34 +326,54 @@ class SkinSystem:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
-        :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
+        :root {
+            --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+            --percent-green: #bbf7d0;
+            --row-green: #bbf7d0;  /* 3 珍品传说 */
+            --row-blue: #bfdbfe;   /* 2 荣耀典藏 */
+            --row-purple: #e9d5ff; /* 1 无双 */
+            --row-gold: #fde68a;   /* 0 珍品无双 */
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-        .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: center; padding: 12px 8px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
-        td { padding: 10px 8px; vertical-align: middle; text-align: center; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
-        .quality-col { width: 90px; text-align: center; }
+        th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
+        td { padding: 10px 6px; vertical-align: middle; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 18px; width: 40px; }
+        .quality-col { width: 80px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-        .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
+
+        /* 数据列 */
+        .data-col { font-weight: 700; font-size: 15px; width: 80px; }
+        .real-pts { color: #6366f1; } 
+        .missing-data { color: #ccc; font-weight: 400; } /* 缺失数据样式 */
+
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
-        tbody tr:nth-child(-n+3) td { background-color: var(--row-green); }
-        tr.rerun-row td { background-color: var(--row-purple) !important; }
-        tbody tr:nth-child(-n+3) .bg-up, tbody tr:nth-child(-n+3) .bg-price {
-            background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+        /* 颜色逻辑 */
+        tr.q-normal td { background-color: #ffffff; }
+        tr.q-green td { background-color: var(--row-green); }
+        tr.q-blue td { background-color: var(--row-blue); }
+        tr.q-purple td { background-color: var(--row-purple); }
+        tr.q-gold td { background-color: var(--row-gold); }
+
+        tr:not(.q-normal) .bg-up,
+        tr:not(.q-normal) .bg-price {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
     </style>
 </head>
@@ -315,21 +384,44 @@ class SkinSystem:
             <p>Last updated: {{ update_time }}</p>
         </div>
         <table>
-            <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Rank</th><th>Qual</th>
+                    <th style="text-align:left; padding-left:20px;">Skin Name</th>
+                    <th>Rank Pts</th>
+                    <th>Real Pts</th>
+                    <th>Growth</th>
+                    <th>List Price</th>
+                    <th>Real Price</th>
+                </tr>
+            </thead>
             <tbody>
                 {% for skin in total_skins %}
-                <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
+                {% set q_class = 'q-normal' %}
+                {% if skin.quality == 3 %}{% set q_class = 'q-green' %}
+                {% elif skin.quality == 2 %}{% set q_class = 'q-blue' %}
+                {% elif skin.quality == 1 %}{% set q_class = 'q-purple' %}
+                {% elif skin.quality == 0 %}{% set q_class = 'q-gold' %}
+                {% endif %}
+
+                <tr class="{{ q_class }}">
                     <td class="rank-col">{{ loop.index }}</td>
                     <td class="quality-col">
-                        <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality == 1 else '' }}">
+                        <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality <= 1 else '' }}">
                     </td>
                     <td>
                         <div class="song-col">
-                            {% set bg_color = 'f3e8ff' if skin.is_rerun else ('bbf7d0' if loop.index <= 3 else 'f3f4f6') %}
+                            {% set placeholder_bg = 'f3f4f6' %}
+                            {% if skin.quality == 3 %}{% set placeholder_bg = 'bbf7d0' %}
+                            {% elif skin.quality == 2 %}{% set placeholder_bg = 'bfdbfe' %}
+                            {% elif skin.quality == 1 %}{% set placeholder_bg = 'e9d5ff' %}
+                            {% elif skin.quality == 0 %}{% set placeholder_bg = 'fde68a' %}
+                            {% endif %}
+
                             {% if skin.local_img %}
                                 <img src="./{{ skin.local_img }}" class="album-art">
                             {% else %}
-                                <img src="https://via.placeholder.com/48/{{ bg_color }}/555555?text={{ skin.name[0] }}" class="album-art">
+                                <img src="https://via.placeholder.com/48/{{ placeholder_bg }}/555555?text={{ skin.name[0] }}" class="album-art">
                             {% endif %}
                             <div class="song-info">
                                 <span class="song-title">{{ skin.name }}</span>
@@ -339,9 +431,21 @@ class SkinSystem:
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">{{ skin.score }}</td>
+                    <td class="data-col">{{ skin.score }}</td>
+
+                    <td class="data-col real-pts">
+                        {% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}
+                    </td>
+
                     <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.price > 0 else 'bg-none' }}">{% if skin.price > 0 %}¥{{ skin.price }}{% else %}--{% endif %}</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥{{ skin.list_price }}</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style {{ 'bg-price' if skin.real_price > 0 else 'bg-none' }}">
+                            {% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -377,22 +481,27 @@ class SkinSystem:
 if __name__ == "__main__":
     app = SkinSystem()
     while True:
-        print("\n" + "=" * 45)
-        print("👑 王者荣耀榜单 V19.12 (纯净搜索版)")
+        print("\n" + "=" * 55)
+        print("👑 王者荣耀榜单 V19.16 (支持缺失数据 -- 版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
-        print("-" * 45)
-        print("1. 添加皮肤")
-        print("2. 删除/修改数据")
-        print("3. 手动修改状态")
+        print("-" * 55)
+        print("1. 添加皮肤 (定价可修改/价格可选填)")
+        print("2. 修改数据")
+        print("3. 修改标签")
         print("4. >>> 发布到互联网 <<<")
         print("5. 强制刷新HTML")
         print("6. 查看榜单")
-        print("7. 🕷️ 自动抓取百度头像 (纯净版)")
+        print("7. 🕷️ 自动抓取百度头像")
         print("0. 退出")
-        print("=" * 45)
+        print("=" * 55)
         cmd = input("指令: ").strip()
+
         if cmd == '1':
             app.add_skin_ui()
+        elif cmd == '2':
+            app.modify_data_ui()
+        elif cmd == '3':
+            app.manage_status_ui()
         elif cmd == '4':
             app.deploy_to_github()
         elif cmd == '5':

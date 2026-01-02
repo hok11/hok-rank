@@ -5,9 +5,11 @@
     "is_rerun": false,
     "score": 200.0,
     "growth": 3.3,
-    "price": 400.0,
     "is_new": true,
-    "local_img": "skin_avatars/孙悟空-无相.jpg"
+    "local_img": "skin_avatars/孙悟空-无相.jpg",
+    "real_price": 400.0,
+    "list_price": 400.0,
+    "real_score": 200.0
   },
   {
     "quality": 1,
@@ -15,9 +17,11 @@
     "is_rerun": true,
     "score": 117.4,
     "growth": 0.1,
-    "price": 400.0,
     "is_new": false,
-    "local_img": "skin_avatars/甄姬-雪境奇遇.jpg"
+    "local_img": "skin_avatars/甄姬-雪境奇遇.jpg",
+    "real_price": 400.0,
+    "list_price": 400.0,
+    "real_score": 117.4
   },
   {
     "quality": 1,
@@ -25,9 +29,11 @@
     "is_rerun": true,
     "score": 80.8,
     "growth": 3.0,
-    "price": 400.0,
     "is_new": false,
-    "local_img": "skin_avatars/瑶-真我赫兹.jpg"
+    "local_img": "skin_avatars/瑶-真我赫兹.jpg",
+    "real_price": 400.0,
+    "list_price": 400.0,
+    "real_score": 80.8
   },
   {
     "quality": 4,
@@ -35,9 +41,11 @@
     "is_rerun": false,
     "score": 59.0,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": true,
-    "local_img": "skin_avatars/曹操-万灵伏威.jpg"
+    "local_img": "skin_avatars/曹操-万灵伏威.jpg",
+    "real_price": 0.0,
+    "list_price": 48.8,
+    "real_score": null
   },
   {
     "quality": 5,
@@ -45,9 +53,11 @@
     "is_rerun": false,
     "score": 44.1,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": true,
-    "local_img": "skin_avatars/安琪拉-糖果风暴.jpg"
+    "local_img": "skin_avatars/安琪拉-糖果风暴.jpg",
+    "real_price": 0.0,
+    "list_price": 88.8,
+    "real_score": null
   },
   {
     "quality": 6,
@@ -55,9 +65,11 @@
     "is_rerun": false,
     "score": 33.1,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": true,
-    "local_img": "skin_avatars/孙权-径山谋武.jpg"
+    "local_img": "skin_avatars/孙权-径山谋武.jpg",
+    "real_price": 0.0,
+    "list_price": 178.8,
+    "real_score": null
   },
   {
     "quality": 6,
@@ -65,9 +77,11 @@
     "is_rerun": false,
     "score": 24.6,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": true,
-    "local_img": "skin_avatars/蚩姹-极光幻客.jpg"
+    "local_img": "skin_avatars/蚩姹-极光幻客.jpg",
+    "real_price": 0.0,
+    "list_price": 178.8,
+    "real_score": null
   },
   {
     "quality": 4,
@@ -75,9 +89,11 @@
     "is_rerun": true,
     "score": 17.7,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": false,
-    "local_img": "skin_avatars/小乔-山海·琳琅生.jpg"
+    "local_img": "skin_avatars/小乔-山海·琳琅生.jpg",
+    "real_price": 0.0,
+    "list_price": 48.8,
+    "real_score": null
   },
   {
     "quality": 5,
@@ -85,9 +101,11 @@
     "is_rerun": true,
     "score": 12.0,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": false,
-    "local_img": "skin_avatars/妲己-热情桑巴.jpg"
+    "local_img": "skin_avatars/妲己-热情桑巴.jpg",
+    "real_price": 0.0,
+    "list_price": 88.8,
+    "real_score": null
   },
   {
     "quality": 4,
@@ -95,8 +113,10 @@
     "is_rerun": true,
     "score": 7.2,
     "growth": 0.0,
-    "price": 0.0,
     "is_new": false,
-    "local_img": "skin_avatars/曜-山海·苍雷引.jpg"
+    "local_img": "skin_avatars/曜-山海·苍雷引.jpg",
+    "real_price": 0.0,
+    "list_price": 48.8,
+    "real_score": null
   }
 ]

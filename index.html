@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
-        :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
+        /* 定义颜色变量 */
+        :root {
+            --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+            --percent-green: #bbf7d0;
+            --row-green: #bbf7d0;  /* 3 珍品传说 */
+            --row-blue: #bfdbfe;   /* 2 荣耀典藏 */
+            --row-purple: #e9d5ff; /* 1 无双 */
+            --row-gold: #fde68a;   /* 0 珍品无双 */
+            /* 456 勇者史诗传说 为白色 (默认) */
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
@@ -30,10 +39,19 @@
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
-        tbody tr:nth-child(-n+3) td { background-color: var(--row-green); }
-        tr.rerun-row td { background-color: var(--row-purple) !important; }
-        tbody tr:nth-child(-n+3) .bg-up, tbody tr:nth-child(-n+3) .bg-price {
-            background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+        /* --- 🔥 核心颜色逻辑 (基于品质 class) --- */
+        tr.q-normal td { background-color: #ffffff; } /* 4,5,6 */
+        tr.q-green td { background-color: var(--row-green); } /* 3 */
+        tr.q-blue td { background-color: var(--row-blue); } /* 2 */
+        tr.q-purple td { background-color: var(--row-purple); } /* 1 */
+        tr.q-gold td { background-color: var(--row-gold); } /* 0 */
+
+        /* 如果行背景不是白色，则强制内部小框为白色背景 */
+        tr:not(.q-normal) .bg-up,
+        tr:not(.q-normal) .bg-price {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
     </style>
 </head>
@@ -41,13 +59,18 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 03:33</p>
+            <p>Last updated: 2026-01-03 03:49</p>
         </div>
         <table>
             <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
             <tbody>
                 
-                <tr class="">
+                
+                
+                
+                
+
+                <tr class="q-purple">
                     <td class="rank-col">1</td>
                     <td class="quality-col">
                         <img src="./images/1.jpg" class="quality-icon wushuang-big">
@@ -55,6 +78,10 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+                            
+
                             
                                 <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
                             
@@ -71,7 +98,12 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
-                <tr class="rerun-row">
+                
+                
+                
+                
+
+                <tr class="q-purple">
                     <td class="rank-col">2</td>
                     <td class="quality-col">
                         <img src="./images/1.jpg" class="quality-icon wushuang-big">
@@ -79,6 +111,10 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+                            
+
                             
                                 <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
                             
@@ -95,7 +131,12 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
-                <tr class="rerun-row">
+                
+                
+                
+                
+
+                <tr class="q-purple">
                     <td class="rank-col">3</td>
                     <td class="quality-col">
                         <img src="./images/1.jpg" class="quality-icon wushuang-big">
@@ -103,6 +144,10 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+                            
+
                             
                                 <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
                             
@@ -119,7 +164,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
-                <tr class="">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">4</td>
                     <td class="quality-col">
                         <img src="./images/4.jpg" class="quality-icon ">
@@ -127,6 +176,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
                             
@@ -143,7 +195,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">5</td>
                     <td class="quality-col">
                         <img src="./images/5.jpg" class="quality-icon ">
@@ -151,6 +207,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
                             
@@ -167,7 +226,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">6</td>
                     <td class="quality-col">
                         <img src="./images/6.jpg" class="quality-icon ">
@@ -175,6 +238,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
                             
@@ -191,7 +257,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">7</td>
                     <td class="quality-col">
                         <img src="./images/6.jpg" class="quality-icon ">
@@ -199,6 +269,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
                             
@@ -215,7 +288,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="rerun-row">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">8</td>
                     <td class="quality-col">
                         <img src="./images/4.jpg" class="quality-icon ">
@@ -223,6 +300,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
                             
@@ -239,7 +319,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="rerun-row">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">9</td>
                     <td class="quality-col">
                         <img src="./images/5.jpg" class="quality-icon ">
@@ -247,6 +331,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
                             
@@ -263,7 +350,11 @@
                     <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
-                <tr class="rerun-row">
+                
+                
+                
+
+                <tr class="q-normal">
                     <td class="rank-col">10</td>
                     <td class="quality-col">
                         <img src="./images/4.jpg" class="quality-icon ">
@@ -271,6 +362,9 @@
                     <td>
                         <div class="song-col">
                             
+                            
+                            
+
                             
                                 <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
                             
