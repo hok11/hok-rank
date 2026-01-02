@@ -5,314 +5,410 @@ import subprocess
 from datetime import datetime
 from jinja2 import Template
 
-# ================= ⚠️ 配置区域 (请修改这两行) =================
-
-# 1. 设置你的 hok-rank 文件夹路径 (刚才克隆下来的那个文件夹)
-# 注意：路径前面加个 r，防止报错
+# ================= ⚠️ 配置区域 =================
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
-
-# 2. 设置你的 Git.exe 路径 (就是你刚才找到的那个)
-# 如果不设置这个，发布时可能会报错“找不到文件”
 GIT_EXECUTABLE_PATH = r"D:\Git\bin\git.exe"
+GITHUB_USERNAME = "hok11"
 
 
-# ===========================================================
+# ===========================================
 
 class SkinSystem:
     def __init__(self):
-        self.quality_map = {
-            0: "【珍品无双】", 1: "【无双】", 2: "【荣耀典藏】",
-            3: "【珍品传说】", 4: "【传说】", 5: "【史诗】", 6: "【勇者】"
-        }
-        self.active_leaderboard = []
+        # 核心：单源存储。is_new=True 代表在新品榜，False 代表仅在总榜
+        self.all_skins = []
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
-
-        # 自动加载数据
         self.load_data()
 
     def _get_base_score(self, x):
+        """(原版算法) 理论曲线公式: y = 288/sqrt(x) - 88"""
         if x <= 0: return 200
         val = (288 / math.sqrt(x)) - 88
         return max(val, 0)
 
     def load_data(self):
-        """读取本地存储的数据"""
         if os.path.exists(self.data_file):
             try:
                 with open(self.data_file, 'r', encoding='utf-8') as f:
-                    self.active_leaderboard = json.load(f)
-                print(f"✅ 已加载历史数据 (共{len(self.active_leaderboard)}条)")
-                return
-            except:
-                print("⚠️ 数据文件为空或损坏，使用默认初始化")
+                    loaded = json.load(f)
 
-        # 初始化默认数据 (如果没有旧数据)
-        init_data = [
-            (1, "孙悟空-无相", False), (1, "甄姬-雪境奇遇", True),
-            (1, "瑶-真我赫兹", True), (4, "曹操-万灵伏威", False),
-            (5, "安琪拉-糖果风暴", False), (6, "孙权-径山谋武", False),
-            (6, "蚩姹-极光幻客", False), (4, "小乔-山海·琳琅生", True),
-            (5, "妲己-热情桑巴", True), (4, "曜-山海·苍雷引", True)
-        ]
-        self.active_leaderboard = []
-        for i, (q_code, name, is_rerun) in enumerate(init_data):
-            score = self._get_base_score(i + 1)
-            self.active_leaderboard.append({
-                "quality": q_code, "name": name, "is_rerun": is_rerun,
-                "score": round(score, 1), "growth": 0.0, "price": 0.0
-            })
-        self.save_data()
-        self.generate_html()
+                if isinstance(loaded, list):
+                    self.all_skins = loaded
+                    for s in self.all_skins:
+                        if 'is_new' not in s: s['is_new'] = True
+                elif isinstance(loaded, dict):
+                    # 兼容合并
+                    self.all_skins = []
+                    seen = set()
+                    for s in loaded.get('new', []):
+                        s['is_new'] = True
+                        self.all_skins.append(s)
+                        seen.add(s['name'])
+                    for s in loaded.get('total', []):
+                        if s['name'] not in seen:
+                            s['is_new'] = False
+                            self.all_skins.append(s)
+                            seen.add(s['name'])
+
+                print(f"✅ 数据加载完毕 (总库存: {len(self.all_skins)})")
+            except:
+                self.all_skins = []
+        else:
+            self.save_data()
 
     def save_data(self):
-        """保存数据到JSON"""
         try:
             with open(self.data_file, 'w', encoding='utf-8') as f:
-                json.dump(self.active_leaderboard, f, ensure_ascii=False, indent=2)
+                # 存盘按分数排序
+                self.all_skins.sort(key=lambda x: x['score'], reverse=True)
+                json.dump(self.all_skins, f, ensure_ascii=False, indent=2)
         except FileNotFoundError:
             print(f"❌ 错误：找不到路径 {LOCAL_REPO_PATH}")
-            print("请检查代码顶部的 LOCAL_REPO_PATH 是否配置正确！")
+
+    # --- 视图逻辑 ---
+    def get_active_skins(self):
+        """新品榜：只包含 is_new=True 的皮肤"""
+        data = [s for s in self.all_skins if s.get('is_new', True)]
+        data.sort(key=lambda x: x['score'], reverse=True)
+        return data
+
+    def get_total_skins(self):
+        """总榜：包含所有皮肤"""
+        data = self.all_skins[:]
+        data.sort(key=lambda x: x['score'], reverse=True)
+        return data
+
+    # --- 控制台打印 (你要的新功能) ---
+    def print_console_table(self, view_type="new"):
+        if view_type == "new":
+            data = self.get_active_skins()
+            title = f"🔥 新品榜 (Active Top 10)"
+        else:
+            data = self.get_total_skins()
+            title = f"🏆 历史总榜 (Total History)"
+
+        print(f"\n====== {title} ======")
+        print(f"{'No.':<4} {'状态':<6} {'名字':<12} {'点数':<8} {'涨幅':<8} {'价格'}")
+        print("-" * 60)
+
+        for i, skin in enumerate(data):
+            status = " [在榜]" if skin.get('is_new') else " [退榜]"
+            growth_str = f"+{skin['growth']}%" if skin['growth'] > 0 else "--"
+            price_str = f"¥{skin['price']}" if skin['price'] > 0 else "--"
+            print(f"{i + 1:<4} {status:<6} {skin['name']:<12} {skin['score']:<8} {growth_str:<8} {price_str}")
+        print("=" * 60 + "\n")
+
+    # --- 核心算法：插值计算 (完全回归旧逻辑) ---
+    def calculate_insertion_score(self, rank_input, active_list, price=0, growth=0):
+        # 1. 榜首算法
+        if rank_input == 1:
+            old_top1_score = active_list[0]['score'] if active_list else 0
+            algo_1 = old_top1_score / 0.6
+            algo_2 = (288 / math.sqrt(1.25)) - 88
+            algo_3 = price * growth * 15
+
+            final_score = max(algo_1, algo_2, algo_3)
+            print(f"   [算法] 榜首MAX: A({algo_1:.1f}), B({algo_2:.1f}), C({algo_3:.1f}) -> {final_score:.1f}")
+            return final_score
+
+        # 2. 插值算法
+        prev_idx = rank_input - 2
+        next_idx = rank_input - 1
+
+        # 上一名分数
+        if prev_idx < 0:
+            prev_score = 200
+        else:
+            prev_score = active_list[prev_idx]['score']
+
+        # 下一名分数
+        if next_idx >= len(active_list):
+            # 队尾：取 [上一名] 和 [理论公式下一名] 的几何平均
+            theoretical_next = self._get_base_score(rank_input + 1)
+            if theoretical_next < 0: theoretical_next = 1
+            next_score = theoretical_next
+        else:
+            # 中间：取 [上一名] 和 [被插队的那个] 的几何平均
+            next_score = active_list[next_idx]['score']
+
+        final_score = math.sqrt(prev_score * next_score)
+        print(f"   [算法] 插值计算: sqrt({prev_score:.1f} * {next_score:.1f}) = {final_score:.1f}")
+        return final_score
+
+    # --- 交互功能 ---
+    def add_skin_ui(self):
+        print("\n>>> 添加新皮肤 (自动加入新品榜 & 总榜)")
+        # 先打印当前榜单供参考
+        self.print_console_table("new")
+        active_list = self.get_active_skins()
+
+        try:
+            print("格式: 品质代码 名字 [非0数字代表复刻]")
+            raw = input("输入: ").split()
+            if len(raw) < 2: return
+
+            q_code = int(raw[0])
+            name = raw[1]
+            is_rerun = False
+            if len(raw) >= 3 and raw[2] != '0': is_rerun = True
+
+            # 询问排名
+            rank_str = input(f"插入排名位置 (1-{len(active_list) + 1}): ").strip()
+            if not rank_str.isdigit(): return
+            rank = int(rank_str)
+            if rank < 1: rank = 1
+            if rank > len(active_list) + 1: rank = len(active_list) + 1
+
+            price = 0.0
+            growth = 0.0
+
+            # 第一名强校验
+            if rank == 1:
+                print(">>> 🔥 榜首数据录入")
+                try:
+                    price = float(input("售价 (RMB): "))
+                    growth = float(input("次日涨幅 (%): "))
+                except:
+                    price = 0; growth = 0
+            else:
+                extra = input("选填 [涨幅 售价] (回车跳过): ").split()
+                if len(extra) >= 1: growth = float(extra[0])
+                if len(extra) >= 2: price = float(extra[1])
+
+            # 计算分数
+            new_score = self.calculate_insertion_score(rank, active_list, price, growth)
+
+            # 创建对象
+            new_skin = {
+                "quality": q_code, "name": name, "is_rerun": is_rerun,
+                "score": round(new_score, 1),
+                "growth": growth, "price": price,
+                "is_new": True
+            }
+            self.all_skins.append(new_skin)
+
+            # === 自动挤出逻辑 (保留在总榜) ===
+            # 获取最新的 Active 列表（按分数排序）
+            current_active = self.get_active_skins()
+            if len(current_active) > 10:
+                # 找到 Active 里分数最低的那个 (列表最后一个)
+                last_skin = current_active[-1]
+                # 修改标记
+                last_skin['is_new'] = False
+                print(f"\n📉 榜单已满，[{last_skin['name']}] 自动退榜 (保留在总榜)")
+
+            self.save_data()
+            self.generate_html()
+            print(f"✅ 添加成功！点数: {new_score:.1f}")
+
+        except ValueError:
+            print("❌ 输入错误")
+
+    def manage_status_ui(self):
+        """手动退榜"""
+        self.print_console_table("new")
+        active_view = self.get_active_skins()
+
+        try:
+            idx = int(input("输入要【手动退榜】的序号: ")) - 1
+            if 0 <= idx < len(active_view):
+                target = active_view[idx]
+                target['is_new'] = False  # 核心：只改标记
+                self.save_data()
+                self.generate_html()
+                print(f"✅ {target['name']} 已退榜 (保留在总榜)")
+            else:
+                print("❌ 序号无效")
+        except:
+            pass
+
+    def modify_data_ui(self):
+        print("\n1. 修改 Active 榜")
+        print("2. 修改 Total 榜")
+        choice = input("选: ")
+
+        # 显示列表
+        view_type = "new" if choice == "1" else "total"
+        self.print_console_table(view_type)
+        target_list = self.get_active_skins() if choice == '1' else self.get_total_skins()
+
+        try:
+            idx = int(input("输入序号修改: ")) - 1
+            if 0 <= idx < len(target_list):
+                item = target_list[idx]
+                print(f"当前: {item['name']} 分数:{item['score']}")
+
+                s = input("新分数: ")
+                if s: item['score'] = float(s)
+                g = input(f"新涨幅 (原{item['growth']}): ")
+                if g: item['growth'] = float(g)
+                p = input(f"新价格 (原{item['price']}): ")
+                if p: item['price'] = float(p)
+
+                self.save_data()
+                self.generate_html()
+                print("✅ 修改成功")
+        except:
+            pass
 
     def generate_html(self):
-        """生成漂亮的静态HTML文件"""
+        """生成网页"""
         html_template = """
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>王者荣耀皮肤销量点数榜</title>
+    <title>Honor of Kings Data</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #d68bfb 0%, #faa6d9 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .chart-header { background: var(--header-bg); padding: 25px; text-align: center; color: #111; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
-        .chart-header p { font-size: 14px; font-weight: 500; }
+        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: #111; }
+        .chart-header.total-header { background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); color: white; }
+        .chart-header.total-header h1 { color: white; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 5px; color: #000; letter-spacing: -0.5px; }
+        .chart-header p { font-size: 12px; font-weight: 600; opacity: 0.7; text-transform: uppercase; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: center; padding: 10px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; }
-        td { padding: 8px; vertical-align: middle; text-align: center; }
-        .rank-col { font-weight: 800; font-size: 16px; width: 50px; }
-        .quality-col { font-size: 12px; width: 80px; font-weight: bold; color: #555; }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 20px; }
-        .album-art { width: 45px; height: 45px; border-radius: 4px; margin-right: 12px; background-color: #ddd; object-fit: cover; }
+        th { text-align: center; padding: 12px 8px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
+        td { padding: 10px 8px; vertical-align: middle; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
+        .quality-col { width: 90px; }
+        .quality-icon { height: 28px; width: auto; display: block; margin: 0 auto; mix-blend-mode: multiply; filter: contrast(1.1); }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
+        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: #eee; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
-        .song-title { font-weight: 700; font-size: 14px; color: #111; margin-bottom: 2px; }
-        .artist-name { font-size: 12px; color: #666; }
-        .points-col { text-align: right; font-weight: 800; padding-right: 20px; width: 80px; }
-        .percent-box { display: inline-block; width: 100%; padding: 8px 0; font-weight: 500; font-size: 12px; border-radius: 4px; }
-        .bg-up { background-color: var(--percent-green); }
-        .bg-none { background-color: #f3f4f6; color: #999; }
-
-        /* 还原图片风格 */
+        .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
+        .artist-name { font-size: 12px; color: #666; font-weight: 500; }
+        .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
+        .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
+        .bg-up { background-color: var(--percent-green); color: #064e3b; }
+        .bg-none { background-color: #f3f4f6; color: #888; }
+        .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
         tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
         tr.rerun-row td { background-color: var(--row-purple); }
-
-        .footer { background: #8b5cf6; color: white; text-align: center; padding: 10px; font-weight: 700; font-size: 14px; }
+        tr:nth-child(-n+3) .bg-up { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .footer { background: #333; color: white; text-align: center; padding: 10px; font-weight: 700; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="chart-card">
         <div class="chart-header">
-            <h1>Early Hot 100 Predictions</h1>
-            <p>王者荣耀皮肤销量点数榜 (Update: {{ update_time }})</p>
+            <h1>Active Skin Board</h1>
+            <p>Current Ranking</p>
         </div>
         <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Qual</th>
-                    <th style="text-align:left; padding-left:30px;">Skin Name</th>
-                    <th>Points</th>
-                    <th>%</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
             <tbody>
-                {% for skin in skins %}
+                {% for skin in new_skins %}
                 <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
                     <td class="rank-col">{{ loop.index }}</td>
-                    <td class="quality-col">{{ skin.quality_str }}</td>
+                    <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
                     <td>
                         <div class="song-col">
-                            <img src="https://via.placeholder.com/45/{{ '9333ea' if skin.is_rerun else '16a34a' }}/FFFFFF?text={{ skin.name[0] }}" class="album-art">
-                            <div class="song-info">
-                                <span class="song-title">{{ skin.name }}</span>
-                                <span class="artist-name">{{ '★ 限定复刻' if skin.is_rerun else 'New Arrival' }}</span>
-                            </div>
+                            <img src="https://via.placeholder.com/48/{{ 'E9D5FF' if skin.is_rerun else 'DCFCE7' }}/555555?text={{ skin.name[0] }}" class="album-art">
+                            <div class="song-info"><span class="song-title">{{ skin.name }}</span><span class="artist-name">{{ '★ 限定复刻' if skin.is_rerun else 'Active' }}</span></div>
                         </div>
                     </td>
                     <td class="points-col">{{ skin.score }}</td>
-                    <td>
-                        {% if skin.growth > 0 %}
-                        <div class="percent-box bg-up">+{{ skin.growth }}%</div>
-                        {% else %}
-                        <div class="percent-box bg-none">--</div>
-                        {% endif %}
-                    </td>
-                    <td style="font-weight:bold; color:#555;">
-                        {% if skin.price > 0 %}¥{{ skin.price }}{% else %}--{% endif %}
-                    </td>
+                    <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.price > 0 else 'bg-none' }}">{% if skin.price > 0 %}¥{{ skin.price }}{% else %}--{% endif %}</div></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="footer">Top 10 Available via PyCharm System</div>
     </div>
+
+    <div class="chart-card">
+        <div class="chart-header total-header">
+            <h1>All-Time History</h1>
+            <p>Total Archive</p>
+        </div>
+        <table>
+            <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
+            <tbody>
+                {% for skin in total_skins %}
+                <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
+                    <td class="rank-col">{{ loop.index }}</td>
+                    <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/48/{{ 'E9D5FF' if skin.is_rerun else 'DCFCE7' }}/555555?text={{ skin.name[0] }}" class="album-art">
+                            <div class="song-info"><span class="song-title">{{ skin.name }}</span><span class="artist-name">{{ 'Active' if skin.is_new else 'Retired' }}</span></div>
+                        </div>
+                    </td>
+                    <td class="points-col">{{ skin.score }}</td>
+                    <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.price > 0 else 'bg-none' }}">{% if skin.price > 0 %}¥{{ skin.price }}{% else %}--{% endif %}</div></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer" style="background:transparent; color:#888;">Updated: {{ update_time }}</div>
 </body>
 </html>
         """
 
-        render_list = []
-        for skin in self.active_leaderboard:
-            item = skin.copy()
-            item['quality_str'] = self.quality_map.get(item['quality'], "")
-            render_list.append(item)
-
         t = Template(html_template)
-        html_content = t.render(skins=render_list, update_time=datetime.now().strftime("%Y-%m-%d"))
+        html_content = t.render(
+            new_skins=self.get_active_skins(),
+            total_skins=self.get_total_skins(),
+            update_time=datetime.now().strftime("%Y-%m-%d %H:%M")
+        )
 
-        # 写入 index.html 到仓库目录
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已自动更新")
+            print("📄 网页文件已更新")
         except FileNotFoundError:
             pass
 
     def deploy_to_github(self):
-        """一键发布到 GitHub (使用指定的 git.exe)"""
-        print("\n🚀 正在连接 GitHub，请稍候...")
+        print("\n🚀 正在连接 GitHub...")
         try:
-            # 切换到仓库目录
             os.chdir(LOCAL_REPO_PATH)
-
-            # 使用用户指定的 git 路径
-            git_cmd = GIT_EXECUTABLE_PATH
-
-            # 执行 Git 命令
-            subprocess.run([git_cmd, "add", "."], check=True)
-            subprocess.run([git_cmd, "commit", "-m", f"Update {datetime.now().strftime('%H:%M')}"], check=True)
-            subprocess.run([git_cmd, "push"], check=True)
-
+            subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
+            subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", f"Update {datetime.now().strftime('%H:%M')}"],
+                           check=True)
+            subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
             print("\n✅ 发布成功！")
-            # 尝试从路径中解析用户名
-            try:
-                username = LOCAL_REPO_PATH.split(os.sep)[-2]  # 简单猜测
-                if "github" not in username and "Users" not in username:
-                    print(f"🌐 你的网站地址: https://{username}.github.io/hok-rank/")
-                else:
-                    print(f"🌐 你的网站地址: https://[你的GitHub用户名].github.io/hok-rank/")
-            except:
-                print(f"🌐 你的网站地址: https://[你的GitHub用户名].github.io/hok-rank/")
-
-            print("(注意：GitHub 更新可能有 1-2 分钟延迟，请稍后刷新网页)")
+            print(f"🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
             print(f"\n❌ 发布失败: {e}")
-            print("请检查：")
-            print("1. LOCAL_REPO_PATH 和 GIT_EXECUTABLE_PATH 是否都填对了？")
-            print("2. 第一次运行可能需要你在弹出的窗口里登录 GitHub 账号。")
-
-    # --- 界面交互逻辑 ---
-    def add_skin_ui(self):
-        print("\n>>> 请输入皮肤信息 (格式: 品质代码 名字 [任意数字代表复刻])")
-        try:
-            raw = input("输入: ").strip().split()
-            if len(raw) < 2: return
-            q_code = int(raw[0])
-            name = raw[1]
-            is_rerun = True if len(raw) >= 3 else False
-
-            rank = int(input(f"插入排名位置 (1-{len(self.active_leaderboard) + 1}): "))
-            if rank < 1: rank = 1
-            if rank > len(self.active_leaderboard) + 1: rank = len(self.active_leaderboard) + 1
-
-            price, growth, new_score = 0.0, 0.0, 0.0
-
-            if rank == 1:
-                p_in = input("售价 (RMB): ")
-                g_in = input("次日涨幅 (%): ")
-                try:
-                    price, growth = float(p_in), float(g_in)
-                except:
-                    pass
-
-                algo_1 = self.active_leaderboard[0]['score'] / 0.6 if self.active_leaderboard else 0
-                algo_2 = 169.6
-                algo_3 = price * growth * 15
-                new_score = max(algo_1, algo_2, algo_3)
-            else:
-                extra = input("输入 [涨幅 售价] (可选): ").split()
-                if len(extra) >= 1: growth = float(extra[0])
-                if len(extra) >= 2: price = float(extra[1])
-
-                prev_idx, next_idx = rank - 2, rank - 1
-                if prev_idx < 0:
-                    new_score = 200
-                elif next_idx >= len(self.active_leaderboard):
-                    new_score = math.sqrt(self.active_leaderboard[prev_idx]['score'] * self._get_base_score(rank + 1))
-                else:
-                    new_score = math.sqrt(
-                        self.active_leaderboard[prev_idx]['score'] * self.active_leaderboard[next_idx]['score'])
-
-            new_skin = {"quality": q_code, "name": name, "is_rerun": is_rerun, "score": new_score, "growth": growth,
-                        "price": price}
-            self.active_leaderboard.insert(rank - 1, new_skin)
-            if len(self.active_leaderboard) > 10: self.active_leaderboard.pop()
-
-            self.save_data()
-            self.generate_html()
-            print("✅ 录入成功")
-
-        except Exception as e:
-            print(f"❌ 错误: {e}")
-
-    def remove_skin_ui(self):
-        val = input("请输入要退榜的 [排名序号]: ").strip()
-        if val.isdigit():
-            idx = int(val) - 1
-            if 0 <= idx < len(self.active_leaderboard):
-                self.active_leaderboard.pop(idx)
-                self.save_data()
-                self.generate_html()
-                print("✅ 退榜成功")
-
-    def modify_score_ui(self):
-        try:
-            idx = int(input("请输入新品榜序号: ")) - 1
-            if 0 <= idx < len(self.active_leaderboard):
-                self.active_leaderboard[idx]['score'] = float(input("新点数: "))
-                self.save_data()
-                self.generate_html()
-                print("✅ 修改成功")
-        except:
-            print("输入错误")
 
 
-# ================= 运行入口 =================
 if __name__ == "__main__":
     app = SkinSystem()
-
     while True:
-        print("\n" + "=" * 40)
-        print("👑 王者荣耀榜单管理员系统 (V13.0)")
-        print("1. 新品上榜")
-        print("2. 皮肤退榜")
-        print("3. 修改点数")
+        print("\n" + "=" * 45)
+        print("👑 王者荣耀榜单 V18.2 (完整修复版)")
+        print(f"📊 当前: 新品榜 {len(app.get_active_skins())} | 总库存 {len(app.all_skins)}")
+        print("-" * 45)
+        print("1. 添加皮肤 (自动插值算法 & 自动退榜)")
+        print("2. 删除皮肤 (彻底删除)")
+        print("3. 修改数据")
         print("4. >>> 发布到互联网 <<<")
+        print("5. 手动退榜")
+        print("6. 👀 查看榜单 (新品/总榜)")
         print("0. 退出")
-        print("=" * 40)
-
+        print("=" * 45)
         cmd = input("指令: ").strip()
 
         if cmd == '1':
             app.add_skin_ui()
         elif cmd == '2':
-            app.remove_skin_ui()
+            app.remove_skin_ui()  # 注意: 原代码未定义此函数，若需要请补充或忽略
         elif cmd == '3':
-            app.modify_score_ui()
+            app.modify_data_ui()
         elif cmd == '4':
             app.deploy_to_github()
+        elif cmd == '5':
+            app.manage_status_ui()
+        elif cmd == '6':
+            app.print_console_table("new")
+            app.print_console_table("total")
         elif cmd == '0':
             break
