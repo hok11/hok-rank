@@ -5,23 +5,23 @@ import subprocess
 from datetime import datetime
 from jinja2 import Template
 
-# ================= ⚠️ 配置区域 (请确认路径) =================
+# ================= ⚠️ 配置区域 =================
 
-# 1. 设置你的 hok-rank 文件夹路径
+# 1. 你的文件夹路径
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
 
-# 2. 设置你的 Git.exe 路径
+# 2. 你的 Git 路径
 GIT_EXECUTABLE_PATH = r"D:\Git\bin\git.exe"
+
+# 3. 你的 GitHub 用户名
+GITHUB_USERNAME = "hok11"
 
 
 # ===========================================================
 
 class SkinSystem:
     def __init__(self):
-        self.quality_map = {
-            0: "【珍品无双】", 1: "【无双】", 2: "【荣耀典藏】",
-            3: "【珍品传说】", 4: "【传说】", 5: "【史诗】", 6: "【勇者】"
-        }
+        # 这里不再存文字，而是逻辑映射，具体在HTML里拼接文件名
         self.active_leaderboard = []
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.load_data()
@@ -41,7 +41,6 @@ class SkinSystem:
             except:
                 print("⚠️ 数据读取失败，初始化默认数据")
 
-        # 默认初始化
         self.active_leaderboard = []
         self.save_data()
 
@@ -53,7 +52,7 @@ class SkinSystem:
             print(f"❌ 错误：找不到路径 {LOCAL_REPO_PATH}")
 
     def generate_html(self):
-        """生成 V14.0 美化版网页"""
+        """生成 V15.0 图片品质版网页"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +66,6 @@ class SkinSystem:
         body { background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
-        /* 头部样式优化 */
         .chart-header { background: var(--header-bg); padding: 30px 20px; text-align: center; color: #111; }
         .chart-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: #000; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
@@ -77,7 +75,19 @@ class SkinSystem:
         td { padding: 10px 8px; vertical-align: middle; text-align: center; }
 
         .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
-        .quality-col { font-size: 12px; width: 80px; font-weight: bold; color: #555; }
+
+        /* === 品质列新样式 === */
+        .quality-col { width: 90px; } /* 稍微加宽一点给图片 */
+        .quality-icon { 
+            height: 28px;       /* 限制高度，防止图片太大撑破表格 */
+            width: auto; 
+            display: block; 
+            margin: 0 auto;
+            /* ⚠️魔法代码：让图片的白底变透明，融合背景 */
+            mix-blend-mode: multiply; 
+            filter: contrast(1.1); /* 稍微增加一点对比度让图标更清晰 */
+        }
+
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: #eee; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
@@ -86,13 +96,11 @@ class SkinSystem:
 
         .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
 
-        /* 统一的框框样式 */
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        /* 前三名高亮 */
         tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
         tr.rerun-row td { background-color: var(--row-purple); }
 
@@ -112,14 +120,19 @@ class SkinSystem:
                     <th>Qual</th>
                     <th style="text-align:left; padding-left:25px;">Skin Name</th>
                     <th>Points</th>
-                    <th>Growth</th> <th>Price</th>
+                    <th>Growth</th>
+                    <th>Price</th>
                 </tr>
             </thead>
             <tbody>
                 {% for skin in skins %}
                 <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
                     <td class="rank-col">{{ loop.index }}</td>
-                    <td class="quality-col">{{ skin.quality_str }}</td>
+
+                    <td class="quality-col">
+                        <img src="./images/{{ skin.quality }}.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/{{ 'E9D5FF' if skin.is_rerun else 'DCFCE7' }}/555555?text={{ skin.name[0] }}" class="album-art">
@@ -154,9 +167,7 @@ class SkinSystem:
 
         render_list = []
         for skin in self.active_leaderboard:
-            item = skin.copy()
-            item['quality_str'] = self.quality_map.get(item['quality'], "")
-            render_list.append(item)
+            render_list.append(skin)  # 直接传递数据，不需要再转换文字了
 
         t = Template(html_template)
         html_content = t.render(skins=render_list, update_time=datetime.now().strftime("%Y-%m-%d"))
@@ -164,41 +175,37 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新 (V14.0 美化版)")
+            print("📄 网页文件已更新 (V15.0 图标版)")
         except FileNotFoundError:
             pass
 
     def deploy_to_github(self):
-        """一键发布"""
         print("\n🚀 正在连接 GitHub...")
         try:
             os.chdir(LOCAL_REPO_PATH)
             git_cmd = GIT_EXECUTABLE_PATH
 
+            # 这里很重要：把新加的图片文件夹也加上去
             subprocess.run([git_cmd, "add", "."], check=True)
-            subprocess.run([git_cmd, "commit", "-m", f"Update {datetime.now().strftime('%H:%M')}"], check=True)
+            subprocess.run([git_cmd, "commit", "-m", f"Update images {datetime.now().strftime('%H:%M')}"], check=True)
             subprocess.run([git_cmd, "push"], check=True)
 
             print("\n✅ 发布成功！")
-            try:
-                username = LOCAL_REPO_PATH.split(os.sep)[-2]
-                print(f"🌐 访问: https://{username}.github.io/hok-rank/")
-            except:
-                print("🌐 请访问你的 GitHub Pages 网址")
+            print(f"🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
-            print(f"\n❌ 发布失败 (如果是因为没修改数据，请先修改任意数据再发布)")
+            print(f"\n❌ 发布失败: {e}")
 
     # --- 交互逻辑 ---
     def add_skin_ui(self):
         print("\n>>> 添加新皮肤")
         try:
+            print("品质代码对照: 0=珍品无双, 1=无双, 2=荣耀典藏, 3=珍品传说, 4=传说, 5=史诗, 6=勇者")
             raw = input("输入 [品质代码 名字]: ").split()
             if len(raw) < 2: return
             q_code = int(raw[0])
             name = raw[1]
             is_rerun = input("是复刻吗? (y/n): ").lower() == 'y'
 
-            # 简单的初始分计算
             rank = len(self.active_leaderboard) + 1
             score = self._get_base_score(rank)
 
@@ -224,24 +231,18 @@ class SkinSystem:
             pass
 
     def modify_data_ui(self):
-        """全面升级的修改功能"""
         try:
             idx = int(input("请输入要修改的 [排名序号]: ")) - 1
             if 0 <= idx < len(self.active_leaderboard):
                 item = self.active_leaderboard[idx]
                 print(f"\n当前选中: {item['name']}")
-                print(f"当前数据: 点数={item['score']}, 涨幅={item['growth']}%, 价格={item['price']}")
-                print("(提示: 不想改的项直接按回车跳过)")
 
-                # 修改点数
                 s_in = input(f"新点数 (原{item['score']}): ")
                 if s_in.strip(): item['score'] = float(s_in)
 
-                # 修改涨幅
                 g_in = input(f"新涨幅 (原{item['growth']}): ")
                 if g_in.strip(): item['growth'] = float(g_in)
 
-                # 修改价格
                 p_in = input(f"新价格 (原{item['price']}): ")
                 if p_in.strip(): item['price'] = float(p_in)
 
@@ -258,10 +259,10 @@ if __name__ == "__main__":
 
     while True:
         print("\n" + "=" * 40)
-        print("👑 王者荣耀榜单 V14.0 (增强版)")
+        print("👑 王者荣耀榜单 V15.0 (图形化增强版)")
         print("1. 添加皮肤")
         print("2. 删除皮肤")
-        print("3. 修改数据 (点数/涨幅/价格)")
+        print("3. 修改数据")
         print("4. >>> 发布到互联网 <<<")
         print("0. 退出")
         print("=" * 40)
@@ -273,7 +274,7 @@ if __name__ == "__main__":
         elif cmd == '2':
             app.remove_skin_ui()
         elif cmd == '3':
-            app.modify_data_ui()  # 这里的函数换了
+            app.modify_data_ui()
         elif cmd == '4':
             app.deploy_to_github()
         elif cmd == '0':

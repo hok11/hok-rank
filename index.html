@@ -11,7 +11,6 @@
         body { background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
         .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
-        /* 头部样式优化 */
         .chart-header { background: var(--header-bg); padding: 30px 20px; text-align: center; color: #111; }
         .chart-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: #000; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
@@ -21,7 +20,19 @@
         td { padding: 10px 8px; vertical-align: middle; text-align: center; }
 
         .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
-        .quality-col { font-size: 12px; width: 80px; font-weight: bold; color: #555; }
+
+        /* === 品质列新样式 === */
+        .quality-col { width: 90px; } /* 稍微加宽一点给图片 */
+        .quality-icon { 
+            height: 28px;       /* 限制高度，防止图片太大撑破表格 */
+            width: auto; 
+            display: block; 
+            margin: 0 auto;
+            /* ⚠️魔法代码：让图片的白底变透明，融合背景 */
+            mix-blend-mode: multiply; 
+            filter: contrast(1.1); /* 稍微增加一点对比度让图标更清晰 */
+        }
+
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: #eee; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
@@ -30,13 +41,11 @@
 
         .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
 
-        /* 统一的框框样式 */
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        /* 前三名高亮 */
         tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
         tr.rerun-row td { background-color: var(--row-purple); }
 
@@ -56,14 +65,19 @@
                     <th>Qual</th>
                     <th style="text-align:left; padding-left:25px;">Skin Name</th>
                     <th>Points</th>
-                    <th>Growth</th> <th>Price</th>
+                    <th>Growth</th>
+                    <th>Price</th>
                 </tr>
             </thead>
             <tbody>
                 
                 <tr class="">
                     <td class="rank-col">1</td>
-                    <td class="quality-col">【无双】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/1.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/DCFCE7/555555?text=孙" class="album-art">
@@ -88,7 +102,11 @@
                 
                 <tr class="rerun-row">
                     <td class="rank-col">2</td>
-                    <td class="quality-col">【无双】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/1.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/E9D5FF/555555?text=甄" class="album-art">
@@ -101,19 +119,23 @@
                     <td class="points-col">115.6</td>
                     <td style="width: 80px;">
                         
-                        <div class="box-style bg-none">--</div>
+                        <div class="box-style bg-up">+0.1%</div>
                         
                     </td>
                     <td style="width: 80px; padding-right:10px;">
-                        <div class="box-style bg-none">
-                             --
+                        <div class="box-style bg-price">
+                             ¥400.0
                         </div>
                     </td>
                 </tr>
                 
                 <tr class="rerun-row">
                     <td class="rank-col">3</td>
-                    <td class="quality-col">【无双】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/1.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/E9D5FF/555555?text=瑶" class="album-art">
@@ -138,7 +160,11 @@
                 
                 <tr class="">
                     <td class="rank-col">4</td>
-                    <td class="quality-col">【传说】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/4.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/DCFCE7/555555?text=曹" class="album-art">
@@ -163,7 +189,11 @@
                 
                 <tr class="">
                     <td class="rank-col">5</td>
-                    <td class="quality-col">【史诗】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/5.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/DCFCE7/555555?text=安" class="album-art">
@@ -188,7 +218,11 @@
                 
                 <tr class="">
                     <td class="rank-col">6</td>
-                    <td class="quality-col">【勇者】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/6.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/DCFCE7/555555?text=孙" class="album-art">
@@ -213,7 +247,11 @@
                 
                 <tr class="">
                     <td class="rank-col">7</td>
-                    <td class="quality-col">【勇者】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/6.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/DCFCE7/555555?text=蚩" class="album-art">
@@ -238,7 +276,11 @@
                 
                 <tr class="rerun-row">
                     <td class="rank-col">8</td>
-                    <td class="quality-col">【传说】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/4.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/E9D5FF/555555?text=小" class="album-art">
@@ -263,7 +305,11 @@
                 
                 <tr class="rerun-row">
                     <td class="rank-col">9</td>
-                    <td class="quality-col">【史诗】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/5.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/E9D5FF/555555?text=妲" class="album-art">
@@ -288,7 +334,11 @@
                 
                 <tr class="rerun-row">
                     <td class="rank-col">10</td>
-                    <td class="quality-col">【传说】</td>
+
+                    <td class="quality-col">
+                        <img src="./images/4.jpg" class="quality-icon" alt="Qual">
+                    </td>
+
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/E9D5FF/555555?text=曜" class="album-art">
