@@ -1,0 +1,82 @@
+[
+  {
+    "quality": 1,
+    "name": "孙悟空-无相",
+    "is_rerun": false,
+    "score": 200.0,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 1,
+    "name": "甄姬-雪境奇遇",
+    "is_rerun": true,
+    "score": 115.6,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 1,
+    "name": "瑶-真我赫兹",
+    "is_rerun": true,
+    "score": 78.3,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 4,
+    "name": "曹操-万灵伏威",
+    "is_rerun": false,
+    "score": 56.0,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 5,
+    "name": "安琪拉-糖果风暴",
+    "is_rerun": false,
+    "score": 40.8,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 6,
+    "name": "孙权-径山谋武",
+    "is_rerun": false,
+    "score": 29.6,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 6,
+    "name": "蚩姹-极光幻客",
+    "is_rerun": false,
+    "score": 20.9,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 4,
+    "name": "小乔-山海·琳琅生",
+    "is_rerun": true,
+    "score": 13.8,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 5,
+    "name": "妲己-热情桑巴",
+    "is_rerun": true,
+    "score": 8.0,
+    "growth": 0.0,
+    "price": 0.0
+  },
+  {
+    "quality": 4,
+    "name": "曜-山海·苍雷引",
+    "is_rerun": true,
+    "score": 3.1,
+    "growth": 0.0,
+    "price": 0.0
+  }
+]

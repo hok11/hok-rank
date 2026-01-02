@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王者荣耀皮肤销量点数榜</title>
+    <style>
+        :root { --header-bg: linear-gradient(90deg, #d68bfb 0%, #faa6d9 100%); --percent-green: #bbf7d0; --row-green: #bbf7d0; --row-purple: #f3e8ff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .chart-header { background: var(--header-bg); padding: 25px; text-align: center; color: #111; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
+        .chart-header p { font-size: 14px; font-weight: 500; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: center; padding: 10px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; }
+        td { padding: 8px; vertical-align: middle; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 16px; width: 50px; }
+        .quality-col { font-size: 12px; width: 80px; font-weight: bold; color: #555; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 20px; }
+        .album-art { width: 45px; height: 45px; border-radius: 4px; margin-right: 12px; background-color: #ddd; object-fit: cover; }
+        .song-info { display: flex; flex-direction: column; justify-content: center; }
+        .song-title { font-weight: 700; font-size: 14px; color: #111; margin-bottom: 2px; }
+        .artist-name { font-size: 12px; color: #666; }
+        .points-col { text-align: right; font-weight: 800; padding-right: 20px; width: 80px; }
+        .percent-box { display: inline-block; width: 100%; padding: 8px 0; font-weight: 500; font-size: 12px; border-radius: 4px; }
+        .bg-up { background-color: var(--percent-green); }
+        .bg-none { background-color: #f3f4f6; color: #999; }
+
+        /* 还原图片风格 */
+        tr:nth-child(1) td, tr:nth-child(2) td, tr:nth-child(3) td { background-color: var(--row-green); }
+        tr.rerun-row td { background-color: var(--row-purple); }
+
+        .footer { background: #8b5cf6; color: white; text-align: center; padding: 10px; font-weight: 700; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="chart-card">
+        <div class="chart-header">
+            <h1>Early Hot 100 Predictions</h1>
+            <p>王者荣耀皮肤销量点数榜 (Update: 2026-01-03)</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Qual</th>
+                    <th style="text-align:left; padding-left:30px;">Skin Name</th>
+                    <th>Points</th>
+                    <th>%</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="">
+                    <td class="rank-col">1</td>
+                    <td class="quality-col">【无双】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/16a34a/FFFFFF?text=孙" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">孙悟空-无相</span>
+                                <span class="artist-name">New Arrival</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">200.0</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="rerun-row">
+                    <td class="rank-col">2</td>
+                    <td class="quality-col">【无双】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/9333ea/FFFFFF?text=甄" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">甄姬-雪境奇遇</span>
+                                <span class="artist-name">★ 限定复刻</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">115.6</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="rerun-row">
+                    <td class="rank-col">3</td>
+                    <td class="quality-col">【无双】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/9333ea/FFFFFF?text=瑶" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">瑶-真我赫兹</span>
+                                <span class="artist-name">★ 限定复刻</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">78.3</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td class="rank-col">4</td>
+                    <td class="quality-col">【传说】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/16a34a/FFFFFF?text=曹" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">曹操-万灵伏威</span>
+                                <span class="artist-name">New Arrival</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">56.0</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td class="rank-col">5</td>
+                    <td class="quality-col">【史诗】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/16a34a/FFFFFF?text=安" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">安琪拉-糖果风暴</span>
+                                <span class="artist-name">New Arrival</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">40.8</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td class="rank-col">6</td>
+                    <td class="quality-col">【勇者】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/16a34a/FFFFFF?text=孙" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">孙权-径山谋武</span>
+                                <span class="artist-name">New Arrival</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">29.6</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td class="rank-col">7</td>
+                    <td class="quality-col">【勇者】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/16a34a/FFFFFF?text=蚩" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">蚩姹-极光幻客</span>
+                                <span class="artist-name">New Arrival</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">20.9</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="rerun-row">
+                    <td class="rank-col">8</td>
+                    <td class="quality-col">【传说】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/9333ea/FFFFFF?text=小" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">小乔-山海·琳琅生</span>
+                                <span class="artist-name">★ 限定复刻</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">13.8</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="rerun-row">
+                    <td class="rank-col">9</td>
+                    <td class="quality-col">【史诗】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/9333ea/FFFFFF?text=妲" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">妲己-热情桑巴</span>
+                                <span class="artist-name">★ 限定复刻</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">8.0</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+                <tr class="rerun-row">
+                    <td class="rank-col">10</td>
+                    <td class="quality-col">【传说】</td>
+                    <td>
+                        <div class="song-col">
+                            <img src="https://via.placeholder.com/45/9333ea/FFFFFF?text=曜" class="album-art">
+                            <div class="song-info">
+                                <span class="song-title">曜-山海·苍雷引</span>
+                                <span class="artist-name">★ 限定复刻</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="points-col">3.1</td>
+                    <td>
+                        
+                        <div class="percent-box bg-none">--</div>
+                        
+                    </td>
+                    <td style="font-weight:bold; color:#555;">
+                        --
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+        <div class="footer">Top 10 Available via PyCharm System</div>
+    </div>
+</body>
+</html>
+        
