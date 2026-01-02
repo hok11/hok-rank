@@ -141,21 +141,16 @@ class SkinSystem:
         return data
 
     def print_console_table(self):
-        """控制台打印 - 已加回涨幅显示"""
         data = self.get_total_skins()
         print(f"\n====== 🏆 历史总榜 (Total History) ======")
-        # 增加了 Growth 列
         print(f"{'No.':<4} {'Q':<2} {'名字':<12} {'RankPts':<8} {'RealPts':<8} {'Growth':<8} {'ListP':<8} {'RealP'}")
         print("-" * 85)
         for i, skin in enumerate(data):
             real_pts_str = str(skin.get('real_score')) if skin.get('real_score') else "--"
             list_p_str = f"¥{skin.get('list_price', 0)}"
             real_p_str = f"¥{skin.get('real_price', 0)}" if skin.get('real_price', 0) > 0 else "--"
-
-            # 涨幅显示逻辑
             g_val = skin.get('growth', 0)
-            growth_str = f"+{g_val}%" if g_val > 0 else "--"
-
+            growth_str = f"+{g_val}%" if g_val > 0 else (f"{g_val}%" if g_val < 0 else "--")
             print(
                 f"{i + 1:<4} {skin['quality']:<2} {skin['name']:<12} {skin['score']:<8} {real_pts_str:<8} {growth_str:<8} {list_p_str:<8} {real_p_str}")
         print("=" * 85 + "\n")
@@ -310,7 +305,7 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        """生成网页 V19.19"""
+        """生成网页 V19.20 (涨幅色彩分级 + 强制白底)"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -348,16 +343,31 @@ class SkinSystem:
         .data-col { font-weight: 700; font-size: 15px; width: 80px; }
         .real-pts { color: #6366f1; } 
         .missing-data { color: #ccc; font-weight: 400; }
-        .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
-        .bg-up { background-color: var(--percent-green); color: #064e3b; }
-        .bg-none { background-color: #f3f4f6; color: #888; }
-        .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
+
+        /* 🔥 通用卡片样式：默认白色背景 */
+        .box-style { 
+            display: inline-block; width: 100%; padding: 6px 0; 
+            font-weight: 700; font-size: 12px; border-radius: 6px; 
+            background-color: #ffffff; /* 强制白底 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* 🔥 涨幅字体颜色分级 */
+        .text-red { color: #b91c1c; }    /* < 0% */
+        .text-black { color: #1f2937; }  /* 0-5% */
+        .text-green { color: #15803d; }  /* > 5% */
+        .text-orange { color: #c2410c; } /* > 10% */
+
+        /* 空数据样式 (灰色背景) */
+        .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; }
+
+        .bg-price { color: #333; } /* 价格字体颜色 */
+
         tr.q-normal td { background-color: #ffffff; }
         tr.q-green td { background-color: var(--row-green); }
         tr.q-blue td { background-color: var(--row-blue); }
         tr.q-purple td { background-color: var(--row-purple); }
         tr.q-gold td { background-color: var(--row-gold); }
-        tr:not(.q-normal) .bg-up, tr:not(.q-normal) .bg-price { background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -409,9 +419,31 @@ class SkinSystem:
                     </td>
                     <td class="data-col">{{ skin.score }}</td>
                     <td class="data-col real-pts">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
-                    <td style="width: 80px;">{% if skin.growth > 0 %}<div class="box-style bg-up">+{{ skin.growth }}%</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
-                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥{{ skin.list_price }}</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style {{ 'bg-price' if skin.real_price > 0 else 'bg-none' }}">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
+
+                    <td style="width: 80px;">
+                        {% if skin.growth != 0 %}
+                            {% set g_cls = 'text-black' %}
+                            {% if skin.growth < 0 %}{% set g_cls = 'text-red' %}
+                            {% elif skin.growth > 10 %}{% set g_cls = 'text-orange' %}
+                            {% elif skin.growth > 5 %}{% set g_cls = 'text-green' %}
+                            {% endif %}
+                            <div class="box-style {{ g_cls }}">
+                                {{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%
+                            </div>
+                        {% else %}
+                            <div class="box-style bg-none">--</div>
+                        {% endif %}
+                    </td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        {% if skin.real_price > 0 %}
+                            <div class="box-style bg-price">¥{{ skin.real_price }}</div>
+                        {% else %}
+                            <div class="box-style bg-none">--</div>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -448,11 +480,11 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.19 (修复控制台涨幅显示)")
+        print("👑 王者荣耀榜单 V19.20 (涨幅视觉分级版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
-        print("2. 修改数据 (快捷指令)")
+        print("2. 修改数据")
         print("3. 修改标签")
         print("4. >>> 发布到互联网 <<<")
         print("5. 强制刷新HTML")
