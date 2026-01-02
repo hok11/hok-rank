@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
-        /* 定义颜色变量 */
         :root {
             --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
             --percent-green: #bbf7d0;
@@ -14,40 +13,43 @@
             --row-blue: #bfdbfe;   /* 2 荣耀典藏 */
             --row-purple: #e9d5ff; /* 1 无双 */
             --row-gold: #fde68a;   /* 0 珍品无双 */
-            /* 456 勇者史诗传说 为白色 (默认) */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-        .chart-card { background: white; width: 100%; max-width: 800px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: center; padding: 12px 8px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
-        td { padding: 10px 8px; vertical-align: middle; text-align: center; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
-        .quality-col { width: 90px; text-align: center; }
+        th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
+        td { padding: 10px 6px; vertical-align: middle; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 18px; width: 40px; }
+        .quality-col { width: 80px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-        .points-col { text-align: right; font-weight: 800; padding-right: 25px; width: 80px; font-size: 16px; }
+
+        /* 数据列 */
+        .data-col { font-weight: 700; font-size: 15px; width: 80px; }
+        .real-pts { color: #6366f1; } 
+        .missing-data { color: #ccc; font-weight: 400; } /* 缺失数据样式 */
+
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 600; font-size: 12px; border-radius: 6px; }
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        /* --- 🔥 核心颜色逻辑 (基于品质 class) --- */
-        tr.q-normal td { background-color: #ffffff; } /* 4,5,6 */
-        tr.q-green td { background-color: var(--row-green); } /* 3 */
-        tr.q-blue td { background-color: var(--row-blue); } /* 2 */
-        tr.q-purple td { background-color: var(--row-purple); } /* 1 */
-        tr.q-gold td { background-color: var(--row-gold); } /* 0 */
+        /* 颜色逻辑 */
+        tr.q-normal td { background-color: #ffffff; }
+        tr.q-green td { background-color: var(--row-green); }
+        tr.q-blue td { background-color: var(--row-blue); }
+        tr.q-purple td { background-color: var(--row-purple); }
+        tr.q-gold td { background-color: var(--row-gold); }
 
-        /* 如果行背景不是白色，则强制内部小框为白色背景 */
         tr:not(.q-normal) .bg-up,
         tr:not(.q-normal) .bg-price {
             background-color: #ffffff;
@@ -59,12 +61,21 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 03:49</p>
+            <p>Last updated: 2026-01-03 04:04</p>
         </div>
         <table>
-            <thead><tr><th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:25px;">Skin Name</th><th>Points</th><th>Growth</th><th>Price</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Rank</th><th>Qual</th>
+                    <th style="text-align:left; padding-left:20px;">Skin Name</th>
+                    <th>Rank Pts</th>
+                    <th>Real Pts</th>
+                    <th>Growth</th>
+                    <th>List Price</th>
+                    <th>Real Price</th>
+                </tr>
+            </thead>
             <tbody>
-                
                 
                 
                 
@@ -80,7 +91,6 @@
                             
                             
                             
-                            
 
                             
                                 <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
@@ -93,11 +103,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">200.0</td>
+                    <td class="data-col">200.0</td>
+
+                    <td class="data-col real-pts">
+                        200.0
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-up">+3.3%</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-price">
+                            ¥400.0
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -113,7 +134,6 @@
                             
                             
                             
-                            
 
                             
                                 <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
@@ -126,11 +146,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">117.4</td>
+                    <td class="data-col">117.4</td>
+
+                    <td class="data-col real-pts">
+                        117.4
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-up">+0.1%</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-price">
+                            ¥400.0
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -146,7 +177,6 @@
                             
                             
                             
-                            
 
                             
                                 <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
@@ -159,11 +189,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">80.8</td>
+                    <td class="data-col">80.8</td>
+
+                    <td class="data-col real-pts">
+                        80.8
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-up">+3.0%</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-price">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥400.0</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-price">
+                            ¥400.0
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -175,7 +216,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -190,11 +230,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">59.0</td>
+                    <td class="data-col">59.0</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥48.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -206,7 +257,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -221,11 +271,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">44.1</td>
+                    <td class="data-col">44.1</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥88.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -237,7 +298,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -252,11 +312,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">33.1</td>
+                    <td class="data-col">33.1</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥178.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -268,7 +339,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -283,11 +353,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">24.6</td>
+                    <td class="data-col">24.6</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥178.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -299,7 +380,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -314,11 +394,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">17.7</td>
+                    <td class="data-col">17.7</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥48.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -330,7 +421,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -345,11 +435,22 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">12.0</td>
+                    <td class="data-col">12.0</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥88.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
-                
                 
                 
                 
@@ -361,7 +462,6 @@
                     </td>
                     <td>
                         <div class="song-col">
-                            
                             
                             
 
@@ -376,9 +476,21 @@
                             </div>
                         </div>
                     </td>
-                    <td class="points-col">7.2</td>
+                    <td class="data-col">7.2</td>
+
+                    <td class="data-col real-pts">
+                        <span class="missing-data">--</span>
+                    </td>
+
                     <td style="width: 80px;"><div class="box-style bg-none">--</div></td>
-                    <td style="width: 80px; padding-right:10px;"><div class="box-style bg-none">--</div></td>
+
+                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none">¥48.8</div></td>
+
+                    <td style="width: 80px; padding-right:10px;">
+                        <div class="box-style bg-none">
+                            --
+                        </div>
+                    </td>
                 </tr>
                 
             </tbody>
