@@ -52,7 +52,7 @@
     "on_leaderboard": true
   },
   {
-    "quality": 5,
+    "quality": 6,
     "name": "安琪拉-糖果风暴",
     "is_rerun": false,
     "score": 44.1,
@@ -60,8 +60,8 @@
     "is_new": true,
     "local_img": "skin_avatars/安琪拉-糖果风暴.jpg",
     "real_price": 6.0,
-    "list_price": 88.8,
-    "real_score": 3.0,
+    "list_price": 48.8,
+    "real_score": 5.4,
     "on_leaderboard": true
   },
   {
