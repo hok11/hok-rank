@@ -309,7 +309,7 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        """生成网页 V19.21 (修复涨幅色彩逻辑：暴涨优先)"""
+        """生成网页 V19.23 (右侧局部背景 + 亮橙色优化)"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -320,58 +320,65 @@ class SkinSystem:
     <style>
         :root {
             --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
-            --percent-green: #bbf7d0;
-            --row-green: #bbf7d0;
-            --row-blue: #bfdbfe;
-            --row-purple: #e9d5ff;
-            --row-gold: #fde68a;
+            /* 背景色变量 */
+            --bg-green: #dcfce7;
+            --bg-blue: #dbeafe;
+            --bg-purple: #f3e8ff;
+            --bg-gold: #fef9c3;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; }
+        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
+        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+        /* 🔥 关键布局修改: 允许单元格分离，设置行间距 */
+        table { 
+            width: 96%; 
+            margin: 0 auto; 
+            border-collapse: separate; 
+            border-spacing: 0 8px; 
+            font-size: 14px; 
+        }
+
         th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
-        td { padding: 10px 6px; vertical-align: middle; text-align: center; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 40px; }
+        td { padding: 12px 6px; vertical-align: middle; text-align: center; background-color: transparent; border: none; }
+
+        /* 圆角控制 */
+        .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        .rank-col { font-weight: 800; font-size: 18px; width: 40px; color: #333; }
         .quality-col { width: 80px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
+
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
+
         .data-col { font-weight: 700; font-size: 15px; width: 80px; }
         .real-pts { color: #6366f1; } 
         .missing-data { color: #ccc; font-weight: 400; }
 
-        /* 🔥 通用卡片样式：默认白色背景 */
         .box-style { 
             display: inline-block; width: 100%; padding: 6px 0; 
             font-weight: 700; font-size: 12px; border-radius: 6px; 
-            background-color: #ffffff; /* 强制白底 */
+            background-color: #ffffff; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        /* 🔥 涨幅字体颜色分级 */
-        .text-red { color: #b91c1c; }    /* < 0% (Dark Red) */
+        /* 🔥 颜色优化: 亮橙色 */
+        .text-red { color: #b91c1c; }    /* < 0% */
         .text-black { color: #1f2937; }  /* 0-5% */
         .text-green { color: #15803d; }  /* > 5% */
-        .text-orange { color: #c2410c; } /* >= 10% or 100% */
+        .text-orange { color: #ff9900; } /* >= 10% (Bright Orange) */
 
-        /* 空数据样式 (灰色背景) */
         .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; }
-
-        .bg-price { color: #333; } /* 价格字体颜色 */
-
-        tr.q-normal td { background-color: #ffffff; }
-        tr.q-green td { background-color: var(--row-green); }
-        tr.q-blue td { background-color: var(--row-blue); }
-        tr.q-purple td { background-color: var(--row-purple); }
-        tr.q-gold td { background-color: var(--row-gold); }
+        .bg-price { color: #333; } 
     </style>
 </head>
 <body>
@@ -389,25 +396,25 @@ class SkinSystem:
             </thead>
             <tbody>
                 {% for skin in total_skins %}
-                {% set q_class = 'q-normal' %}
-                {% if skin.quality == 3 %}{% set q_class = 'q-green' %}
-                {% elif skin.quality == 2 %}{% set q_class = 'q-blue' %}
-                {% elif skin.quality == 1 %}{% set q_class = 'q-purple' %}
-                {% elif skin.quality == 0 %}{% set q_class = 'q-gold' %}
+                {# 动态定义背景色 #}
+                {% set row_bg = '#ffffff' %}
+                {% if skin.quality == 3 %}{% set row_bg = '#dcfce7' %}
+                {% elif skin.quality == 2 %}{% set row_bg = '#dbeafe' %}
+                {% elif skin.quality == 1 %}{% set row_bg = '#f3e8ff' %}
+                {% elif skin.quality == 0 %}{% set row_bg = '#fef9c3' %}
                 {% endif %}
-                <tr class="{{ q_class }}">
+
+                <tr>
                     <td class="rank-col">{{ loop.index }}</td>
+
                     <td class="quality-col">
                         <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality <= 1 else '' }}">
                     </td>
-                    <td>
+
+                    {# 背景色从这里开始 (带左圆角) #}
+                    <td class="rounded-left" style="background-color: {{ row_bg }};">
                         <div class="song-col">
                             {% set placeholder_bg = 'f3f4f6' %}
-                            {% if skin.quality == 3 %}{% set placeholder_bg = 'bbf7d0' %}
-                            {% elif skin.quality == 2 %}{% set placeholder_bg = 'bfdbfe' %}
-                            {% elif skin.quality == 1 %}{% set placeholder_bg = 'e9d5ff' %}
-                            {% elif skin.quality == 0 %}{% set placeholder_bg = 'fde68a' %}
-                            {% endif %}
                             {% if skin.local_img %}
                                 <img src="./{{ skin.local_img }}" class="album-art">
                             {% else %}
@@ -421,32 +428,23 @@ class SkinSystem:
                             </div>
                         </div>
                     </td>
-                    <td class="data-col">{{ skin.score }}</td>
-                    <td class="data-col real-pts">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
 
-                    <td style="width: 80px;">
+                    <td class="data-col" style="background-color: {{ row_bg }};">{{ skin.score }}</td>
+                    <td class="data-col real-pts" style="background-color: {{ row_bg }};">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
+
+                    <td style="width: 80px; background-color: {{ row_bg }};">
                         {% if skin.growth != 0 %}
-                            {# ================= LOGIC FIX HERE ================= #}
                             {% set g_cls = 'text-black' %} 
-
-                            {# 1. 暴涨优先级最高 (>= 100%) -> Orange #}
+                            {# 逻辑：暴涨优先 #}
                             {% if skin.growth >= 100 %}
                                 {% set g_cls = 'text-orange' %}
-
-                            {# 2. 跌 (小于 0) -> Red #}
                             {% elif skin.growth < 0 %}
                                 {% set g_cls = 'text-red' %}
-
-                            {# 3. 大涨 (>= 10%) -> Orange #}
                             {% elif skin.growth >= 10 %}
                                 {% set g_cls = 'text-orange' %}
-
-                            {# 4. 普通涨 (> 5%) -> Green #}
                             {% elif skin.growth > 5 %}
                                 {% set g_cls = 'text-green' %}
                             {% endif %}
-                            {# ============================================== #}
-
                             <div class="box-style {{ g_cls }}">
                                 {{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%
                             </div>
@@ -455,9 +453,12 @@ class SkinSystem:
                         {% endif %}
                     </td>
 
-                    <td style="width: 80px; padding-right:5px;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
+                    <td style="width: 80px; padding-right:5px; background-color: {{ row_bg }};">
+                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div>
+                    </td>
 
-                    <td style="width: 80px; padding-right:10px;">
+                    {# 背景色在这里结束 (带右圆角) #}
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: {{ row_bg }};">
                         {% if skin.real_price > 0 %}
                             <div class="box-style bg-price">¥{{ skin.real_price }}</div>
                         {% else %}
@@ -478,7 +479,7 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新 (涨幅逻辑修复版)")
+            print("📄 网页文件已更新 (视觉优化版V19.23)")
         except:
             print("❌ 错误：找不到 index.html 路径")
 
@@ -500,7 +501,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.21 (涨幅逻辑修复版)")
+        print("👑 王者荣耀榜单 V19.23 (视觉优化版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
