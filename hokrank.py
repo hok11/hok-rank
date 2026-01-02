@@ -2,6 +2,9 @@ import math
 import json
 import os
 import subprocess
+import requests
+import time
+import random
 from datetime import datetime
 from jinja2 import Template
 
@@ -13,41 +16,149 @@ GITHUB_USERNAME = "hok11"
 
 # ===========================================
 
+class SkinCrawler:
+    def __init__(self, data_path):
+        self.save_dir = os.path.join(data_path, "skin_avatars")
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/plain, */*; q=0.01',
+            'Referer': 'https://image.baidu.com/search/index',
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+        }
+
+    def fetch_images(self, skin_list):
+        print("\n🕷️ 正在启动百度图片搜索 (纯净关键词版)...")
+        count = 0
+
+        for skin in skin_list:
+            # 1. 检查本地文件 (你删了就会触发下载)
+            if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])):
+                continue
+
+            # 2. 🔥 核心修改：只保留 [皮肤名 英雄名]
+            parts = skin['name'].split('-')
+            if len(parts) >= 2:
+                # 翻转：把独特的皮肤名放在前面，权重更高
+                # 例如：曜-山海·苍雷引 -> "山海·苍雷引 曜"
+                search_name = f"{parts[1]} {parts[0]}"
+            else:
+                search_name = skin['name']
+
+            # ❌ 已移除 "王者荣耀" 和 "头像"
+            keyword = search_name
+
+            # 3. 百度图片 API
+            url = "https://image.baidu.com/search/acjson"
+            params = {
+                "tn": "resultjson_com",
+                "logid": "8388656667592781395",
+                "ipn": "rj",
+                "ct": "201326592",
+                "is": "",
+                "fp": "result",
+                "queryWord": keyword,
+                "cl": "2",
+                "lm": "-1",
+                "ie": "utf-8",
+                "oe": "utf-8",
+                "adpicid": "",
+                "st": "-1",
+                "z": "",
+                "ic": "",
+                "hd": "",
+                "latest": "",
+                "copyright": "",
+                "word": keyword,
+                "s": "",
+                "se": "",
+                "tab": "",
+                "width": "",
+                "height": "",
+                "face": "0",
+                "istype": "2",
+                "qc": "",
+                "nc": "1",
+                "fr": "",
+                "expermode": "",
+                "force": "",
+                "pn": "0",
+                "rn": "1",
+                "gsm": "1e",
+            }
+
+            try:
+                # 4. 请求 API
+                resp = requests.get(url, headers=self.headers, params=params, timeout=5)
+
+                try:
+                    data = resp.json()
+                except:
+                    try:
+                        data = json.loads(resp.text.replace(r"\'", r"'"))
+                    except:
+                        print(f"   ⚠️ API 解析失败: {skin['name']}")
+                        continue
+
+                # 提取图片
+                if 'data' in data and len(data['data']) > 0 and 'thumbURL' in data['data'][0]:
+                    img_url = data['data'][0]['thumbURL']
+                    if not img_url:
+                        if 'replaceUrl' in data['data'][0] and len(data['data'][0]['replaceUrl']) > 0:
+                            img_url = data['data'][0]['replaceUrl'][0]['ObjURL']
+                        else:
+                            print(f"   💨 API 返回空地址: {skin['name']}")
+                            continue
+
+                    print(f"   🔍 搜索 [{keyword}] -> 成功!")
+
+                    # 5. 下载
+                    img_resp = requests.get(img_url, headers=self.headers, timeout=10)
+
+                    # 6. 保存
+                    safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
+                    file_name = f"{safe_name}.jpg"
+                    file_path = os.path.join(self.save_dir, file_name)
+
+                    with open(file_path, 'wb') as f:
+                        f.write(img_resp.content)
+
+                    skin['local_img'] = f"skin_avatars/{file_name}"
+                    count += 1
+                    print(f"   ✅ 已下载: {file_name}")
+
+                    time.sleep(random.uniform(0.5, 1.5))
+                else:
+                    print(f"   💨 未搜索到图片: {skin['name']} (关键词: {keyword})")
+
+            except Exception as e:
+                print(f"   ❌ 错误 {skin['name']}: {e}")
+
+        return count
+
+
 class SkinSystem:
     def __init__(self):
         self.all_skins = []
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
+        self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
-
-        # 🔥 暴力修正：启动时强制校准前10名的状态
         self._fix_initial_status()
 
     def _fix_initial_status(self):
-        """一次性修正：根据你的要求，强制设定前10名的复刻/新增状态"""
         if not self.all_skins: return
-
-        # 0-based index: 1, 2, 7, 8, 9 对应 Rank 2, 3, 8, 9, 10
         rerun_indices = {1, 2, 7, 8, 9}
-
-        print("\n🔧 正在校准初始数据状态...")
         for i, skin in enumerate(self.all_skins):
-            if i >= 10: break  # 只修前10个
-
+            if i >= 10: break
             if i in rerun_indices:
-                skin['is_rerun'] = True
-                skin['is_new'] = False  # 复刻不算新品
-                print(f"   Rank {i + 1} [{skin['name']}] -> 复刻 (Purple)")
+                skin['is_rerun'] = True; skin['is_new'] = False
             else:
-                skin['is_rerun'] = False
-                skin['is_new'] = True  # 其他都是新增
-                print(f"   Rank {i + 1} [{skin['name']}] -> 新增 (New)")
-
+                skin['is_rerun'] = False; skin['is_new'] = True
         self.save_data()
-        self.generate_html()
-        print("✅ 状态校准完毕！\n")
 
     def _get_base_score(self, x):
-        """(新版算法) 理论曲线公式: y = 282/sqrt(x) - 82"""
         if x <= 0: return 200
         val = (282 / math.sqrt(x)) - 82
         return max(val, 0)
@@ -61,15 +172,11 @@ class SkinSystem:
                     self.all_skins = loaded
                 elif isinstance(loaded, dict):
                     self.all_skins = loaded.get('total', []) + loaded.get('new', [])
-                # 简单去重
-                seen = set()
-                unique_skins = []
+                seen = set();
+                unique = []
                 for s in self.all_skins:
-                    if s['name'] not in seen:
-                        unique_skins.append(s)
-                        seen.add(s['name'])
-                self.all_skins = unique_skins
-
+                    if s['name'] not in seen: unique.append(s); seen.add(s['name'])
+                self.all_skins = unique
                 print(f"✅ 数据加载完毕 (总库存: {len(self.all_skins)})")
             except:
                 self.all_skins = []
@@ -90,179 +197,78 @@ class SkinSystem:
         data.sort(key=lambda x: x['score'], reverse=True)
         return data
 
-    def get_active_skins(self):
-        # 这里的 active 只是为了控制台显示方便
-        return [s for s in self.all_skins if s.get('is_new', False)]
-
-    # --- 控制台打印 ---
     def print_console_table(self, view_type="total"):
         data = self.get_total_skins()
-        title = f"🏆 历史总榜 (Total History)"
-
-        print(f"\n====== {title} ======")
-        print(f"{'No.':<4} {'类型':<8} {'名字':<12} {'点数':<8} {'涨幅':<8} {'价格'}")
+        print(f"\n====== 🏆 历史总榜 (Total History) ======")
+        print(f"{'No.':<4} {'图片':<6} {'名字':<12} {'点数':<8} {'价格'}")
         print("-" * 60)
-
         for i, skin in enumerate(data):
-            # 状态显示逻辑
-            if skin.get('is_rerun'):
-                type_str = "♻️ 复刻"
-            elif skin.get('is_new'):
-                type_str = "🔥 新增"
-            else:
-                type_str = "📜 历史"
-
-            growth_str = f"+{skin['growth']}%" if skin['growth'] > 0 else "--"
+            # 检查文件实际存在性
+            has_img = skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img']))
+            img_status = "🖼️ 有" if has_img else "❌ 无"
             price_str = f"¥{skin['price']}" if skin['price'] > 0 else "--"
-            print(f"{i + 1:<4} {type_str:<8} {skin['name']:<12} {skin['score']:<8} {growth_str:<8} {price_str}")
+            print(f"{i + 1:<4} {img_status:<6} {skin['name']:<12} {skin['score']:<8} {price_str}")
         print("=" * 60 + "\n")
 
-    # --- 核心算法 ---
     def calculate_insertion_score(self, rank_input, active_list, price=0, growth=0):
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
-            algo_1 = old_top1_score / 0.6
-            algo_2 = (282 / math.sqrt(1.25)) - 82
-            algo_3 = price * growth * 15
-            final_score = max(algo_1, algo_2, algo_3)
-            return final_score
-
+            return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, price * growth * 15)
         prev_idx = rank_input - 2
-        next_idx = rank_input - 1
-
-        if prev_idx < 0:
-            prev_score = 200
+        prev_score = 200 if prev_idx < 0 else active_list[prev_idx]['score']
+        if rank_input - 1 >= len(active_list):
+            next_score = max(self._get_base_score(rank_input + 1), 1)
         else:
-            prev_score = active_list[prev_idx]['score']
+            next_score = active_list[rank_input - 1]['score']
+        return math.sqrt(prev_score * next_score)
 
-        if next_idx >= len(active_list):
-            theoretical_next = self._get_base_score(rank_input + 1)
-            if theoretical_next < 0: theoretical_next = 1
-            next_score = theoretical_next
-        else:
-            next_score = active_list[next_idx]['score']
-
-        final_score = math.sqrt(prev_score * next_score)
-        return final_score
-
-    # --- 交互功能 ---
     def add_skin_ui(self):
         print("\n>>> 添加新皮肤")
-        self.print_console_table("total")
+        self.print_console_table()
         active_list = self.get_total_skins()
-
         try:
-            print("格式: 品质代码 名字 [任意数字=复刻] (直接回车=新增)")
+            print("格式: 品质代码 名字 [非0=复刻]")
             raw = input("输入: ").split()
             if len(raw) < 2: return
-
-            q_code = int(raw[0])
+            q_code = int(raw[0]);
             name = raw[1]
-
-            # 🔥 核心输入逻辑
-            is_rerun = False
-            is_new = True
-
-            # 如果有第三个参数，且不是0，就是复刻
-            if len(raw) >= 3 and raw[2] != '0':
-                is_rerun = True
-                is_new = False  # 复刻就不算 New Arrival 了
-
-            rank_str = input(f"插入排名位置 (1-{len(active_list) + 1}): ").strip()
-            if not rank_str.isdigit(): return
-            rank = int(rank_str)
+            is_rerun = (len(raw) >= 3 and raw[2] != '0')
+            is_new = not is_rerun
+            rank = int(input(f"排名 (1-{len(active_list) + 1}): "))
             if rank < 1: rank = 1
             if rank > len(active_list) + 1: rank = len(active_list) + 1
-
-            price = 0.0
-            growth = 0.0
-
+            p = 0.0;
+            g = 0.0
             if rank == 1:
-                try:
-                    price = float(input("售价 (RMB): "))
-                    growth = float(input("次日涨幅 (%): "))
-                except:
-                    price = 0; growth = 0
+                p = float(input("售价: ")); g = float(input("涨幅: "))
             else:
-                extra = input("选填 [涨幅 售价] (回车跳过): ").split()
-                if len(extra) >= 1: growth = float(extra[0])
-                if len(extra) >= 2: price = float(extra[1])
-
-            new_score = self.calculate_insertion_score(rank, active_list, price, growth)
-
-            new_skin = {
+                extra = input("选填 [涨幅 售价]: ").split()
+                if len(extra) >= 1: g = float(extra[0])
+                if len(extra) >= 2: p = float(extra[1])
+            new_score = self.calculate_insertion_score(rank, active_list, p, g)
+            self.all_skins.append({
                 "quality": q_code, "name": name,
                 "is_rerun": is_rerun, "is_new": is_new,
-                "score": round(new_score, 1),
-                "growth": growth, "price": price
-            }
-            self.all_skins.append(new_skin)
+                "score": round(new_score, 1), "growth": g, "price": p,
+                "local_img": None
+            })
+            self.save_data();
+            self.generate_html()
+            print(f"✅ 添加成功")
+        except:
+            print("❌ 错误")
 
+    def run_crawler_ui(self):
+        count = self.crawler.fetch_images(self.all_skins)
+        if count > 0:
             self.save_data()
             self.generate_html()
-            print(f"✅ 添加成功！点数: {new_score:.1f}")
-        except ValueError:
-            print("❌ 输入错误")
-
-    def manage_status_ui(self):
-        """手动退榜/修改状态"""
-        self.print_console_table("total")
-        active_view = self.get_total_skins()
-        try:
-            idx = int(input("输入序号修改状态: ")) - 1
-            if 0 <= idx < len(active_view):
-                target = active_view[idx]
-                print(f"当前: {target['name']} (复刻:{target.get('is_rerun')} | 新增:{target.get('is_new')})")
-                op = input("设为: 1-复刻(Rerun)  2-新增(New)  3-历史(History): ")
-                if op == '1':
-                    target['is_rerun'] = True;
-                    target['is_new'] = False
-                elif op == '2':
-                    target['is_rerun'] = False;
-                    target['is_new'] = True
-                elif op == '3':
-                    target['is_rerun'] = False;
-                    target['is_new'] = False
-
-                self.save_data()
-                self.generate_html()
-                print(f"✅ 状态已更新")
-            else:
-                print("❌ 序号无效")
-        except:
-            pass
-
-    def modify_data_ui(self):
-        print("\n1. 修改数据")
-        print("2. 删除数据")
-        c = input("选: ")
-
-        self.print_console_table("total")
-        target_list = self.get_total_skins()
-
-        try:
-            idx = int(input("输入序号: ")) - 1
-            if 0 <= idx < len(target_list):
-                if c == '2':
-                    del self.all_skins[idx]
-                    print("🗑️ 已删除")
-                else:
-                    item = target_list[idx]
-                    print(f"当前: {item['name']} 分数:{item['score']}")
-                    s = input("新分数: ");
-                    if s: item['score'] = float(s)
-                    g = input(f"新涨幅 (原{item['growth']}): ");
-                    if g: item['growth'] = float(g)
-                    p = input(f"新价格 (原{item['price']}): ");
-                    if p: item['price'] = float(p)
-                self.save_data()
-                self.generate_html()
-                print("✅ 操作成功")
-        except:
-            pass
+            print(f"\n🎉 成功抓取并更新了 {count} 张新图片！")
+        else:
+            print("\n⚠️ 没有发现新图片，或已全部存在。")
 
     def generate_html(self):
-        """生成网页：V19.6"""
+        """生成网页 V19.12"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -295,8 +301,6 @@ class SkinSystem:
         .bg-up { background-color: var(--percent-green); color: #064e3b; }
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
-
-        /* 颜色逻辑 */
         tbody tr:nth-child(-n+3) td { background-color: var(--row-green); }
         tr.rerun-row td { background-color: var(--row-purple) !important; }
         tbody tr:nth-child(-n+3) .bg-up, tbody tr:nth-child(-n+3) .bg-price {
@@ -322,7 +326,11 @@ class SkinSystem:
                     <td>
                         <div class="song-col">
                             {% set bg_color = 'f3e8ff' if skin.is_rerun else ('bbf7d0' if loop.index <= 3 else 'f3f4f6') %}
-                            <img src="https://via.placeholder.com/48/{{ bg_color }}/555555?text={{ skin.name[0] }}" class="album-art">
+                            {% if skin.local_img %}
+                                <img src="./{{ skin.local_img }}" class="album-art">
+                            {% else %}
+                                <img src="https://via.placeholder.com/48/{{ bg_color }}/555555?text={{ skin.name[0] }}" class="album-art">
+                            {% endif %}
                             <div class="song-info">
                                 <span class="song-title">{{ skin.name }}</span>
                                 <span class="artist-name">
@@ -343,15 +351,13 @@ class SkinSystem:
 </html>
         """
         t = Template(html_template)
-        html_content = t.render(
-            total_skins=self.get_total_skins(),
-            update_time=datetime.now().strftime("%Y-%m-%d %H:%M")
-        )
+        html_content = t.render(total_skins=self.get_total_skins(),
+                                update_time=datetime.now().strftime("%Y-%m-%d %H:%M"))
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
             print("📄 网页文件已更新")
-        except FileNotFoundError:
+        except:
             print("❌ 错误：找不到 index.html 路径")
 
     def deploy_to_github(self):
@@ -372,30 +378,28 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 45)
-        print("👑 王者荣耀榜单 V19.6 (初始数据强制校准)")
+        print("👑 王者荣耀榜单 V19.12 (纯净搜索版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 45)
         print("1. 添加皮肤")
-        print("2. 修改/删除数据")
-        print("3. 手动修改状态 (Rerun/New)")
+        print("2. 删除/修改数据")
+        print("3. 手动修改状态")
         print("4. >>> 发布到互联网 <<<")
         print("5. 强制刷新HTML")
         print("6. 查看榜单")
+        print("7. 🕷️ 自动抓取百度头像 (纯净版)")
         print("0. 退出")
         print("=" * 45)
         cmd = input("指令: ").strip()
-
         if cmd == '1':
             app.add_skin_ui()
-        elif cmd == '2':
-            app.modify_data_ui()
-        elif cmd == '3':
-            app.manage_status_ui()
         elif cmd == '4':
             app.deploy_to_github()
         elif cmd == '5':
             app.generate_html()
         elif cmd == '6':
-            app.print_console_table("total")
+            app.print_console_table()
+        elif cmd == '7':
+            app.run_crawler_ui()
         elif cmd == '0':
             break
