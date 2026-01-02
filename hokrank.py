@@ -20,11 +20,13 @@ class SkinSystem:
         self.all_skins = []
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.load_data()
+        # 🔥 新增：启动时立即用新算法重算所有现有数据
+        self.recalculate_all_scores()
 
     def _get_base_score(self, x):
         """(新版算法) 理论曲线公式: y = 282/sqrt(x) - 82"""
         if x <= 0: return 200
-        # 修改点：288 -> 282, 88 -> 82
+        # 修改点：282 / 82
         val = (282 / math.sqrt(x)) - 82
         return max(val, 0)
 
@@ -67,6 +69,28 @@ class SkinSystem:
         except FileNotFoundError:
             print(f"❌ 错误：找不到路径 {LOCAL_REPO_PATH}")
 
+    # 🔥 新增：全量数据重算函数
+    def recalculate_all_scores(self):
+        if not self.all_skins: return
+        print("\n🔄 正在使用新算法 (282/82) 重新计算所有库存分数...")
+        # 确保先按现有分数排序，确定排名
+        self.all_skins.sort(key=lambda x: x['score'], reverse=True)
+
+        for i, skin in enumerate(self.all_skins):
+            rank = i + 1
+            # 直接使用基础公式计算理论分
+            new_score = self._get_base_score(rank)
+            # 更新分数 (保留1位小数)
+            old_score = skin['score']
+            skin['score'] = round(new_score, 1)
+            print(f"   - Rank {rank} [{skin['name']}]: {old_score} -> {skin['score']}")
+
+        # 立即保存更新后的数据
+        self.save_data()
+        # 顺便刷新一下HTML
+        self.generate_html()
+        print("✅ 所有数据已更新完毕并保存！\n")
+
     # --- 视图逻辑 ---
     def get_active_skins(self):
         """新品榜：只包含 is_new=True 的皮肤"""
@@ -106,7 +130,7 @@ class SkinSystem:
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
             algo_1 = old_top1_score / 0.6
-            # 修改点：同步更新这里的比较参数 288->282, 88->82
+            # 修改点：同步更新这里的比较参数 282 / 82
             algo_2 = (282 / math.sqrt(1.25)) - 82
             algo_3 = price * growth * 15
 
@@ -145,7 +169,7 @@ class SkinSystem:
         active_list = self.get_active_skins()
 
         try:
-            print("格式: 品质代码 名字 [非0数字代表复刻]")
+            print("格式: 品质代码 名字 [非0数字代表复刻] (提示: 无双品质代码通常为1)")
             raw = input("输入: ").split()
             if len(raw) < 2: return
 
@@ -250,7 +274,7 @@ class SkinSystem:
             pass
 
     def generate_html(self):
-        """生成网页：Total榜 + 英文标题 + 日期 + UI修复(前三行白色框)"""
+        """生成网页：修复品质栏染色 + 无双图标放大 + UI修复"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -274,8 +298,15 @@ class SkinSystem:
         td { padding: 10px 8px; vertical-align: middle; text-align: center; }
 
         .rank-col { font-weight: 800; font-size: 18px; width: 50px; }
-        .quality-col { width: 90px; }
-        .quality-icon { height: 28px; width: auto; display: block; margin: 0 auto; mix-blend-mode: multiply; filter: contrast(1.1); }
+        .quality-col { width: 90px; text-align: center; }
+
+        /* 默认图标样式 */
+        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
+
+        /* 🔥 修复2：无双大图标样式 (假设无双代码为1) */
+        .quality-icon.wushuang-big {
+            transform: scale(1.4); /* 放大1.4倍，可自行调整 */
+        }
 
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 15px; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: #eee; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -290,15 +321,17 @@ class SkinSystem:
         .bg-none { background-color: #f3f4f6; color: #888; }
         .bg-price { background-color: #f3f4f6; color: #333; font-weight: 700; }
 
-        /* 1. 修复行背景色：只针对 tbody，避免表头变色 */
-        tbody tr:nth-child(1) td,
-        tbody tr:nth-child(2) td,
-        tbody tr:nth-child(3) td {
-            background-color: var(--row-green);
-        }
-        tr.rerun-row td { background-color: var(--row-purple); }
+        /* 行背景色设置 */
+        tbody tr:nth-child(-n+3) td { background-color: var(--row-green); }
+        tr.rerun-row td { background-color: var(--row-purple); !important; }
 
-        /* 2. 修复卡片样式：前三行数据中的框强制白色背景 */
+        /* 🔥 修复1：强制前三行的“品质栏”背景为透明/白色，解决染色问题 */
+        tbody tr:nth-child(-n+3) .quality-col,
+        tr.rerun-row:nth-child(-n+3) .quality-col {
+            background-color: #fff !important; /* 或者使用 transparent */
+        }
+
+        /* 修复卡片样式：前三行数据中的框强制白色背景 */
         tbody tr:nth-child(-n+3) .bg-up,
         tbody tr:nth-child(-n+3) .bg-price {
             background-color: #ffffff;
@@ -319,7 +352,9 @@ class SkinSystem:
                 {% for skin in total_skins %}
                 <tr class="{{ 'rerun-row' if skin.is_rerun else '' }}">
                     <td class="rank-col">{{ loop.index }}</td>
-                    <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
+                    <td class="quality-col">
+                        <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality == 1 else '' }}">
+                    </td>
                     <td>
                         <div class="song-col">
                             <img src="https://via.placeholder.com/48/{{ 'E9D5FF' if skin.is_rerun else 'DCFCE7' }}/555555?text={{ skin.name[0] }}" class="album-art">
@@ -348,7 +383,7 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新 (UI修复 + 新算法)")
+            print("📄 网页文件已更新 (修复染色 + 无双放大)")
         except FileNotFoundError:
             print("❌ 错误：找不到 index.html 路径")
 
@@ -367,10 +402,11 @@ class SkinSystem:
 
 
 if __name__ == "__main__":
+    # 程序启动时会自动加载数据并重算分数
     app = SkinSystem()
     while True:
         print("\n" + "=" * 45)
-        print("👑 王者荣耀榜单 V19.1 (新算法 282/82)")
+        print("👑 王者荣耀榜单 V19.2 (自动重算+UI修复)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 45)
         print("1. 添加皮肤 (自动插值)")
