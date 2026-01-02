@@ -260,7 +260,8 @@ class SkinSystem:
                         elif opt == '5':
                             item['quality'] = int(val)
                         else:
-                            print("❌ 无效序号"); continue
+                            print("❌ 无效序号");
+                            continue
 
                         if opt in ['1', '3', '4']:
                             item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
@@ -284,11 +285,14 @@ class SkinSystem:
                 target = active_view[idx]
                 op = input("设为: 1-复刻  2-新增  3-历史: ")
                 if op == '1':
-                    target['is_rerun'] = True; target['is_new'] = False
+                    target['is_rerun'] = True;
+                    target['is_new'] = False
                 elif op == '2':
-                    target['is_rerun'] = False; target['is_new'] = True
+                    target['is_rerun'] = False;
+                    target['is_new'] = True
                 elif op == '3':
-                    target['is_rerun'] = False; target['is_new'] = False
+                    target['is_rerun'] = False;
+                    target['is_new'] = False
                 self.save_data();
                 self.generate_html()
                 print(f"✅ 标签已更新")
@@ -305,7 +309,7 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        """生成网页 V19.20 (涨幅色彩分级 + 强制白底)"""
+        """生成网页 V19.21 (修复涨幅色彩逻辑：暴涨优先)"""
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -353,10 +357,10 @@ class SkinSystem:
         }
 
         /* 🔥 涨幅字体颜色分级 */
-        .text-red { color: #b91c1c; }    /* < 0% */
+        .text-red { color: #b91c1c; }    /* < 0% (Dark Red) */
         .text-black { color: #1f2937; }  /* 0-5% */
         .text-green { color: #15803d; }  /* > 5% */
-        .text-orange { color: #c2410c; } /* > 10% */
+        .text-orange { color: #c2410c; } /* >= 10% or 100% */
 
         /* 空数据样式 (灰色背景) */
         .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; }
@@ -422,11 +426,27 @@ class SkinSystem:
 
                     <td style="width: 80px;">
                         {% if skin.growth != 0 %}
-                            {% set g_cls = 'text-black' %}
-                            {% if skin.growth < 0 %}{% set g_cls = 'text-red' %}
-                            {% elif skin.growth > 10 %}{% set g_cls = 'text-orange' %}
-                            {% elif skin.growth > 5 %}{% set g_cls = 'text-green' %}
+                            {# ================= LOGIC FIX HERE ================= #}
+                            {% set g_cls = 'text-black' %} 
+
+                            {# 1. 暴涨优先级最高 (>= 100%) -> Orange #}
+                            {% if skin.growth >= 100 %}
+                                {% set g_cls = 'text-orange' %}
+
+                            {# 2. 跌 (小于 0) -> Red #}
+                            {% elif skin.growth < 0 %}
+                                {% set g_cls = 'text-red' %}
+
+                            {# 3. 大涨 (>= 10%) -> Orange #}
+                            {% elif skin.growth >= 10 %}
+                                {% set g_cls = 'text-orange' %}
+
+                            {# 4. 普通涨 (> 5%) -> Green #}
+                            {% elif skin.growth > 5 %}
+                                {% set g_cls = 'text-green' %}
                             {% endif %}
+                            {# ============================================== #}
+
                             <div class="box-style {{ g_cls }}">
                                 {{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%
                             </div>
@@ -458,7 +478,7 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 网页文件已更新")
+            print("📄 网页文件已更新 (涨幅逻辑修复版)")
         except:
             print("❌ 错误：找不到 index.html 路径")
 
@@ -480,7 +500,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.20 (涨幅视觉分级版)")
+        print("👑 王者荣耀榜单 V19.21 (涨幅逻辑修复版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
