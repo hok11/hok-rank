@@ -8,11 +8,6 @@
     <style>
         :root {
             --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
-            /* 背景色变量 */
-            --bg-green: #dcfce7;
-            --bg-blue: #dbeafe;
-            --bg-purple: #f3e8ff;
-            --bg-gold: #fef9c3;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
@@ -20,60 +15,33 @@
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-
-        /* 🔥 关键布局修改: 允许单元格分离，设置行间距 */
-        table { 
-            width: 96%; 
-            margin: 0 auto; 
-            border-collapse: separate; 
-            border-spacing: 0 8px; 
-            font-size: 14px; 
-        }
-
+        table { width: 96%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
         th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; }
         td { padding: 12px 6px; vertical-align: middle; text-align: center; background-color: transparent; border: none; }
-
-        /* 圆角控制 */
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-
         .rank-col { font-weight: 800; font-size: 18px; width: 40px; color: #333; }
         .quality-col { width: 80px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
-
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-
         .data-col { font-weight: 700; font-size: 15px; width: 80px; }
         .real-pts { color: #6366f1; } 
         .missing-data { color: #ccc; font-weight: 400; }
-
-        .box-style { 
-            display: inline-block; width: 100%; padding: 6px 0; 
-            font-weight: 700; font-size: 12px; border-radius: 6px; 
-            background-color: #ffffff; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        /* 🔥 颜色优化: 亮橙色 */
-        .text-red { color: #b91c1c; }    /* < 0% */
-        .text-black { color: #1f2937; }  /* 0-5% */
-        .text-green { color: #15803d; }  /* > 5% */
-        .text-orange { color: #ff9900; } /* >= 10% (Bright Orange) */
-
-        .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; }
-        .bg-price { color: #333; } 
+        .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .text-red { color: #b91c1c; } .text-black { color: #1f2937; } .text-green { color: #15803d; } .text-orange { color: #ff9900; } 
+        .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; } .bg-price { color: #333; } 
     </style>
 </head>
 <body>
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 04:50</p>
+            <p>Last updated: 2026-01-03 05:33</p>
         </div>
         <table>
             <thead>
@@ -85,520 +53,312 @@
             <tbody>
                 
                 
+
                 
+                  
                 
                 
 
                 <tr>
                     <td class="rank-col">1</td>
-
-                    <td class="quality-col">
-                        <img src="./images/1.jpg" class="quality-icon wushuang-big">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
                     <td class="rounded-left" style="background-color: #f3e8ff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">孙悟空-无相</span>
-                                <span class="artist-name">
-                                    New Arrival
-                                </span>
+                                <span class="artist-name">New Arrival</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #f3e8ff;">200.0</td>
                     <td class="data-col real-pts" style="background-color: #f3e8ff;">200.0</td>
-
                     <td style="width: 80px; background-color: #f3e8ff;">
                         
                              
                             
-                            
-                            <div class="box-style text-black">
-                                +3.3%
-                            </div>
+                            <div class="box-style text-black">+3.3%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;">
-                        
-                            <div class="box-style bg-price">¥400.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
                 
+
                 
+                  
                 
                 
 
                 <tr>
                     <td class="rank-col">2</td>
-
-                    <td class="quality-col">
-                        <img src="./images/1.jpg" class="quality-icon wushuang-big">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
                     <td class="rounded-left" style="background-color: #f3e8ff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">甄姬-雪境奇遇</span>
-                                <span class="artist-name">
-                                    ★ Limited Rerun
-                                </span>
+                                <span class="artist-name">★ Limited Rerun</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #f3e8ff;">117.4</td>
                     <td class="data-col real-pts" style="background-color: #f3e8ff;">117.4</td>
-
                     <td style="width: 80px; background-color: #f3e8ff;">
                         
                              
                             
-                            
-                            <div class="box-style text-black">
-                                +0.1%
-                            </div>
+                            <div class="box-style text-black">+0.1%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;">
-                        
-                            <div class="box-style bg-price">¥400.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
                 
+
                 
+                  
                 
                 
 
                 <tr>
                     <td class="rank-col">3</td>
-
-                    <td class="quality-col">
-                        <img src="./images/1.jpg" class="quality-icon wushuang-big">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
                     <td class="rounded-left" style="background-color: #f3e8ff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">瑶-真我赫兹</span>
-                                <span class="artist-name">
-                                    ★ Limited Rerun
-                                </span>
+                                <span class="artist-name">★ Limited Rerun</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #f3e8ff;">80.8</td>
                     <td class="data-col real-pts" style="background-color: #f3e8ff;">80.8</td>
-
                     <td style="width: 80px; background-color: #f3e8ff;">
                         
                              
                             
-                            
-                            <div class="box-style text-black">
-                                +3.0%
-                            </div>
+                            <div class="box-style text-black">+3.0%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;">
-                        
-                            <div class="box-style bg-price">¥400.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                 </tr>
                 
+                
+
                 
                 
                 
 
                 <tr>
                     <td class="rank-col">4</td>
-
-                    <td class="quality-col">
-                        <img src="./images/4.jpg" class="quality-icon ">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/4.jpg" class="quality-icon "></td>
                     <td class="rounded-left" style="background-color: #ffffff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">曹操-万灵伏威</span>
-                                <span class="artist-name">
-                                    New Arrival
-                                </span>
+                                <span class="artist-name">New Arrival</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #ffffff;">59.0</td>
                     <td class="data-col real-pts" style="background-color: #ffffff;">119.7</td>
-
                     <td style="width: 80px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
+                        <div class="box-style bg-none">--</div>
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-price">¥99.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥99.0</div></td>
                 </tr>
                 
+                
+
                 
                 
                 
 
                 <tr>
                     <td class="rank-col">5</td>
-
-                    <td class="quality-col">
-                        <img src="./images/5.jpg" class="quality-icon ">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/5.jpg" class="quality-icon "></td>
                     <td class="rounded-left" style="background-color: #ffffff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">安琪拉-糖果风暴</span>
-                                <span class="artist-name">
-                                    New Arrival
-                                </span>
+                                <span class="artist-name">New Arrival</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #ffffff;">44.1</td>
                     <td class="data-col real-pts" style="background-color: #ffffff;">3.0</td>
-
                     <td style="width: 80px; background-color: #ffffff;">
                         
                              
                             
-                            
-                            <div class="box-style text-black">
-                                +4.2%
-                            </div>
+                            <div class="box-style text-black">+4.2%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-price">¥6.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                 </tr>
                 
+                
+
                 
                 
                 
 
                 <tr>
                     <td class="rank-col">6</td>
-
-                    <td class="quality-col">
-                        <img src="./images/6.jpg" class="quality-icon ">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
                     <td class="rounded-left" style="background-color: #ffffff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">孙权-径山谋武</span>
-                                <span class="artist-name">
-                                    New Arrival
-                                </span>
+                                <span class="artist-name">New Arrival</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #ffffff;">33.1</td>
                     <td class="data-col real-pts" style="background-color: #ffffff;">1.1</td>
-
                     <td style="width: 80px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
+                        <div class="box-style bg-none">--</div>
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-price">¥6.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                 </tr>
                 
+                
+
                 
                 
                 
 
                 <tr>
                     <td class="rank-col">7</td>
-
-                    <td class="quality-col">
-                        <img src="./images/6.jpg" class="quality-icon ">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
                     <td class="rounded-left" style="background-color: #ffffff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">蚩姹-极光幻客</span>
-                                <span class="artist-name">
-                                    New Arrival
-                                </span>
+                                <span class="artist-name">New Arrival</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #ffffff;">24.6</td>
                     <td class="data-col real-pts" style="background-color: #ffffff;">0.8</td>
-
                     <td style="width: 80px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
+                        <div class="box-style bg-none">--</div>
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-price">¥6.0</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                 </tr>
                 
                 
+
+                
+                 
                 
                 
 
                 <tr>
                     <td class="rank-col">8</td>
-
-                    <td class="quality-col">
-                        <img src="./images/4.jpg" class="quality-icon ">
-                    </td>
-
-                    
-                    <td class="rounded-left" style="background-color: #ffffff;">
+                    <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon "></td>
+                    <td class="rounded-left" style="background-color: #e0f2fe;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">小乔-山海·琳琅生</span>
-                                <span class="artist-name">
-                                    ★ Limited Rerun
-                                </span>
+                                <span class="artist-name">★ Limited Rerun</span>
                             </div>
                         </div>
                     </td>
-
-                    <td class="data-col" style="background-color: #ffffff;">17.7</td>
-                    <td class="data-col real-pts" style="background-color: #ffffff;"><span class="missing-data">--</span></td>
-
-                    <td style="width: 80px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
+                    <td class="data-col" style="background-color: #e0f2fe;">17.7</td>
+                    <td class="data-col real-pts" style="background-color: #e0f2fe;"><span class="missing-data">--</span></td>
+                    <td style="width: 80px; background-color: #e0f2fe;">
+                        <div class="box-style bg-none">--</div>
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
+                
+
                 
                 
                 
 
                 <tr>
                     <td class="rank-col">9</td>
-
-                    <td class="quality-col">
-                        <img src="./images/5.jpg" class="quality-icon ">
-                    </td>
-
-                    
+                    <td class="quality-col"><img src="./images/5.jpg" class="quality-icon "></td>
                     <td class="rounded-left" style="background-color: #ffffff;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">妲己-热情桑巴</span>
-                                <span class="artist-name">
-                                    ★ Limited Rerun
-                                </span>
+                                <span class="artist-name">★ Limited Rerun</span>
                             </div>
                         </div>
                     </td>
-
                     <td class="data-col" style="background-color: #ffffff;">12.0</td>
                     <td class="data-col real-pts" style="background-color: #ffffff;"><span class="missing-data">--</span></td>
-
                     <td style="width: 80px; background-color: #ffffff;">
                         
                              
                             
-                            
-                                
-                            
-                            <div class="box-style text-orange">
-                                +100.0%
-                            </div>
+                            <div class="box-style text-orange">+100.0%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
                 
+
+                
+                 
                 
                 
 
                 <tr>
                     <td class="rank-col">10</td>
-
-                    <td class="quality-col">
-                        <img src="./images/4.jpg" class="quality-icon ">
-                    </td>
-
-                    
-                    <td class="rounded-left" style="background-color: #ffffff;">
+                    <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon "></td>
+                    <td class="rounded-left" style="background-color: #e0f2fe;">
                         <div class="song-col">
                             
-                            
-                                <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
-                            
+                            <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
                             <div class="song-info">
                                 <span class="song-title">曜-山海·苍雷引</span>
-                                <span class="artist-name">
-                                    ★ Limited Rerun
-                                </span>
+                                <span class="artist-name">★ Limited Rerun</span>
                             </div>
                         </div>
                     </td>
-
-                    <td class="data-col" style="background-color: #ffffff;">7.2</td>
-                    <td class="data-col real-pts" style="background-color: #ffffff;"><span class="missing-data">--</span></td>
-
-                    <td style="width: 80px; background-color: #ffffff;">
+                    <td class="data-col" style="background-color: #e0f2fe;">7.2</td>
+                    <td class="data-col real-pts" style="background-color: #e0f2fe;"><span class="missing-data">--</span></td>
+                    <td style="width: 80px; background-color: #e0f2fe;">
                         
                              
                             
-                            
-                                
-                            
-                            <div class="box-style text-red">
-                                -100.0%
-                            </div>
+                            <div class="box-style text-red">-100.0%</div>
                         
                     </td>
-
-                    <td style="width: 80px; padding-right:5px; background-color: #ffffff;">
-                        <div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div>
-                    </td>
-
-                    
-                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;">
-                        
-                            <div class="box-style bg-none">--</div>
-                        
-                    </td>
+                    <td style="width: 80px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                    <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
                 </tr>
                 
             </tbody>

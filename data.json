@@ -9,7 +9,8 @@
     "local_img": "skin_avatars/孙悟空-无相.jpg",
     "real_price": 400.0,
     "list_price": 400.0,
-    "real_score": 200.0
+    "real_score": 200.0,
+    "on_leaderboard": true
   },
   {
     "quality": 1,
@@ -21,7 +22,8 @@
     "local_img": "skin_avatars/甄姬-雪境奇遇.jpg",
     "real_price": 400.0,
     "list_price": 400.0,
-    "real_score": 117.4
+    "real_score": 117.4,
+    "on_leaderboard": true
   },
   {
     "quality": 1,
@@ -33,7 +35,8 @@
     "local_img": "skin_avatars/瑶-真我赫兹.jpg",
     "real_price": 400.0,
     "list_price": 400.0,
-    "real_score": 80.8
+    "real_score": 80.8,
+    "on_leaderboard": true
   },
   {
     "quality": 4,
@@ -45,7 +48,8 @@
     "local_img": "skin_avatars/曹操-万灵伏威.jpg",
     "real_price": 99.0,
     "list_price": 48.8,
-    "real_score": 119.7
+    "real_score": 119.7,
+    "on_leaderboard": true
   },
   {
     "quality": 5,
@@ -57,7 +61,8 @@
     "local_img": "skin_avatars/安琪拉-糖果风暴.jpg",
     "real_price": 6.0,
     "list_price": 88.8,
-    "real_score": 3.0
+    "real_score": 3.0,
+    "on_leaderboard": true
   },
   {
     "quality": 6,
@@ -69,7 +74,8 @@
     "local_img": "skin_avatars/孙权-径山谋武.jpg",
     "real_price": 6.0,
     "list_price": 178.8,
-    "real_score": 1.1
+    "real_score": 1.1,
+    "on_leaderboard": true
   },
   {
     "quality": 6,
@@ -81,10 +87,11 @@
     "local_img": "skin_avatars/蚩姹-极光幻客.jpg",
     "real_price": 6.0,
     "list_price": 178.8,
-    "real_score": 0.8
+    "real_score": 0.8,
+    "on_leaderboard": true
   },
   {
-    "quality": 4,
+    "quality": 3.5,
     "name": "小乔-山海·琳琅生",
     "is_rerun": true,
     "score": 17.7,
@@ -92,8 +99,9 @@
     "is_new": false,
     "local_img": "skin_avatars/小乔-山海·琳琅生.jpg",
     "real_price": 0.0,
-    "list_price": 48.8,
-    "real_score": null
+    "list_price": 178.8,
+    "real_score": null,
+    "on_leaderboard": true
   },
   {
     "quality": 5,
@@ -105,10 +113,11 @@
     "local_img": "skin_avatars/妲己-热情桑巴.jpg",
     "real_price": 0.0,
     "list_price": 88.8,
-    "real_score": null
+    "real_score": null,
+    "on_leaderboard": true
   },
   {
-    "quality": 4,
+    "quality": 3.5,
     "name": "曜-山海·苍雷引",
     "is_rerun": true,
     "score": 7.2,
@@ -116,7 +125,8 @@
     "is_new": false,
     "local_img": "skin_avatars/曜-山海·苍雷引.jpg",
     "real_price": 0.0,
-    "list_price": 48.8,
-    "real_score": null
+    "list_price": 178.8,
+    "real_score": null,
+    "on_leaderboard": true
   }
 ]
