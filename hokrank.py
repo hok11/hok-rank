@@ -404,32 +404,27 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 V19.47 重点修复：使用 transform 硬缩放绕过保护 + 表头排序
+        # 🔥 V19.45 重点：还原 V19.42 的极致缩小比例 (0.6/0.7)，同时开启滑动兼容
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
+        /* 🔥 还原 19.42 极致缩放比例 */
         @media screen and (max-width: 600px) {
-            /* 采用 transform 硬缩放，无视浏览器的最小字号保护限制 */
             .chart-card { 
-                transform: scale(0.65); 
-                transform-origin: top left;
-                width: 154%; /* 补偿 scale 后留下的右侧空白 */
-                margin-left: 2%; 
+                zoom: 0.7; 
+                -moz-transform: scale(0.7); 
+                -moz-transform-origin: top center; 
             }
-            body { 
-                padding: 10px; 
-                align-items: flex-start; /* 必须居左对齐，否则滑动会偏移 */
-                overflow-x: auto; 
-            }
+            body { padding: 5px; }
         }
 
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
@@ -437,10 +432,12 @@ class SkinSystem:
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
 
+        /* 🔥 允许滑动（防止被截断） */
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 排序三角样式 */
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
+
+        /* 🔥 表头排序样式 (新增) */
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
             text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
@@ -456,7 +453,8 @@ class SkinSystem:
         .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
         .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); }
+        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
+        .quality-icon.wushuang-big { transform: scale(1.4); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
@@ -490,51 +488,71 @@ class SkinSystem:
                 </thead>
                 <tbody>
                     {% for skin in total_skins %}
-                    {% set rb = '#ffffff' %}
-                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
+                    {% set row_bg = '#ffffff' %}
+                    {% if skin.quality == 3.5 %}{% set row_bg = '#e0f2fe' %}
+                    {% elif skin.quality == 3 %}{% set row_bg = '#dcfce7' %}
+                    {% elif skin.quality == 2 %}{% set row_bg = '#bfdbfe' %}
+                    {% elif skin.quality == 1 %}{% set row_bg = '#f3e8ff' %}
+                    {% elif skin.quality == 0 %}{% set row_bg = '#fef9c3' %}
+                    {% endif %}
                     <tr>
                         <td class="rank-col">{{ loop.index }}</td>
                         <td class="quality-col" data-val="{{ skin.quality }}"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
-                        <td class="rounded-left" style="background-color: {{ rb }};">
+                        <td class="rounded-left" style="background-color: {{ row_bg }};">
                             <div class="song-col">
-                                {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48/f3f4f6/555555?text={{ skin.name[0] }}" class="album-art">{% endif %}
+                                {% set placeholder_bg = 'f3f4f6' %}
+                                {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48/{{ placeholder_bg }}/555555?text={{ skin.name[0] }}" class="album-art">{% endif %}
                                 <div class="song-info">
                                     <span class="song-title">{{ skin.name }}</span>
                                     <span class="artist-name">{% if skin.is_rerun %}★ Limited Rerun{% elif skin.is_new %}New Arrival{% else %}History{% endif %}</span>
                                 </div>
                             </div>
                         </td>
-                        <td class="data-col" data-val="{{ skin.score }}" style="background-color: {{ rb }};">{{ skin.score }}</td>
-                        <td class="data-col real-pts" data-val="{{ skin.real_score or -1 }}" style="background-color: {{ rb }};">{{ skin.real_score or '--' }}</td>
-                        <td data-val="{{ skin.growth }}" style="width: 75px; background-color: {{ rb }};">
+                        <td class="data-col" data-val="{{ skin.score }}" style="background-color: {{ row_bg }};">{{ skin.score }}</td>
+                        <td class="data-col real-pts" data-val="{{ skin.real_score or -1 }}" style="background-color: {{ row_bg }};">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
+                        <td data-val="{{ skin.growth }}" style="width: 75px; background-color: {{ row_bg }};">
                             {% if skin.growth != 0 %}
-                                {% set gc = 'text-black' %}{% if skin.growth >= 100 %}{% set gc = 'text-orange' %}{% elif skin.growth < 0 %}{% set gc = 'text-red' %}{% elif skin.growth >= 10 %}{% set gc = 'text-orange' %}{% elif skin.growth > 5 %}{% set gc = 'text-green' %}{% endif %}
-                                <div class="box-style {{ gc }}">{{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%</div>
+                                {% set g_cls = 'text-black' %} 
+                                {% if skin.growth >= 100 %}{% set g_cls = 'text-orange' %}{% elif skin.growth < 0 %}{% set g_cls = 'text-red' %}{% elif skin.growth >= 10 %}{% set g_cls = 'text-orange' %}{% elif skin.growth > 5 %}{% set g_cls = 'text-green' %}{% endif %}
+                                <div class="box-style {{ g_cls }}">{{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%</div>
                             {% else %}<div class="box-style bg-none">--</div>{% endif %}
                         </td>
-                        <td data-val="{{ skin.list_price }}" style="width: 75px; padding-right:2px; background-color: {{ rb }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
-                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="width: 75px; padding-right:5px; background-color: {{ rb }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                        <td data-val="{{ skin.list_price }}" style="width: 75px; padding-right:2px; background-color: {{ row_bg }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
+                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="width: 75px; padding-right:5px; background-color: {{ row_bg }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
     <script>
     function sortTable(n, type) {
-        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
+        var table = document.getElementById("skinTable"), 
+            rows = Array.from(table.rows).slice(1), 
+            headers = table.getElementsByTagName("TH"),
+            dir = "desc";
+
+        // 品质列默认升序，其他降序
         if (n === 1) dir = "asc";
-        if (headers[n].classList.contains("sort-desc")) dir = "asc"; else if (headers[n].classList.contains("sort-asc")) dir = "desc";
+
+        // 切换排序逻辑
+        if (headers[n].classList.contains("sort-desc")) dir = "asc";
+        else if (headers[n].classList.contains("sort-asc")) dir = "desc";
+
         rows.sort((a, b) => {
             var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
-            if (isNaN(xVal)) xVal = -999999; if (isNaN(yVal)) yVal = -999999;
+            if (isNaN(xVal)) xVal = -999999;
+            if (isNaN(yVal)) yVal = -999999;
             return dir === "asc" ? xVal - yVal : yVal - xVal;
         });
+
         rows.forEach(row => table.tBodies[0].appendChild(row));
         for (var j = 0; j < headers.length; j++) headers[j].classList.remove("sort-asc", "sort-desc");
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
+    // 默认排序
     window.onload = function() { sortTable(3, 'float'); };
     </script>
 </body>
@@ -551,14 +569,15 @@ class SkinSystem:
             print("❌ 错误：找不到 index.html 路径")
 
     def deploy_to_github(self):
-        print("\n🚀 正在连接 GitHub...");
-        os.chdir(LOCAL_REPO_PATH)
+        print("\n🚀 正在连接 GitHub...")
         try:
+            os.chdir(LOCAL_REPO_PATH)
             subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", f"Update {datetime.now().strftime('%H:%M')}"],
                            check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
             print("\n✅ 发布成功！")
+            print(f"🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
             print(f"\n❌ 发布失败: {e}")
 
@@ -567,7 +586,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.47 (硬性缩印+滑动全显)")
+        print("👑 王者荣耀榜单 V19.45 (19.42比例+排序)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
@@ -581,6 +600,7 @@ if __name__ == "__main__":
         print("0. 退出")
         print("=" * 55)
         cmd = input("指令: ").strip()
+
         if cmd == '1':
             app.add_skin_ui()
         elif cmd == '2':
