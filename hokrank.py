@@ -38,6 +38,7 @@ class SkinCrawler:
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
+            # 🔥 找回被阉割的百度精准接口参数，保证搜索精准度
             params = {
                 "tn": "resultjson_com", "logid": "8388656667592781395", "ipn": "rj", "ct": "201326592", "is": "",
                 "fp": "result", "queryWord": keyword, "cl": "2", "lm": "-1", "ie": "utf-8", "oe": "utf-8",
@@ -261,7 +262,7 @@ class SkinSystem:
         c = input("选: ");
         target_list = self.get_total_skins()
         try:
-            idx = int(input("总榜序号: ")) - 1
+            idx = int(input("序号: ")) - 1
             if 0 <= idx < len(target_list):
                 if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
                 item = target_list[idx]
@@ -356,13 +357,13 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 V19.96 修正：去除背景色，保留紫色底线 */
+        /* 🔥 修正：去除表头背景色，仅保留底线，高度压扁 */
         th { 
             text-align: center; 
-            padding: 16px 2px; 
+            padding: 10px 2px; /* 压扁高度 */
             font-weight: 800; 
             color: #333; 
-            background-color: transparent; /* 修正为透明 */
+            background-color: transparent; /* 透明背景 */
             border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
@@ -391,15 +392,15 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V19.96 修正：青碧色 + 瘦长方形 */
+        /* 🔥 修正：排名角标变为紫色 + 黑色加粗字体 + 瘦长形 */
         .badge-rank { 
             display: inline-block; 
-            min-width: 18px; /* 进一步收窄 */
-            padding: 1px 4px; /* 减少内边距 */
-            background: #1fa6a4; /* 青碧色 */
-            color: #fff; 
+            min-width: 18px; 
+            padding: 1px 4px; 
+            background: #6366f1; /* 与分割线同款紫色 */
+            color: #000;         /* 黑色 */
             font-weight: 800; font-size: 11px; 
-            border-radius: 4px; /* 圆角改小，接近长方形 */
+            border-radius: 4px; 
             box-shadow: 0 2px 3px rgba(0,0,0,0.1);
         }
 
@@ -600,7 +601,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.96 (界面精修定稿版)")
+        print("👑 王者荣耀榜单 V19.97 (界面精修最终版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
