@@ -404,7 +404,6 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 修正映射：2荣耀典藏，3珍品传说
         quality_map = {0: "珍品无双", 1: "无双", 2: "荣耀典藏", 3: "珍品传说", 3.5: "传说限定", 4: "传说", 5: "史诗",
                        6: "勇者"}
         html_template = """
@@ -437,15 +436,24 @@ class SkinSystem:
             text-transform: uppercase; white-space: nowrap; transition: background 0.2s;
         }
 
-        /* 🔥 品质栏：极简布局 */
-        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .filter-select { 
-            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 6px; color: #333; font-weight: bold; cursor: pointer; outline: none; background: white;
+        /* 🔥 品质栏：勾选筛选布局 */
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+        .multi-select-box { 
+            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 10px; 
+            color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 80px; text-align: center;
         }
+        .dropdown-menu {
+            display: none; position: absolute; top: 105%; left: 0; background: white; border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 120px; text-align: left;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item input { cursor: pointer; width: 14px; height: 14px; }
+
         .sort-icon-btn { cursor: pointer; color: #ccc; transition: color 0.2s; font-size: 12px; padding: 0 4px; }
         .sort-icon-btn.active { color: #6366f1; }
 
-        /* 其他列排序图标 */
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
@@ -487,17 +495,14 @@ class SkinSystem:
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
                         <th>
                             <div class="qual-header">
-                                <select class="filter-select" onchange="filterTable(this.value)">
-                                    <option value="all">全部品质</option>
-                                    <option value="珍品无双">珍品无双</option>
-                                    <option value="无双">无双</option>
-                                    <option value="荣耀典藏">荣耀典藏</option>
-                                    <option value="珍品传说">珍品传说</option>
-                                    <option value="传说限定">传说限定</option>
-                                    <option value="传说">传说</option>
-                                    <option value="史诗">史诗</option>
-                                    <option value="勇者">勇者</option>
-                                </select>
+                                <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
+                                <div id="dropdownMenu" class="dropdown-menu">
+                                    {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="{{ qname }}" checked onchange="updateFilter()"> {{ qname }}
+                                    </label>
+                                    {% endfor %}
+                                </div>
                                 <span id="qualSortBtn" class="sort-icon-btn" onclick="sortTable(1, 'float')">⇅</span>
                             </div>
                         </th>
@@ -549,6 +554,24 @@ class SkinSystem:
     </div>
 
     <script>
+    function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
+    document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
+    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
+
+    function updateFilter() {
+        const checkboxes = document.querySelectorAll('#dropdownMenu input');
+        const checkedVals = Array.from(checkboxes).filter(i => i.checked).map(i => i.value);
+        const btn = document.getElementById('multiSelectBtn');
+
+        if (checkedVals.length === checkboxes.length || checkedVals.length === 0) btn.innerText = "全部品质";
+        else if (checkedVals.length === 1) btn.innerText = checkedVals[0];
+        else btn.innerText = "筛选中";
+
+        document.querySelectorAll('#skinTable tbody tr').forEach(row => {
+            row.style.display = checkedVals.includes(row.getAttribute('data-quality')) ? "" : "none";
+        });
+    }
+
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), 
             rows = Array.from(table.rows).slice(1), 
@@ -556,7 +579,6 @@ class SkinSystem:
             isQualCol = (n === 1),
             dir = "desc";
 
-        // 获取当前状态
         var currentHeader = headers[n];
         var isAsc = false;
 
@@ -564,7 +586,6 @@ class SkinSystem:
             var btn = document.getElementById("qualSortBtn");
             isAsc = btn.classList.contains("active-asc");
             dir = isAsc ? "desc" : "asc";
-            // 重置所有按钮状态
             btn.innerHTML = dir === "asc" ? "▲" : "▼";
             btn.className = "sort-icon-btn active " + (dir === "asc" ? "active-asc" : "active-desc");
         } else {
@@ -581,23 +602,12 @@ class SkinSystem:
 
         rows.forEach(row => table.tBodies[0].appendChild(row));
 
-        // 更新 UI 样式
-        for (var j = 0; j < headers.length; j++) {
-            if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc");
-        }
+        for (var j = 0; j < headers.length; j++) { if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
         if (!isQualCol) {
             currentHeader.classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
             document.getElementById("qualSortBtn").className = "sort-icon-btn";
             document.getElementById("qualSortBtn").innerHTML = "⇅";
         }
-    }
-
-    function filterTable(val) {
-        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1);
-        rows.forEach(row => {
-            if (val === "all" || row.getAttribute("data-quality") === val) { row.style.display = ""; } 
-            else { row.style.display = "none"; }
-        });
     }
     window.onload = function() { sortTable(3, 'float'); };
     </script>
@@ -632,7 +642,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.54 (极简品质栏+修正版)")
+        print("👑 王者荣耀榜单 V19.55 (逻辑完整补完版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")

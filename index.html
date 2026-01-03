@@ -28,15 +28,24 @@
             text-transform: uppercase; white-space: nowrap; transition: background 0.2s;
         }
 
-        /* 🔥 品质栏：极简布局 */
-        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .filter-select { 
-            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 6px; color: #333; font-weight: bold; cursor: pointer; outline: none; background: white;
+        /* 🔥 品质栏：勾选筛选布局 */
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+        .multi-select-box { 
+            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 10px; 
+            color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 80px; text-align: center;
         }
+        .dropdown-menu {
+            display: none; position: absolute; top: 105%; left: 0; background: white; border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 120px; text-align: left;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
+        .dropdown-item:hover { background: #f5f5f5; }
+        .dropdown-item input { cursor: pointer; width: 14px; height: 14px; }
+
         .sort-icon-btn { cursor: pointer; color: #ccc; transition: color 0.2s; font-size: 12px; padding: 0 4px; }
         .sort-icon-btn.active { color: #6366f1; }
 
-        /* 其他列排序图标 */
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
@@ -69,7 +78,7 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 17:26</p>
+            <p>Last updated: 2026-01-03 17:32</p>
         </div>
         <div class="table-container">
             <table id="skinTable">
@@ -78,17 +87,42 @@
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
                         <th>
                             <div class="qual-header">
-                                <select class="filter-select" onchange="filterTable(this.value)">
-                                    <option value="all">全部品质</option>
-                                    <option value="珍品无双">珍品无双</option>
-                                    <option value="无双">无双</option>
-                                    <option value="荣耀典藏">荣耀典藏</option>
-                                    <option value="珍品传说">珍品传说</option>
-                                    <option value="传说限定">传说限定</option>
-                                    <option value="传说">传说</option>
-                                    <option value="史诗">史诗</option>
-                                    <option value="勇者">勇者</option>
-                                </select>
+                                <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
+                                <div id="dropdownMenu" class="dropdown-menu">
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="珍品无双" checked onchange="updateFilter()"> 珍品无双
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="无双" checked onchange="updateFilter()"> 无双
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="荣耀典藏" checked onchange="updateFilter()"> 荣耀典藏
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="珍品传说" checked onchange="updateFilter()"> 珍品传说
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="传说限定" checked onchange="updateFilter()"> 传说限定
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="传说" checked onchange="updateFilter()"> 传说
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="史诗" checked onchange="updateFilter()"> 史诗
+                                    </label>
+                                    
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" value="勇者" checked onchange="updateFilter()"> 勇者
+                                    </label>
+                                    
+                                </div>
                                 <span id="qualSortBtn" class="sort-icon-btn" onclick="sortTable(1, 'float')">⇅</span>
                             </div>
                         </th>
@@ -427,6 +461,24 @@
     </div>
 
     <script>
+    function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
+    document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
+    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
+
+    function updateFilter() {
+        const checkboxes = document.querySelectorAll('#dropdownMenu input');
+        const checkedVals = Array.from(checkboxes).filter(i => i.checked).map(i => i.value);
+        const btn = document.getElementById('multiSelectBtn');
+
+        if (checkedVals.length === checkboxes.length || checkedVals.length === 0) btn.innerText = "全部品质";
+        else if (checkedVals.length === 1) btn.innerText = checkedVals[0];
+        else btn.innerText = "筛选中";
+
+        document.querySelectorAll('#skinTable tbody tr').forEach(row => {
+            row.style.display = checkedVals.includes(row.getAttribute('data-quality')) ? "" : "none";
+        });
+    }
+
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), 
             rows = Array.from(table.rows).slice(1), 
@@ -434,7 +486,6 @@
             isQualCol = (n === 1),
             dir = "desc";
 
-        // 获取当前状态
         var currentHeader = headers[n];
         var isAsc = false;
 
@@ -442,7 +493,6 @@
             var btn = document.getElementById("qualSortBtn");
             isAsc = btn.classList.contains("active-asc");
             dir = isAsc ? "desc" : "asc";
-            // 重置所有按钮状态
             btn.innerHTML = dir === "asc" ? "▲" : "▼";
             btn.className = "sort-icon-btn active " + (dir === "asc" ? "active-asc" : "active-desc");
         } else {
@@ -459,23 +509,12 @@
 
         rows.forEach(row => table.tBodies[0].appendChild(row));
 
-        // 更新 UI 样式
-        for (var j = 0; j < headers.length; j++) {
-            if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc");
-        }
+        for (var j = 0; j < headers.length; j++) { if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
         if (!isQualCol) {
             currentHeader.classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
             document.getElementById("qualSortBtn").className = "sort-icon-btn";
             document.getElementById("qualSortBtn").innerHTML = "⇅";
         }
-    }
-
-    function filterTable(val) {
-        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1);
-        rows.forEach(row => {
-            if (val === "all" || row.getAttribute("data-quality") === val) { row.style.display = ""; } 
-            else { row.style.display = "none"; }
-        });
     }
     window.onload = function() { sortTable(3, 'float'); };
     </script>
