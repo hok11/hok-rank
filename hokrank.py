@@ -38,6 +38,7 @@ class SkinCrawler:
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
+            # 🔥 找回被阉割的百度精准接口参数，保证搜索精准度
             params = {
                 "tn": "resultjson_com", "logid": "8388656667592781395", "ipn": "rj", "ct": "201326592", "is": "",
                 "fp": "result", "queryWord": keyword, "cl": "2", "lm": "-1", "ie": "utf-8", "oe": "utf-8",
@@ -231,7 +232,7 @@ class SkinSystem:
                 growth = float(input("涨幅: ") or 0.0)
             self.all_skins.append({
                 "quality": q_code if not q_code.is_integer() else int(q_code),
-                "name": name, "is_rerun": is_rerun, "is_new": not is_rerun, "on_leaderboard": is_on,
+                "name": name, "is_rerun": is_rr, "is_new": not is_rerun, "on_leaderboard": is_on,
                 "score": rank_score, "real_score": self._calculate_real_score(rank_score, list_p, real_p),
                 "growth": growth, "list_price": list_p, "real_price": real_p, "local_img": None
             })
@@ -326,7 +327,7 @@ class SkinSystem:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
-    <title>Honor of Kings Skin Prediction</title>
+    <title>Honor of Kings Skin Revenue Forecast</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -372,6 +373,7 @@ class SkinSystem:
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
+
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
 
@@ -405,7 +407,10 @@ class SkinSystem:
                 {% if header_gifs|length >= 1 %}<img src="./show/{{ header_gifs[0] }}" class="header-gif">{% endif %}
                 {% if header_gifs|length >= 2 %}<img src="./show/{{ header_gifs[1] }}" class="header-gif">{% endif %}
             </div>
-            <div class="header-content"><h1>Honor of Kings Skin Prediction</h1><p>Update: {{ update_time }}</p></div>
+            <div class="header-content">
+                <h1>Honor of Kings Skin Revenue Forecast</h1>
+                <p>Update: {{ update_time }}</p>
+            </div>
             <div class="header-gifs-container">
                 {% if header_gifs|length >= 3 %}<img src="./show/{{ header_gifs[2] }}" class="header-gif">{% endif %}
                 {% if header_gifs|length >= 4 %}<img src="./show/{{ header_gifs[3] }}" class="header-gif">{% endif %}
@@ -562,16 +567,16 @@ class SkinSystem:
             subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", "update"], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
-            print(f"\n✅ 成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
+            print(f"\n✅ 发布成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
-            print(f"\n❌ 失败: {e}")
+            print(f"\n❌ 发布失败: {e}")
 
 
 if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.91 (视觉统一全量版)")
+        print("👑 王者荣耀皮肤流水榜  ")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
