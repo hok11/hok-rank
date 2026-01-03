@@ -145,7 +145,6 @@ class SkinSystem:
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
-    # ================= 业务逻辑 =================
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
@@ -156,7 +155,6 @@ class SkinSystem:
         active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
         return active[:LEADERBOARD_CAPACITY]
 
-    # ================= 打印逻辑 =================
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None: data_list = self.get_total_skins()
         print(f"\n====== 🏆 {title} (Items: {len(data_list)}) ======")
@@ -261,7 +259,7 @@ class SkinSystem:
         c = input("选: ");
         target_list = self.get_total_skins()
         try:
-            idx = int(input("输入序号: ")) - 1
+            idx = int(input("总榜序号: ")) - 1
             if 0 <= idx < len(target_list):
                 if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
                 item = target_list[idx]
@@ -273,13 +271,12 @@ class SkinSystem:
                     if not raw or raw == '0': break
                     parts = raw.split()
                     if len(parts) < 2: continue
-                    opt, val_raw = parts[0], parts[1]
-                    if opt == '1':
-                        item['score'] = float(val_raw) if val_raw != 'null' else None
-                    elif opt == '2':
-                        item['growth'] = float(val_raw)
-                    elif opt == '3':
-                        item['real_price'] = float(val_raw)
+                    if parts[0] == '1':
+                        item['score'] = float(parts[1])
+                    elif parts[0] == '2':
+                        item['growth'] = float(parts[1])
+                    elif parts[0] == '3':
+                        item['real_price'] = float(parts[1])
                     item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
                                                                     item.get('real_price', 0))
                 self.save_data();
@@ -308,19 +305,17 @@ class SkinSystem:
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0: self.save_data(); self.generate_html(); print(f"🎉 同步完成！")
 
-    # 🔥 核心修改：读取 show 文件夹下的 gif 并排序
     def get_header_gifs(self):
         show_dir = os.path.join(LOCAL_REPO_PATH, "show")
         if not os.path.exists(show_dir): return []
-        # 获取所有 gif 并按文件名排序
         gifs = [f for f in os.listdir(show_dir) if f.lower().endswith('.gif')]
-        gifs.sort()  # 确保顺序：左1, 左2, 右1, 右2
+        gifs.sort()
         return gifs
 
     def generate_html(self):
         quality_map = {0: "珍品无双", 1: "无双", 2: "荣耀典藏", 3: "珍品传说", 3.5: "传说限定", 4: "传说", 5: "史诗",
                        6: "勇者"}
-        header_gifs = self.get_header_gifs()  # 获取排序后的 GIF 列表
+        header_gifs = self.get_header_gifs()
 
         html_template = """
 <!DOCTYPE html>
@@ -336,7 +331,6 @@ class SkinSystem:
         @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
-        /* 🔥 标题栏：Flex布局实现左2右2 */
         .chart-header { 
             background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
@@ -378,20 +372,24 @@ class SkinSystem:
 
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .badge { 
-            position: absolute; top: -6px; left: 60px; padding: 2px 6px; font-size: 8px; 
-            font-weight: 900; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;
-        }
-        .badge-new { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #fff; }
-        .badge-return { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #fff; } /* 深蓝底 */
 
+        .badge { 
+            display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
+            font-weight: 900; border-radius: 3px; text-transform: uppercase;
+        }
+        .badge-new { background: #ffd700; color: #000; }
+        .badge-return { background: #1d4ed8; color: #fff; }
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* 🔥 1. 瘦身 box-style 并统一 Rank Pts 样式 */
+        .box-style { 
+            display: inline-block; width: 75px; padding: 4px 0; 
+            font-weight: 700; font-size: 12px; border-radius: 6px; 
+            background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin: 0 auto;
+        }
 
-        /* 🔥 全配色逻辑 */
         .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
         .growth-down { color: #991b1b !important; }
         .growth-up-mid { color: #16a34a !important; }
@@ -406,12 +404,7 @@ class SkinSystem:
                 {% if header_gifs|length >= 1 %}<img src="./show/{{ header_gifs[0] }}" class="header-gif">{% endif %}
                 {% if header_gifs|length >= 2 %}<img src="./show/{{ header_gifs[1] }}" class="header-gif">{% endif %}
             </div>
-
-            <div class="header-content">
-                <h1>Honor of Kings Skin Prediction</h1>
-                <p>Update: {{ update_time }}</p>
-            </div>
-
+            <div class="header-content"><h1>Honor of Kings Skin Prediction</h1><p>Update: {{ update_time }}</p></div>
             <div class="header-gifs-container">
                 {% if header_gifs|length >= 3 %}<img src="./show/{{ header_gifs[2] }}" class="header-gif">{% endif %}
                 {% if header_gifs|length >= 4 %}<img src="./show/{{ header_gifs[3] }}" class="header-gif">{% endif %}
@@ -424,17 +417,17 @@ class SkinSystem:
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
                         <th><div class="qual-header">
-                            <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
-                            <div id="dropdownMenu" class="dropdown-menu">
-                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                            <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
+                            <div id="dropdownMenu" class="dropdown-menu" style="display:none; position:absolute; top:110%; left:0; background:#fff; border:1px solid #ddd; z-index:1000; min-width:130px; text-align:left; padding:8px;">
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                <hr style="margin:4px 0">
                                 {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
                                 {% endfor %}
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
                         </div></th>
-                        <th style="text-align:left; padding-left:20px;">Skin Name</th>
+                        <th style="text-align:left; padding-left:20px; padding-right:120px;">Skin Name</th>
                         <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">Growth</th>
@@ -456,7 +449,7 @@ class SkinSystem:
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
                         </td>
-                        <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
+                        <td class="rounded-left" style="background-color: {{ rb }}; padding-right:120px;"><div class="song-col">
                             {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
                             <div class="name-container">
                                 <span class="song-title">{{ skin.name }}</span>
@@ -465,7 +458,9 @@ class SkinSystem:
                             </div>
                         </div></td>
                         <td data-val="{{ skin.score if skin.score is not none else -9999999 }}" style="background-color: {{ rb }};">
-                            {{ skin.score if skin.score is not none else '--' }}
+                            <div class="box-style">
+                                {{ skin.score if skin.score is not none else '--' }}
+                            </div>
                         </td>
                         <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1;">
                             {{ skin.real_score if skin.real_score is not none else '--' }}
@@ -493,29 +488,26 @@ class SkinSystem:
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-
-    /* 🔥 GIF 优先级机制核心修复 */
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) { 
-            img.src = './images/' + q + '.jpg'; // gif不存在，找本品质jpg
-        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let qv = parseFloat(q); 
-            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg'; // 本品质jpg不存在，找1.jpg
+        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
+        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
+            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
         }
     }
-
     function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
-        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const main = document.getElementById('selectAll');
+        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
         } else {
             btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => { r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none"; });
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
+                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
+            });
         }
     }
     function sortTable(n, type) {
@@ -538,32 +530,32 @@ class SkinSystem:
         """
         t = Template(html_template)
         html_content = t.render(total_skins=self.get_total_skins(), quality_map=quality_map,
-                                header_gifs=header_gifs,  # 🔥 注入 GIF 列表
+                                header_gifs=header_gifs,
                                 update_time=datetime.now().strftime("%Y-%m-%d %H:%M"))
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
             print("📄 HTML 刷新完成")
-        except:
-            print("❌ 路径错误")
+        except Exception as e:
+            print(f"❌ 路径错误: {e}")
 
     def deploy_to_github(self):
-        print("\n🚀 正在同步至 GitHub...");
+        print("\n🚀 正在发布至 GitHub...");
         os.chdir(LOCAL_REPO_PATH)
         try:
             subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", "update"], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
-            print(f"\n✅ 成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
+            print(f"\n✅ 发布成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
-            print(f"\n❌ 失败: {e}")
+            print(f"\n❌ 发布失败: {e}")
 
 
 if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.88 (四鬼镇楼+全量版)")
+        print("👑 王者荣耀榜单 V19.89 (界面精修全量版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
