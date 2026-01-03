@@ -11,11 +11,25 @@
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
         @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
-        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
+
+        /* 🔥 标题栏：支持右侧GIF */
+        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; position: relative; }
         .chart-header h1 { font-size: 24px; font-weight: 800; }
+        .header-gif { 
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%); 
+            width: 60px; height: 60px; border-radius: 8px; object-fit: cover; 
+            border: 2px solid rgba(255,255,255,0.5); 
+        }
+        @media screen and (max-width: 600px) { .header-gif { width: 40px; height: 40px; right: 10px; } }
+
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
         th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
+        .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
+        .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
@@ -27,11 +41,10 @@
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
-
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
 
-        /* 🔥 角标位置修正：名字下方，蓝色底 */
+        /* 🔥 角标位置与样式修正 */
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .badge { 
@@ -39,11 +52,11 @@
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
         }
         .badge-new { background: #ffd700; color: #000; }
-        .badge-return { background: #1d4ed8; color: #fff; } /* 深蓝色底 */
+        .badge-return { background: #1d4ed8; color: #fff; } /* 银改深蓝 */
 
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* 🔥 全配色回归 */
+        /* 🔥 全配色逻辑 */
         .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
         .growth-down { color: #991b1b !important; }
         .growth-up-mid { color: #16a34a !important; }
@@ -53,33 +66,39 @@
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 23:43</p></div>
+        <div class="chart-header">
+            <h1>Honor of Kings Skin Prediction</h1>
+            <p>Update: 2026-01-04 04:44</p>
+            
+            <img src="./show/zhaojun.gif" class="header-gif" alt="Show">
+            
+        </div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
-                        <th><div class="qual-header" style="position:relative; display:inline-flex; align-items:center;">
-                            <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
-                            <div id="dropdownMenu" class="dropdown-menu" style="display:none; position:absolute; top:110%; left:0; background:#fff; border:1px solid #ddd; z-index:1000; min-width:130px; text-align:left; padding:8px;">
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                <hr style="margin:4px 0">
+                        <th><div class="qual-header">
+                            <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
                                 
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -114,10 +133,10 @@
                             </div>
                         </div></td>
                         <td data-val="200.0" style="background-color: #f3e8ff;">
-                            200.0
+                            <span>200.0</span>
                         </td>
                         <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">
-                            200.0
+                            <span>200.0</span>
                         </td>
                         <td data-val="3.3" style="background-color: #f3e8ff;">
                             
@@ -149,10 +168,10 @@
                             </div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
-                            117.4
+                            <span>117.4</span>
                         </td>
                         <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">
-                            117.4
+                            <span>117.4</span>
                         </td>
                         <td data-val="0.1" style="background-color: #f3e8ff;">
                             
@@ -184,10 +203,10 @@
                             </div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
-                            80.8
+                            <span>80.8</span>
                         </td>
                         <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">
-                            80.8
+                            <span>80.8</span>
                         </td>
                         <td data-val="3.0" style="background-color: #f3e8ff;">
                             
@@ -220,10 +239,10 @@
                             </div>
                         </div></td>
                         <td data-val="59.0" style="background-color: #ffffff;">
-                            59.0
+                            <span>59.0</span>
                         </td>
                         <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">
-                            34.6
+                            <span>34.6</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -252,10 +271,10 @@
                             </div>
                         </div></td>
                         <td data-val="44.1" style="background-color: #ffffff;">
-                            44.1
+                            <span>44.1</span>
                         </td>
                         <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">
-                            5.4
+                            <span>5.4</span>
                         </td>
                         <td data-val="4.2" style="background-color: #ffffff;">
                             
@@ -287,10 +306,10 @@
                             </div>
                         </div></td>
                         <td data-val="33.1" style="background-color: #ffffff;">
-                            33.1
+                            <span>33.1</span>
                         </td>
                         <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">
-                            4.1
+                            <span>4.1</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -319,10 +338,10 @@
                             </div>
                         </div></td>
                         <td data-val="24.6" style="background-color: #ffffff;">
-                            24.6
+                            <span>24.6</span>
                         </td>
                         <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">
-                            3.0
+                            <span>3.0</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -351,10 +370,10 @@
                             </div>
                         </div></td>
                         <td data-val="20.9" style="background-color: #ffffff;">
-                            20.9
+                            <span>20.9</span>
                         </td>
                         <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">
-                            2.6
+                            <span>2.6</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -382,10 +401,10 @@
                             </div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
-                            17.7
+                            <span>17.7</span>
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            --
+                            <span>--</span>
                         </td>
                         <td data-val="0.0" style="background-color: #e0f2fe;">
                             <div class="box-style">--</div>
@@ -413,10 +432,10 @@
                             </div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
-                            12.0
+                            <span>12.0</span>
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            --
+                            <span>--</span>
                         </td>
                         <td data-val="100.0" style="background-color: #ffffff;">
                             
@@ -448,10 +467,10 @@
                             </div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
-                            7.2
+                            <span>7.2</span>
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            --
+                            <span>--</span>
                         </td>
                         <td data-val="-100.0" style="background-color: #e0f2fe;">
                             
@@ -484,10 +503,10 @@
                             </div>
                         </div></td>
                         <td data-val="-9999999" style="background-color: #ffffff;">
-                            --
+                            <span class="pts-null">Null</span>
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            --
+                            <span class="pts-null">Null</span>
                         </td>
                         <td data-val="1.9" style="background-color: #ffffff;">
                             
@@ -508,29 +527,29 @@
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
+    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
-    /* 🔥 GIF 优先级机制核心修复 */
+    /* 🔥 GIF 优先级机制修复 */
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) { 
-            img.src = './images/' + q + '.jpg'; // gif不存在，找本品质jpg
-        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let qv = parseFloat(q); 
-            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg'; // 本品质jpg不存在，找1.jpg
+        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
+        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
+            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
         }
     }
-
     function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
-        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const main = document.getElementById('selectAll');
+        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
         } else {
             btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => { r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none"; });
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
+                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
+            });
         }
     }
     function sortTable(n, type) {
