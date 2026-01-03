@@ -177,6 +177,15 @@ class SkinSystem:
                 f"{i + 1:<4} {status_str:<6} {q_str:<4} {skin['name']:<12} {skin['score']:<8} {real_pts_str:<8} {growth_str:<8} {list_p_str:<8} {real_p_str}")
         print("=" * 94 + "\n")
 
+    def view_rank_ui(self):
+        print("\n1. 查看新品榜 (Top 10)")
+        print("2. 查看历史总榜 (All)")
+        c = input("选: ")
+        if c == '1':
+            self.print_console_table(self.get_active_leaderboard(), "新品榜")
+        else:
+            self.print_console_table(self.get_total_skins(), "历史总榜")
+
     def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
         if rank_input == 1:
             old_top1_score = active_list[0]['score'] if active_list else 0
@@ -395,7 +404,6 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 V19.41 核心改进：深度缩放 initial-scale 调整至 0.6，zoom 调整至 0.7
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -407,24 +415,26 @@ class SkinSystem:
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-
-        /* 🔥 深度缩放适配手机端 */
         @media screen and (max-width: 600px) {
-            .chart-card { 
-                zoom: 0.7; 
-                -moz-transform: scale(0.7); 
-                -moz-transform-origin: top center; 
-            }
+            .chart-card { zoom: 0.7; -moz-transform: scale(0.7); -moz-transform-origin: top center; }
             body { padding: 5px; }
         }
-
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        .table-container { width: 100%; overflow-x: visible; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
-        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
+
+        /* 🔥 表头排序样式 */
+        th { 
+            text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
+            text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
+        }
+        th:hover { background-color: #f9f9f9; }
+        th::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
+        th.sort-asc::after { content: ' ▲'; color: #6366f1; }
+        th.sort-desc::after { content: ' ▼'; color: #6366f1; }
+
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
@@ -451,11 +461,17 @@ class SkinSystem:
             <p>Last updated: {{ update_time }}</p>
         </div>
         <div class="table-container">
-            <table>
+            <table id="skinTable">
                 <thead>
                     <tr>
-                        <th>Rank</th><th>Qual</th><th style="text-align:left; padding-left:20px;">Skin Name</th>
-                        <th>Rank Pts</th><th>Real Pts</th><th>Growth</th><th>List Price</th><th>Real Price</th>
+                        <th onclick="sortTable(0, 'int')">No</th>
+                        <th onclick="sortTable(1, 'float')">Qual</th>
+                        <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
+                        <th onclick="sortTable(3, 'float')">Rank Pts</th>
+                        <th onclick="sortTable(4, 'float')">Real Pts</th>
+                        <th onclick="sortTable(5, 'float')">Growth</th>
+                        <th onclick="sortTable(6, 'float')">List Price</th>
+                        <th onclick="sortTable(7, 'float')">Real Price</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -469,7 +485,7 @@ class SkinSystem:
                     {% endif %}
                     <tr>
                         <td class="rank-col">{{ loop.index }}</td>
-                        <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
+                        <td class="quality-col" data-val="{{ skin.quality }}"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: {{ row_bg }};">
                             <div class="song-col">
                                 {% set placeholder_bg = 'f3f4f6' %}
@@ -480,23 +496,59 @@ class SkinSystem:
                                 </div>
                             </div>
                         </td>
-                        <td class="data-col" style="background-color: {{ row_bg }};">{{ skin.score }}</td>
-                        <td class="data-col real-pts" style="background-color: {{ row_bg }};">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
-                        <td style="width: 75px; background-color: {{ row_bg }};">
+                        <td class="data-col" data-val="{{ skin.score }}" style="background-color: {{ row_bg }};">{{ skin.score }}</td>
+                        <td class="data-col real-pts" data-val="{{ skin.real_score or -1 }}" style="background-color: {{ row_bg }};">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
+                        <td data-val="{{ skin.growth }}" style="width: 75px; background-color: {{ row_bg }};">
                             {% if skin.growth != 0 %}
                                 {% set g_cls = 'text-black' %} 
                                 {% if skin.growth >= 100 %}{% set g_cls = 'text-orange' %}{% elif skin.growth < 0 %}{% set g_cls = 'text-red' %}{% elif skin.growth >= 10 %}{% set g_cls = 'text-orange' %}{% elif skin.growth > 5 %}{% set g_cls = 'text-green' %}{% endif %}
                                 <div class="box-style {{ g_cls }}">{{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%</div>
                             {% else %}<div class="box-style bg-none">--</div>{% endif %}
                         </td>
-                        <td style="width: 75px; padding-right:2px; background-color: {{ row_bg }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
-                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: {{ row_bg }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                        <td data-val="{{ skin.list_price }}" style="width: 75px; padding-right:2px; background-color: {{ row_bg }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
+                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="width: 75px; padding-right:5px; background-color: {{ row_bg }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+    function sortTable(n, type) {
+        var table = document.getElementById("skinTable"), 
+            rows = Array.from(table.rows).slice(1), 
+            headers = table.getElementsByTagName("TH"),
+            dir = "desc";
+
+        // 品质列默认升序，其他降序
+        if (n === 1) dir = "asc";
+
+        // 如果当前已经是降序，切换为升序；反之亦然
+        if (headers[n].classList.contains("sort-desc")) dir = "asc";
+        else if (headers[n].classList.contains("sort-asc")) dir = "desc";
+
+        rows.sort((a, b) => {
+            var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
+            var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
+
+            if (isNaN(xVal)) xVal = -999999;
+            if (isNaN(yVal)) yVal = -999999;
+
+            return dir === "asc" ? xVal - yVal : yVal - xVal;
+        });
+
+        rows.forEach(row => table.tBodies[0].appendChild(row));
+
+        for (var j = 0; j < headers.length; j++) {
+            headers[j].classList.remove("sort-asc", "sort-desc");
+        }
+        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+    }
+
+    // 页面加载完成按排位点数降序
+    window.onload = function() { sortTable(3, 'float'); };
+    </script>
 </body>
 </html>
         """
@@ -528,7 +580,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.41 (极致界面缩放)")
+        print("👑 王者荣耀榜单 V19.42 (深度全显+交互排序)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
