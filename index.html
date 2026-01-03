@@ -10,7 +10,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
-        /* 🔥 移除锁定左上角的代码，恢复弹性居中展示和左右滑动能力 */
         @media screen and (max-width: 600px) {
             .chart-card { zoom: 0.7; }
             body { padding: 5px; align-items: center; }
@@ -18,7 +17,7 @@
 
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
         th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
@@ -59,11 +58,16 @@
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* 🔥 Null 样式 */
+        .pts-null { color: #f43f5e; font-weight: 800; font-style: italic; }
+        /* 🔥 1.9% 特殊紫色样式 */
+        .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
     </style>
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Last updated: 2026-01-03 19:31</p></div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 22:33</p></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -110,7 +114,6 @@
                     
 
                     
-                    
 
                     <tr data-quality="无双">
                         <td>1</td>
@@ -125,9 +128,17 @@
                             <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">孙悟空-无相</span></div>
                         </div></td>
-                        <td data-val="200.0" style="background-color: #f3e8ff;">200.0</td>
-                        <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">200.0</td>
-                        <td data-val="3.3" style="background-color: #f3e8ff;"><div class="box-style">3.3%</div></td>
+                        <td data-val="200.0" style="background-color: #f3e8ff;">
+                            <span>200.0</span>
+                        </td>
+                        <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">
+                            <span>200.0</span>
+                        </td>
+                        <td data-val="3.3" style="background-color: #f3e8ff;">
+                            <div class="box-style ">
+                                3.3%
+                            </div>
+                        </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                     </tr>
@@ -135,7 +146,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="无双">
@@ -151,9 +161,17 @@
                             <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">甄姬-雪境奇遇</span></div>
                         </div></td>
-                        <td data-val="117.4" style="background-color: #f3e8ff;">117.4</td>
-                        <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">117.4</td>
-                        <td data-val="0.1" style="background-color: #f3e8ff;"><div class="box-style">0.1%</div></td>
+                        <td data-val="117.4" style="background-color: #f3e8ff;">
+                            <span>117.4</span>
+                        </td>
+                        <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">
+                            <span>117.4</span>
+                        </td>
+                        <td data-val="0.1" style="background-color: #f3e8ff;">
+                            <div class="box-style ">
+                                0.1%
+                            </div>
+                        </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                     </tr>
@@ -161,7 +179,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="无双">
@@ -177,9 +194,17 @@
                             <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">瑶-真我赫兹</span></div>
                         </div></td>
-                        <td data-val="80.8" style="background-color: #f3e8ff;">80.8</td>
-                        <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">80.8</td>
-                        <td data-val="3.0" style="background-color: #f3e8ff;"><div class="box-style">3.0%</div></td>
+                        <td data-val="80.8" style="background-color: #f3e8ff;">
+                            <span>80.8</span>
+                        </td>
+                        <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">
+                            <span>80.8</span>
+                        </td>
+                        <td data-val="3.0" style="background-color: #f3e8ff;">
+                            <div class="box-style ">
+                                3.0%
+                            </div>
+                        </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                     </tr>
@@ -187,7 +212,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="传说">
@@ -203,9 +227,17 @@
                             <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">曹操-万灵伏威</span></div>
                         </div></td>
-                        <td data-val="59.0" style="background-color: #ffffff;">59.0</td>
-                        <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">34.6</td>
-                        <td data-val="0.0" style="background-color: #ffffff;"><div class="box-style">0.0%</div></td>
+                        <td data-val="59.0" style="background-color: #ffffff;">
+                            <span>59.0</span>
+                        </td>
+                        <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">
+                            <span>34.6</span>
+                        </td>
+                        <td data-val="0.0" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                0.0%
+                            </div>
+                        </td>
                         <td data-val="168.8" style="background-color: #ffffff;">¥168.8</td>
                         <td class="rounded-right" data-val="99.0" style="background-color: #ffffff;">¥99.0</td>
                     </tr>
@@ -213,7 +245,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="勇者">
@@ -228,9 +259,17 @@
                             <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">安琪拉-糖果风暴</span></div>
                         </div></td>
-                        <td data-val="44.1" style="background-color: #ffffff;">44.1</td>
-                        <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">5.4</td>
-                        <td data-val="4.2" style="background-color: #ffffff;"><div class="box-style">4.2%</div></td>
+                        <td data-val="44.1" style="background-color: #ffffff;">
+                            <span>44.1</span>
+                        </td>
+                        <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">
+                            <span>5.4</span>
+                        </td>
+                        <td data-val="4.2" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                4.2%
+                            </div>
+                        </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
                     </tr>
@@ -238,7 +277,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="勇者">
@@ -253,9 +291,17 @@
                             <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">孙权-径山谋武</span></div>
                         </div></td>
-                        <td data-val="33.1" style="background-color: #ffffff;">33.1</td>
-                        <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">4.1</td>
-                        <td data-val="0.0" style="background-color: #ffffff;"><div class="box-style">0.0%</div></td>
+                        <td data-val="33.1" style="background-color: #ffffff;">
+                            <span>33.1</span>
+                        </td>
+                        <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">
+                            <span>4.1</span>
+                        </td>
+                        <td data-val="0.0" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                0.0%
+                            </div>
+                        </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
                     </tr>
@@ -263,7 +309,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="勇者">
@@ -278,9 +323,17 @@
                             <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">蚩姹-极光幻客</span></div>
                         </div></td>
-                        <td data-val="24.6" style="background-color: #ffffff;">24.6</td>
-                        <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">3.0</td>
-                        <td data-val="0.0" style="background-color: #ffffff;"><div class="box-style">0.0%</div></td>
+                        <td data-val="24.6" style="background-color: #ffffff;">
+                            <span>24.6</span>
+                        </td>
+                        <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">
+                            <span>3.0</span>
+                        </td>
+                        <td data-val="0.0" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                0.0%
+                            </div>
+                        </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
                     </tr>
@@ -288,7 +341,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="勇者">
@@ -303,9 +355,17 @@
                             <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">蒙恬-苍云破阵</span></div>
                         </div></td>
-                        <td data-val="20.9" style="background-color: #ffffff;">20.9</td>
-                        <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">2.6</td>
-                        <td data-val="0.0" style="background-color: #ffffff;"><div class="box-style">0.0%</div></td>
+                        <td data-val="20.9" style="background-color: #ffffff;">
+                            <span>20.9</span>
+                        </td>
+                        <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">
+                            <span>2.6</span>
+                        </td>
+                        <td data-val="0.0" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                0.0%
+                            </div>
+                        </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
                     </tr>
@@ -313,7 +373,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="传说限定">
@@ -328,9 +387,17 @@
                             <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">小乔-山海·琳琅生</span></div>
                         </div></td>
-                        <td data-val="17.7" style="background-color: #e0f2fe;">17.7</td>
-                        <td data-val="-1" style="background-color: #e0f2fe; color:#6366f1;">--</td>
-                        <td data-val="0.0" style="background-color: #e0f2fe;"><div class="box-style">0.0%</div></td>
+                        <td data-val="17.7" style="background-color: #e0f2fe;">
+                            <span>17.7</span>
+                        </td>
+                        <td data-val="-999999" style="background-color: #e0f2fe; color:#6366f1;">
+                            <span>--</span>
+                        </td>
+                        <td data-val="0.0" style="background-color: #e0f2fe;">
+                            <div class="box-style ">
+                                0.0%
+                            </div>
+                        </td>
                         <td data-val="178.8" style="background-color: #e0f2fe;">¥178.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #e0f2fe;">--</td>
                     </tr>
@@ -338,7 +405,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="史诗">
@@ -353,9 +419,17 @@
                             <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">妲己-热情桑巴</span></div>
                         </div></td>
-                        <td data-val="12.0" style="background-color: #ffffff;">12.0</td>
-                        <td data-val="-1" style="background-color: #ffffff; color:#6366f1;">--</td>
-                        <td data-val="100.0" style="background-color: #ffffff;"><div class="box-style">100.0%</div></td>
+                        <td data-val="12.0" style="background-color: #ffffff;">
+                            <span>12.0</span>
+                        </td>
+                        <td data-val="-999999" style="background-color: #ffffff; color:#6366f1;">
+                            <span>--</span>
+                        </td>
+                        <td data-val="100.0" style="background-color: #ffffff;">
+                            <div class="box-style ">
+                                100.0%
+                            </div>
+                        </td>
                         <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #ffffff;">--</td>
                     </tr>
@@ -363,7 +437,6 @@
                     
                     
 
-                    
                     
 
                     <tr data-quality="传说限定">
@@ -378,11 +451,51 @@
                             <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">曜-山海·苍雷引</span></div>
                         </div></td>
-                        <td data-val="7.2" style="background-color: #e0f2fe;">7.2</td>
-                        <td data-val="-1" style="background-color: #e0f2fe; color:#6366f1;">--</td>
-                        <td data-val="-100.0" style="background-color: #e0f2fe;"><div class="box-style">-100.0%</div></td>
+                        <td data-val="7.2" style="background-color: #e0f2fe;">
+                            <span>7.2</span>
+                        </td>
+                        <td data-val="-999999" style="background-color: #e0f2fe; color:#6366f1;">
+                            <span>--</span>
+                        </td>
+                        <td data-val="-100.0" style="background-color: #e0f2fe;">
+                            <div class="box-style ">
+                                -100.0%
+                            </div>
+                        </td>
                         <td data-val="178.8" style="background-color: #e0f2fe;">¥178.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #e0f2fe;">--</td>
+                    </tr>
+                    
+                    
+                    
+
+                    
+
+                    <tr data-quality="史诗">
+                        <td>12</td>
+                        <td class="quality-col" data-val="5">
+                            
+                            
+                            <img src="./images/5.gif" class="quality-icon " 
+                                 onerror="loadFallbackImg(this, '5')">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="https://via.placeholder.com/48?text=大" class="album-art">
+                            <div class="song-info"><span class="song-title" style="font-weight:700">大乔-乘龙·忆丹青</span></div>
+                        </div></td>
+                        <td data-val="-999999" style="background-color: #ffffff;">
+                            <span class="pts-null">Null</span>
+                        </td>
+                        <td data-val="-999999" style="background-color: #ffffff; color:#6366f1;">
+                            <span class="pts-null">Null</span>
+                        </td>
+                        <td data-val="1.9" style="background-color: #ffffff;">
+                            <div class="box-style growth-special">
+                                1.9%!
+                            </div>
+                        </td>
+                        <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
+                        <td class="rounded-right" data-val="53.2" style="background-color: #ffffff;">¥53.2</td>
                     </tr>
                     
                 </tbody>
@@ -398,24 +511,17 @@
         if (img.src.indexOf('.gif') !== -1) {
             img.src = './images/' + q + '.jpg';
         } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let qVal = parseFloat(q);
-            if (qVal >= 0.5 && qVal <= 1) img.src = './images/1.jpg';
+            let qv = parseFloat(q);
+            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg';
         }
     }
 
-    function handleSelectAll(mainCb) {
-        if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false);
-        updateFilter();
-    }
-    function handleSingleSelect(singleCb) {
-        if (singleCb.checked) document.getElementById('selectAll').checked = false;
-        updateFilter();
-    }
+    function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
+    function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
         const main = document.getElementById('selectAll');
         const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
-
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
@@ -426,13 +532,13 @@
             });
         }
     }
-
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
         rows.sort((a, b) => {
-            var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%]/g, ''));
-            var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%]/g, ''));
+            var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%!]/g, ''));
+            var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%!]/g, ''));
+            if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });
         rows.forEach(r => table.tBodies[0].appendChild(r));

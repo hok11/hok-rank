@@ -140,6 +140,19 @@
     "real_price": 0.0,
     "list_price": 178.8,
     "real_score": null,
-    "on_leaderboard": true
+    "on_leaderboard": false
+  },
+  {
+    "quality": 5,
+    "name": "大乔-乘龙·忆丹青",
+    "is_rerun": false,
+    "is_new": true,
+    "on_leaderboard": false,
+    "score": null,
+    "real_score": null,
+    "growth": 1.9,
+    "list_price": 88.8,
+    "real_price": 53.2,
+    "local_img": null
   }
 ]
