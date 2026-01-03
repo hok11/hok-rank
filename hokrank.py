@@ -412,82 +412,56 @@ class SkinSystem:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
-    <title>Honor of Kings Skin Revenue Prediction</title>
+    <title>Honor of Kings Skin Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-
         @media screen and (max-width: 600px) {
             .chart-card { zoom: 0.7; -moz-transform: scale(0.7); -moz-transform-origin: top center; }
             body { padding: 5px; }
         }
-
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
-        .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-
+        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
+        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
 
-        th { 
-            text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
-            text-transform: uppercase; white-space: nowrap; transition: background 0.2s;
-        }
-
-        /* 🔥 品质栏：勾选筛选布局 */
-        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { 
-            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 10px; 
-            color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 80px; text-align: center;
+            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; 
+            color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center;
         }
         .dropdown-menu {
-            display: none; position: absolute; top: 105%; left: 0; background: white; border: 1px solid #ddd;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 120px; text-align: left;
+            display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left;
         }
         .dropdown-menu.show { display: block; }
         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .dropdown-item:hover { background: #f5f5f5; }
-        .dropdown-item input { cursor: pointer; width: 14px; height: 14px; }
-
-        .sort-icon-btn { cursor: pointer; color: #ccc; transition: color 0.2s; font-size: 12px; padding: 0 4px; }
-        .sort-icon-btn.active { color: #6366f1; }
-
+        .sort-btn { cursor: pointer; color: #ccc; font-size: 12px; padding: 0 4px; }
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
         .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
-        .quality-col { width: 60px; text-align: center; }
-        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
-
+        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
-        .song-info { display: flex; flex-direction: column; justify-content: center; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
-        .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-        .data-col { font-weight: 700; font-size: 15px; width: 75px; }
-        .real-pts { color: #6366f1; } 
+        .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .text-red { color: #b91c1c; } .text-black { color: #1f2937; } .text-green { color: #15803d; } .text-orange { color: #ff9900; } 
-        .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; } .bg-price { color: #333; } 
     </style>
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header">
-            <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: {{ update_time }}</p>
-        </div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -497,21 +471,25 @@ class SkinSystem:
                             <div class="qual-header">
                                 <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
                                 <div id="dropdownMenu" class="dropdown-menu">
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong>
+                                    </label>
+                                    <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
                                     {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
                                     <label class="dropdown-item">
-                                        <input type="checkbox" value="{{ qname }}" checked onchange="updateFilter()"> {{ qname }}
+                                        <input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}
                                     </label>
                                     {% endfor %}
                                 </div>
-                                <span id="qualSortBtn" class="sort-icon-btn" onclick="sortTable(1, 'float')">⇅</span>
+                                <span id="qualSortBtn" class="sort-btn" onclick="sortTable(1, 'float')">⇅</span>
                             </div>
                         </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">Growth</th>
-                        <th class="col-sort" onclick="sortTable(6, 'float')">List Price</th>
-                        <th class="col-sort" onclick="sortTable(7, 'float')">Real Price</th>
+                        <th class="col-sort" onclick="sortTable(6, 'float')">List P</th>
+                        <th class="col-sort" onclick="sortTable(7, 'float')">Real P</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -527,89 +505,67 @@ class SkinSystem:
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ q_cls }}">
                         </td>
-                        <td class="rounded-left" style="background-color: {{ rb }};">
-                            <div class="song-col">
-                                {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48/f3f4f6/555555?text={{ skin.name[0] }}" class="album-art">{% endif %}
-                                <div class="song-info">
-                                    <span class="song-title">{{ skin.name }}</span>
-                                    <span class="artist-name">{% if skin.is_rerun %}★ Limited Rerun{% elif skin.is_new %}New Arrival{% else %}History{% endif %}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="data-col" data-val="{{ skin.score }}" style="background-color: {{ rb }};">{{ skin.score }}</td>
-                        <td class="data-col real-pts" data-val="{{ skin.real_score or -1 }}" style="background-color: {{ rb }};">{{ skin.real_score or '--' }}</td>
-                        <td data-val="{{ skin.growth }}" style="width: 75px; background-color: {{ rb }};">
-                            {% if skin.growth != 0 %}
-                                {% set gc = 'text-black' %}{% if skin.growth >= 100 %}{% set gc = 'text-orange' %}{% elif skin.growth < 0 %}{% set gc = 'text-red' %}{% elif skin.growth >= 10 %}{% set gc = 'text-orange' %}{% elif skin.growth > 5 %}{% set gc = 'text-green' %}{% endif %}
-                                <div class="box-style {{ gc }}">{{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%</div>
-                            {% else %}<div class="box-style bg-none">--</div>{% endif %}
-                        </td>
-                        <td data-val="{{ skin.list_price }}" style="width: 75px; padding-right:2px; background-color: {{ rb }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
-                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="width: 75px; padding-right:5px; background-color: {{ rb }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                        <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
+                            {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
+                            <div class="song-info"><span class="song-title">{{ skin.name }}</span></div>
+                        </div></td>
+                        <td data-val="{{ skin.score }}" style="background-color: {{ rb }};">{{ skin.score }}</td>
+                        <td data-val="{{ skin.real_score or -1 }}" style="background-color: {{ rb }}; color:#6366f1;">{{ skin.real_score or '--' }}</td>
+                        <td data-val="{{ skin.growth }}" style="background-color: {{ rb }};"><div class="box-style">{{ skin.growth }}%</div></td>
+                        <td data-val="{{ skin.list_price }}" style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
+                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="background-color: {{ rb }};">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
+    function handleSelectAll(mainCb) {
+        if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false);
+        updateFilter();
+    }
+
+    function handleSingleSelect(singleCb) {
+        if (singleCb.checked) document.getElementById('selectAll').checked = false;
+        updateFilter();
+    }
+
     function updateFilter() {
-        const checkboxes = document.querySelectorAll('#dropdownMenu input');
-        const checkedVals = Array.from(checkboxes).filter(i => i.checked).map(i => i.value);
+        const main = document.getElementById('selectAll');
+        const others = Array.from(document.querySelectorAll('.q-check'));
+        const checkedOnes = others.filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
 
-        if (checkedVals.length === checkboxes.length || checkedVals.length === 0) btn.innerText = "全部品质";
-        else if (checkedVals.length === 1) btn.innerText = checkedVals[0];
-        else btn.innerText = "筛选中";
-
-        document.querySelectorAll('#skinTable tbody tr').forEach(row => {
-            row.style.display = checkedVals.includes(row.getAttribute('data-quality')) ? "" : "none";
-        });
+        if (main.checked || checkedOnes.length === 0) {
+            main.checked = true; others.forEach(cb => cb.checked = false);
+            btn.innerText = "全部品质";
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
+        } else {
+            btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
+                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
+            });
+        }
     }
 
     function sortTable(n, type) {
-        var table = document.getElementById("skinTable"), 
-            rows = Array.from(table.rows).slice(1), 
-            headers = table.getElementsByTagName("TH"),
-            isQualCol = (n === 1),
-            dir = "desc";
-
-        var currentHeader = headers[n];
-        var isAsc = false;
-
-        if (isQualCol) {
-            var btn = document.getElementById("qualSortBtn");
-            isAsc = btn.classList.contains("active-asc");
-            dir = isAsc ? "desc" : "asc";
-            btn.innerHTML = dir === "asc" ? "▲" : "▼";
-            btn.className = "sort-icon-btn active " + (dir === "asc" ? "active-asc" : "active-desc");
-        } else {
-            isAsc = currentHeader.classList.contains("sort-asc");
-            dir = isAsc ? "desc" : "asc";
-        }
-
+        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
+        if (headers[n].classList.contains("sort-desc")) dir = "asc";
         rows.sort((a, b) => {
-            var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
-            var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
-            if (isNaN(xVal)) xVal = -999999; if (isNaN(yVal)) yVal = -999999;
-            return dir === "asc" ? xVal - yVal : yVal - xVal;
+            var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%]/g, ''));
+            var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%]/g, ''));
+            return dir === "asc" ? x - y : y - x;
         });
-
-        rows.forEach(row => table.tBodies[0].appendChild(row));
-
-        for (var j = 0; j < headers.length; j++) { if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
-        if (!isQualCol) {
-            currentHeader.classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
-            document.getElementById("qualSortBtn").className = "sort-icon-btn";
-            document.getElementById("qualSortBtn").innerHTML = "⇅";
-        }
+        rows.forEach(r => table.tBodies[0].appendChild(r));
+        Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
-    window.onload = function() { sortTable(3, 'float'); };
+    window.onload = () => sortTable(3, 'float');
     </script>
 </body>
 </html>
@@ -642,7 +598,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.55 (逻辑完整补完版)")
+        print("👑 王者荣耀榜单 V19.56 (互斥多选完整版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
