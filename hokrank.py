@@ -404,26 +404,49 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
+        # 🔥 V19.43 重点修正：保留缩放，同时恢复横向滚动（针对华为浏览器）
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.65, maximum-scale=1.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
+
+        /* 🔥 深度缩放与滚动共存逻辑 */
         @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.7; -moz-transform: scale(0.7); -moz-transform-origin: top center; }
-            body { padding: 5px; }
+            .chart-card { 
+                zoom: 0.8; 
+                -moz-transform: scale(0.8); 
+                -moz-transform-origin: top left; /* 必须是 top left，滑动才正常 */
+            }
+            body { padding: 5px; align-items: flex-start; } /* 窄屏左对齐，防止右侧留白过大无法滑动 */
         }
-        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
-        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
+
+        .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
+        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; border-top-left-radius: 12px; border-top-right-radius: 12px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
+
+        /* 🔥 核心滚动容器修复 */
+        .table-container { 
+            width: 100%; 
+            overflow-x: auto; /* 必须有 auto */
+            -webkit-overflow-scrolling: touch; /* 增强 iOS/安卓 滑动流畅度 */
+        }
+
+        table { 
+            width: 98%; 
+            min-width: 800px; /* 设置最小宽度，确保在缩放后若还挤不下，则触发滚动 */
+            margin: 0 auto; 
+            border-collapse: separate; 
+            border-spacing: 0 8px; 
+            font-size: 14px; 
+        }
 
         /* 🔥 表头排序样式 */
         th { 
@@ -521,32 +544,22 @@ class SkinSystem:
             headers = table.getElementsByTagName("TH"),
             dir = "desc";
 
-        // 品质列默认升序，其他降序
         if (n === 1) dir = "asc";
-
-        // 如果当前已经是降序，切换为升序；反之亦然
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
         else if (headers[n].classList.contains("sort-asc")) dir = "desc";
 
         rows.sort((a, b) => {
             var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
-
             if (isNaN(xVal)) xVal = -999999;
             if (isNaN(yVal)) yVal = -999999;
-
             return dir === "asc" ? xVal - yVal : yVal - xVal;
         });
 
         rows.forEach(row => table.tBodies[0].appendChild(row));
-
-        for (var j = 0; j < headers.length; j++) {
-            headers[j].classList.remove("sort-asc", "sort-desc");
-        }
+        for (var j = 0; j < headers.length; j++) headers[j].classList.remove("sort-asc", "sort-desc");
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
-
-    // 页面加载完成按排位点数降序
     window.onload = function() { sortTable(3, 'float'); };
     </script>
 </body>
@@ -580,7 +593,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.42 (深度全显+交互排序)")
+        print("👑 王者荣耀榜单 V19.43 (缩放+滑动+排序版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
