@@ -142,6 +142,7 @@ class SkinSystem:
         except FileNotFoundError:
             print(f"❌ 错误：找不到路径 {LOCAL_REPO_PATH}")
 
+    # ================= 数据逻辑 =================
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: x['score'], reverse=True)
@@ -152,6 +153,7 @@ class SkinSystem:
         active.sort(key=lambda x: x['score'], reverse=True)
         return active[:LEADERBOARD_CAPACITY]
 
+    # ================= 打印逻辑 =================
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None:
             data_list = self.get_total_skins()
@@ -208,10 +210,12 @@ class SkinSystem:
                 if t > 1000: return 1.0
 
     def _auto_prune_leaderboard(self):
+        """🔥 自动挤出机制：确保榜单只有 10 人"""
         active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
         active.sort(key=lambda x: x['score'], reverse=True)
 
         if len(active) > LEADERBOARD_CAPACITY:
+            # 找到第11名及以后的皮肤
             to_remove = active[LEADERBOARD_CAPACITY:]
             for skin in to_remove:
                 skin['on_leaderboard'] = False
@@ -237,7 +241,7 @@ class SkinSystem:
             name = raw[1]
             is_rerun = (len(raw) >= 3 and raw[2] != '0')
             is_new = not is_rerun
-            list_p = self._get_list_price_by_quality(q_code)
+            list_p = self._get_list_price_by_quality(q_code)  # 自动锁定原价
 
             enter_board_input = input("是否计入新品榜? (y/n, 默认y): ").strip().lower()
             is_on_board = (enter_board_input != 'n')
@@ -250,16 +254,21 @@ class SkinSystem:
                 print(f"--- 进入新品榜自动计算 ---")
                 rank = int(input(f"插入到新品榜第几名? (1-{len(active_list) + 1}): "))
                 if rank < 1: rank = 1
+
+                # 🔥 修复：不再问定价，只问实际价格
                 rp_in = input("实际价格 (Real Price): ")
                 real_p = float(rp_in) if rp_in.strip() else 0.0
                 growth = float(input("涨幅 (Growth %): "))
+
                 rank_score = round(self.calculate_insertion_score(rank, active_list, real_p, growth), 1)
             else:
                 print(f"--- 🚫 不进榜 (手动模式) ---")
                 score_in = input("请输入排位点数 (Rank Score): ")
                 rank_score = float(score_in)
+
                 rp_in = input("实际价格 (Real Price): ")
                 real_p = float(rp_in) if rp_in.strip() else 0.0
+
                 g_in = input("涨幅 (Growth %): ")
                 growth = float(g_in) if g_in.strip() else 0.0
 
@@ -277,7 +286,7 @@ class SkinSystem:
                 "local_img": None
             })
 
-            self._auto_prune_leaderboard()
+            self._auto_prune_leaderboard()  # 🔥 触发挤出逻辑
             self.save_data()
             self.generate_html()
             status_msg = "[🔥在榜]" if is_on_board else "[🚫不进榜]"
@@ -322,6 +331,7 @@ class SkinSystem:
 
                 item = target_list[idx]
                 while True:
+                    # 🔥 修复：显示菜单，不再盲改
                     print(f"\n当前: {item['name']} | 状态: {'[🔥在榜]' if item.get('on_leaderboard') else '[❌退榜]'}")
                     print(f"1. 排位点数: {item['score']}")
                     print(f"2. 涨幅 (%): {item['growth']}")
@@ -332,6 +342,8 @@ class SkinSystem:
                     raw = input("输入 [序号] [数值] (直接回车退出): ").strip()
                     if not raw: break
                     parts = raw.split()
+
+                    # 🔥 修复：删除了 on/off 逻辑
                     if len(parts) < 2: continue
 
                     try:
@@ -343,9 +355,10 @@ class SkinSystem:
                         elif opt == '3':
                             item['real_price'] = val
                         elif opt == '4':
-                            item['list_price'] = val
+                            item['list_price'] = val  # 允许改定价
                         elif opt == '5':
                             item['quality'] = val if not val.is_integer() else int(val)
+                            # 修改品质时，询问是否重置定价
                             if input("是否同步重置定价? (y/n): ").lower() == 'y':
                                 item['list_price'] = self._get_list_price_by_quality(item['quality'])
 
@@ -365,13 +378,17 @@ class SkinSystem:
         self.print_console_table()
         try:
             idx = int(input("输入序号修改标签: ")) - 1
-            if 0 <= idx < len(self.get_total_skins()):
+            if 0 <= idx < len(self.get_total_skins()):  # 修复范围
                 target = self.get_total_skins()[idx]
                 op = input("设为: 1-复刻  2-新增: ")
                 if op == '1':
-                    target['is_rerun'] = True; target['is_new'] = False; print("✅ [复刻]")
+                    target['is_rerun'] = True;
+                    target['is_new'] = False;
+                    print("✅ [复刻]")
                 elif op == '2':
-                    target['is_rerun'] = False; target['is_new'] = True; print("✅ [新增]")
+                    target['is_rerun'] = False;
+                    target['is_new'] = True;
+                    print("✅ [新增]")
                 self.save_data();
                 self.generate_html()
         except:
@@ -380,12 +397,14 @@ class SkinSystem:
     def run_crawler_ui(self):
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0:
-            self.save_data(); self.generate_html(); print(f"\n🎉 更新了 {count} 张图片！")
+            self.save_data();
+            self.generate_html();
+            print(f"\n🎉 更新了 {count} 张图片！")
         else:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 V19.47 重点修复：使用 transform 强制硬性缩印，绕过浏览器的字号保护机制
+        # 🔥 V19.47 重点修复：使用 transform 硬缩放绕过保护 + 表头排序
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -399,16 +418,16 @@ class SkinSystem:
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
         @media screen and (max-width: 600px) {
-            /* 强制硬缩放，无视浏览器最小字号限制 */
+            /* 采用 transform 硬缩放，无视浏览器的最小字号保护限制 */
             .chart-card { 
                 transform: scale(0.65); 
                 transform-origin: top left;
-                width: 154%; /* 补偿 scale 带来的宽度缺失 */
+                width: 154%; /* 补偿 scale 后留下的右侧空白 */
                 margin-left: 2%; 
             }
             body { 
                 padding: 10px; 
-                align-items: flex-start; /* 左对齐方便滑动 */
+                align-items: flex-start; /* 必须居左对齐，否则滑动会偏移 */
                 overflow-x: auto; 
             }
         }
@@ -421,7 +440,12 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; }
+        /* 排序三角样式 */
+        th { 
+            text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
+            text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
+        }
+        th:hover { background-color: #f9f9f9; }
         th::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
@@ -557,7 +581,6 @@ if __name__ == "__main__":
         print("0. 退出")
         print("=" * 55)
         cmd = input("指令: ").strip()
-
         if cmd == '1':
             app.add_skin_ui()
         elif cmd == '2':

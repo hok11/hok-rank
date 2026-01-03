@@ -11,16 +11,16 @@
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
         @media screen and (max-width: 600px) {
-            /* 强制硬缩放，无视浏览器最小字号限制 */
+            /* 采用 transform 硬缩放，无视浏览器的最小字号保护限制 */
             .chart-card { 
                 transform: scale(0.65); 
                 transform-origin: top left;
-                width: 154%; /* 补偿 scale 带来的宽度缺失 */
+                width: 154%; /* 补偿 scale 后留下的右侧空白 */
                 margin-left: 2%; 
             }
             body { 
                 padding: 10px; 
-                align-items: flex-start; /* 左对齐方便滑动 */
+                align-items: flex-start; /* 必须居左对齐，否则滑动会偏移 */
                 overflow-x: auto; 
             }
         }
@@ -33,7 +33,12 @@
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; }
+        /* 排序三角样式 */
+        th { 
+            text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
+            text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
+        }
+        th:hover { background-color: #f9f9f9; }
         th::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
@@ -60,7 +65,7 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 16:53</p>
+            <p>Last updated: 2026-01-03 16:55</p>
         </div>
         <div class="table-container">
             <table id="skinTable">
