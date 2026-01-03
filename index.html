@@ -50,10 +50,8 @@
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
-
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .badge { 
             display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
@@ -63,7 +61,6 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 1. 瘦身 box-style 并统一 Rank Pts 样式 */
         .box-style { 
             display: inline-block; width: 75px; padding: 4px 0; 
             font-weight: 700; font-size: 12px; border-radius: 6px; 
@@ -85,7 +82,7 @@
                 <img src="./show/DiaoChan.gif" class="header-gif">
                 <img src="./show/xishi.gif" class="header-gif">
             </div>
-            <div class="header-content"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-04 04:57</p></div>
+            <div class="header-content"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-04 05:00</p></div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
                 <img src="./show/zhaojun.gif" class="header-gif">
@@ -99,25 +96,25 @@
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
                         <th><div class="qual-header">
                             <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
-                            <div id="dropdownMenu" class="dropdown-menu" style="display:none; position:absolute; top:110%; left:0; background:#fff; border:1px solid #ddd; z-index:1000; min-width:130px; text-align:left; padding:8px;">
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
                                 <hr style="margin:4px 0">
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
                                 
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
                                 
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -570,7 +567,18 @@
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
-    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
+
+    // 🔥 GIF同步：页面加载后强制重置GIF源
+    window.onload = () => {
+        sortTable(3, 'float');
+        const gifs = document.querySelectorAll('.header-gif');
+        if (gifs.length > 0) {
+            gifs.forEach(g => {
+                let s = g.src; g.src = ''; g.src = s; // 强制重载
+            });
+        }
+    };
+
     function loadFallbackImg(img, q) {
         if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
         else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
@@ -606,7 +614,6 @@
         Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
-    window.onload = () => sortTable(3, 'float');
     </script>
 </body>
 </html>

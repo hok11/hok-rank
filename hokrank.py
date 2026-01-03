@@ -259,9 +259,9 @@ class SkinSystem:
         c = input("选: ");
         target_list = self.get_total_skins()
         try:
-            idx = int(input("总榜序号: ")) - 1
+            idx = int(input("序号: ")) - 1
             if 0 <= idx < len(target_list):
-                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
+                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); return
                 item = target_list[idx]
                 while True:
                     cur_s = "--" if item['score'] is None else item['score']
@@ -369,10 +369,8 @@ class SkinSystem:
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
-
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .badge { 
             display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
@@ -382,7 +380,6 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 1. 瘦身 box-style 并统一 Rank Pts 样式 */
         .box-style { 
             display: inline-block; width: 75px; padding: 4px 0; 
             font-weight: 700; font-size: 12px; border-radius: 6px; 
@@ -418,11 +415,11 @@ class SkinSystem:
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
                         <th><div class="qual-header">
                             <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
-                            <div id="dropdownMenu" class="dropdown-menu" style="display:none; position:absolute; top:110%; left:0; background:#fff; border:1px solid #ddd; z-index:1000; min-width:130px; text-align:left; padding:8px;">
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
                                 <hr style="margin:4px 0">
                                 {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
                                 {% endfor %}
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -487,7 +484,18 @@ class SkinSystem:
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
-    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
+
+    // 🔥 GIF同步：页面加载后强制重置GIF源
+    window.onload = () => {
+        sortTable(3, 'float');
+        const gifs = document.querySelectorAll('.header-gif');
+        if (gifs.length > 0) {
+            gifs.forEach(g => {
+                let s = g.src; g.src = ''; g.src = s; // 强制重载
+            });
+        }
+    };
+
     function loadFallbackImg(img, q) {
         if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
         else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
@@ -523,7 +531,6 @@ class SkinSystem:
         Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
-    window.onload = () => sortTable(3, 'float');
     </script>
 </body>
 </html>
@@ -540,22 +547,22 @@ class SkinSystem:
             print(f"❌ 路径错误: {e}")
 
     def deploy_to_github(self):
-        print("\n🚀 正在发布至 GitHub...");
+        print("\n🚀 正在同步至 GitHub...");
         os.chdir(LOCAL_REPO_PATH)
         try:
             subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", "update"], check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
-            print(f"\n✅ 发布成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
+            print(f"\n✅ 成功！🌐 https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
-            print(f"\n❌ 发布失败: {e}")
+            print(f"\n❌ 失败: {e}")
 
 
 if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.89 (界面精修全量版)")
+        print("👑 王者荣耀榜单 V19.90 (终极同步+四图+全修复版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
