@@ -45,10 +45,9 @@
             white-space: nowrap; 
         }
 
-        /* 🔥 V20.1：保持 No.列单元格满填充 */
         td:first-child {
             padding: 0 !important;
-            height: 1px; /* Hack: 强制单元格高度跟随内部元素 */
+            height: 1px;
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -75,17 +74,17 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.1 关键修改：排名框字体放大至20px，边框加粗至4px */
+        /* 🔥 V20.2 赛博风格：黑底 + 荧光绿字 + 深紫边框 */
         .rank-box { 
             display: flex; 
             width: 100%; height: 100%; 
             align-items: center; justify-content: center; 
             padding: 12px 0; 
-            border: 4px solid #4c1d95; /* 3px -> 4px */
-            background: transparent; 
-            color: #000; 
+            border: 4px solid #4c1d95; /* 深紫边框 */
+            background: #000000;       /* 纯黑填充 */
+            color: #39ff14;            /* 荧光绿文字 */
             font-weight: 900; 
-            font-size: 20px;           /* 16px -> 20px */
+            font-size: 20px; 
             border-radius: 0; 
             box-sizing: border-box; 
         }
@@ -120,7 +119,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 06:28</p>
+                <p>Update: 2026-01-04 06:30</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">

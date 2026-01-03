@@ -368,10 +368,9 @@ class SkinSystem:
             white-space: nowrap; 
         }
 
-        /* 🔥 V20.1：保持 No.列单元格满填充 */
         td:first-child {
             padding: 0 !important;
-            height: 1px; /* Hack: 强制单元格高度跟随内部元素 */
+            height: 1px;
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -398,17 +397,17 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.1 关键修改：排名框字体放大至20px，边框加粗至4px */
+        /* 🔥 V20.2 赛博风格：黑底 + 荧光绿字 + 深紫边框 */
         .rank-box { 
             display: flex; 
             width: 100%; height: 100%; 
             align-items: center; justify-content: center; 
             padding: 12px 0; 
-            border: 4px solid #4c1d95; /* 3px -> 4px */
-            background: transparent; 
-            color: #000; 
+            border: 4px solid #4c1d95; /* 深紫边框 */
+            background: #000000;       /* 纯黑填充 */
+            color: #39ff14;            /* 荧光绿文字 */
             font-weight: 900; 
-            font-size: 20px;           /* 16px -> 20px */
+            font-size: 20px; 
             border-radius: 0; 
             box-sizing: border-box; 
         }
@@ -611,7 +610,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V20.1 (最终形态)")
+        print("👑 王者荣耀榜单 V20.2 (赛博夜视仪版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
