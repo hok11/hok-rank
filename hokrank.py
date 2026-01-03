@@ -419,7 +419,7 @@ class SkinSystem:
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
         @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.7; transform: scale(0.7); transform-origin: top center; }
+            .chart-card { zoom: 0.7; -moz-transform: scale(0.7); -moz-transform-origin: top center; }
             body { padding: 5px; }
         }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
@@ -441,21 +441,21 @@ class SkinSystem:
         .dropdown-menu.show { display: block; }
         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .dropdown-item:hover { background: #f5f5f5; }
-
+        .sort-btn { cursor: pointer; color: #ccc; font-size: 12px; padding: 0 4px; }
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
         .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; white-space: nowrap; border: none; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* 核心视觉优化：滤色融合黑底动图 */
-        .quality-col { min-width: 60px; height: 35px; }
+        .quality-col { min-width: 60px; text-align: center; }
         .quality-icon { 
             height: 28px; width: auto; display: inline-block; 
-            mix-blend-mode: screen; filter: contrast(1.1); transition: transform 0.2s; 
+            vertical-align: middle; transition: transform 0.2s; 
+            object-fit: contain;
         }
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
@@ -482,7 +482,9 @@ class SkinSystem:
                                     <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
                                     <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
                                     {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
+                                    <label class="dropdown-item">
+                                        <input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}
+                                    </label>
                                     {% endfor %}
                                 </div>
                                 <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -535,9 +537,9 @@ class SkinSystem:
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
     function loadFallbackImg(img, q) {
-        if (img.src.endsWith('.gif')) {
+        if (img.src.indexOf('.gif') !== -1) {
             img.src = './images/' + q + '.jpg';
-        } else if (img.src.endsWith('.jpg') && !img.src.endsWith('1.jpg')) {
+        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
             let qVal = parseFloat(q);
             if (qVal >= 0.5 && qVal <= 1) img.src = './images/1.jpg';
         }
@@ -553,7 +555,7 @@ class SkinSystem:
     }
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const others = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
@@ -588,7 +590,7 @@ class SkinSystem:
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
                 f.write(html_content)
-            print("📄 HTML 修复完成")
+            print("📄 HTML 刷新完成")
         except:
             print("❌ 路径错误")
 
@@ -601,7 +603,6 @@ class SkinSystem:
                            check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
             print("\n✅ 发布成功！")
-            print(f"🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
             print(f"\n❌ 发布失败: {e}")
 
@@ -610,7 +611,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 ")
+        print("👑 王者荣耀榜单 V19.64 (图片修复+完整逻辑版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
