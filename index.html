@@ -13,7 +13,7 @@
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 20px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -34,14 +34,14 @@
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 方案 C：悬浮卡片系 (Modern Grey) 表头 */
+        /* 🔥 方案 C 改良版：加深灰色背景 */
         th { 
             text-align: center; 
             padding: 16px 2px; 
             font-weight: 800; 
-            color: #333; /* 深灰 */
-            background-color: #f8f9fa; /* 高级浅灰 */
-            border-bottom: 3px solid #6366f1; /* 3px 紫色实线 */
+            color: #333; 
+            background-color: #e2e8f0; /* 加深的蓝灰色，更有质感 */
+            border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
         }
@@ -68,6 +68,15 @@
 
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
+
+        /* 🔥 新增：排名列的金属银徽章 */
+        .badge-rank { 
+            display: inline-block; min-width: 24px; padding: 2px 6px; 
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%); /* 金属银渐变 */
+            color: #000; font-weight: 800; font-size: 11px; 
+            border-radius: 6px; box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+
         .badge { 
             display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
@@ -98,7 +107,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 05:43</p>
+                <p>Update: 2026-01-04 05:49</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -150,7 +159,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td>1</td>
+                        <td><span class="badge-rank">1</span></td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -192,7 +201,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td>2</td>
+                        <td><span class="badge-rank">2</span></td>
                         <td class="quality-col" data-val="0.8">
                             
                             
@@ -233,7 +242,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td>3</td>
+                        <td><span class="badge-rank">3</span></td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -274,7 +283,7 @@
                     
                     
                     <tr data-quality="传说">
-                        <td>4</td>
+                        <td><span class="badge-rank">4</span></td>
                         <td class="quality-col" data-val="4">
                             
                             
@@ -313,7 +322,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td>5</td>
+                        <td><span class="badge-rank">5</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -354,7 +363,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td>6</td>
+                        <td><span class="badge-rank">6</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -392,7 +401,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td>7</td>
+                        <td><span class="badge-rank">7</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -430,7 +439,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td>8</td>
+                        <td><span class="badge-rank">8</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -468,7 +477,7 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td>9</td>
+                        <td><span class="badge-rank">9</span></td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -505,7 +514,7 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td>10</td>
+                        <td><span class="badge-rank">10</span></td>
                         <td class="quality-col" data-val="5">
                             
                             
@@ -546,7 +555,7 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td>11</td>
+                        <td><span class="badge-rank">11</span></td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -587,7 +596,7 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td>12</td>
+                        <td><span class="badge-rank">12</span></td>
                         <td class="quality-col" data-val="5">
                             
                             

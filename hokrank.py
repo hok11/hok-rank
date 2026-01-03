@@ -264,7 +264,7 @@ class SkinSystem:
         try:
             idx = int(input("序号: ")) - 1
             if 0 <= idx < len(target_list):
-                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
+                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); return
                 item = target_list[idx]
                 while True:
                     cur_s = "--" if item['score'] is None else item['score']
@@ -336,7 +336,7 @@ class SkinSystem:
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 20px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -357,14 +357,14 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 方案 C：悬浮卡片系 (Modern Grey) 表头 */
+        /* 🔥 方案 C 改良版：加深灰色背景 */
         th { 
             text-align: center; 
             padding: 16px 2px; 
             font-weight: 800; 
-            color: #333; /* 深灰 */
-            background-color: #f8f9fa; /* 高级浅灰 */
-            border-bottom: 3px solid #6366f1; /* 3px 紫色实线 */
+            color: #333; 
+            background-color: #e2e8f0; /* 加深的蓝灰色，更有质感 */
+            border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
         }
@@ -391,6 +391,15 @@ class SkinSystem:
 
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
+
+        /* 🔥 新增：排名列的金属银徽章 */
+        .badge-rank { 
+            display: inline-block; min-width: 24px; padding: 2px 6px; 
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%); /* 金属银渐变 */
+            color: #000; font-weight: 800; font-size: 11px; 
+            border-radius: 6px; box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+
         .badge { 
             display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
@@ -459,7 +468,7 @@ class SkinSystem:
                     {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
                     {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
                     <tr data-quality="{{ q_name }}">
-                        <td>{{ loop.index }}</td>
+                        <td><span class="badge-rank">{{ loop.index }}</span></td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
@@ -588,7 +597,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.94 (Revenue Forecast 终极定稿版)")
+        print("👑 王者荣耀榜单 V19")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
