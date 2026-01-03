@@ -404,7 +404,7 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 映射修正点
+        # 🔥 修正映射：2荣耀典藏，3珍品传说
         quality_map = {0: "珍品无双", 1: "无双", 2: "荣耀典藏", 3: "珍品传说", 3.5: "传说限定", 4: "传说", 5: "史诗",
                        6: "勇者"}
         html_template = """
@@ -434,24 +434,28 @@ class SkinSystem:
 
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
-            text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
+            text-transform: uppercase; white-space: nowrap; transition: background 0.2s;
         }
-        th:hover { background-color: #f9f9f9; }
-        th::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
-        th.sort-asc::after { content: ' ▲'; color: #6366f1; }
-        th.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        /* 🔥 筛选框样式：右侧布局 */
-        .filter-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; cursor: default; }
+        /* 🔥 品质栏：极简布局 */
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .filter-select { 
-            font-size: 10px; border-radius: 4px; border: 1px solid #ddd; padding: 2px 5px; color: #333; font-weight: bold; cursor: pointer;
+            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 3px 6px; color: #333; font-weight: bold; cursor: pointer; outline: none; background: white;
         }
+        .sort-icon-btn { cursor: pointer; color: #ccc; transition: color 0.2s; font-size: 12px; padding: 0 4px; }
+        .sort-icon-btn.active { color: #6366f1; }
+
+        /* 其他列排序图标 */
+        .col-sort { cursor: pointer; position: relative; }
+        .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
+        .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
+        .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
-        .quality-col { width: 120px; text-align: center; } /* 拓宽以容纳图标+下拉框 */
+        .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
@@ -480,12 +484,11 @@ class SkinSystem:
             <table id="skinTable">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0, 'int')">No</th>
-                        <th style="cursor:default;">
-                            <div class="filter-wrapper">
-                                <span onclick="sortTable(1, 'float')" style="cursor:pointer">图标</span>
+                        <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
+                        <th>
+                            <div class="qual-header">
                                 <select class="filter-select" onchange="filterTable(this.value)">
-                                    <option value="all">筛选</option>
+                                    <option value="all">全部品质</option>
                                     <option value="珍品无双">珍品无双</option>
                                     <option value="无双">无双</option>
                                     <option value="荣耀典藏">荣耀典藏</option>
@@ -495,14 +498,15 @@ class SkinSystem:
                                     <option value="史诗">史诗</option>
                                     <option value="勇者">勇者</option>
                                 </select>
+                                <span id="qualSortBtn" class="sort-icon-btn" onclick="sortTable(1, 'float')">⇅</span>
                             </div>
                         </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
-                        <th onclick="sortTable(3, 'float')">Rank Pts</th>
-                        <th onclick="sortTable(4, 'float')">Real Pts</th>
-                        <th onclick="sortTable(5, 'float')">Growth</th>
-                        <th onclick="sortTable(6, 'float')">List Price</th>
-                        <th onclick="sortTable(7, 'float')">Real Price</th>
+                        <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
+                        <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
+                        <th class="col-sort" onclick="sortTable(5, 'float')">Growth</th>
+                        <th class="col-sort" onclick="sortTable(6, 'float')">List Price</th>
+                        <th class="col-sort" onclick="sortTable(7, 'float')">Real Price</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -546,18 +550,46 @@ class SkinSystem:
 
     <script>
     function sortTable(n, type) {
-        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
-        if (n === 1) dir = "asc";
-        if (headers[n].classList.contains("sort-desc")) dir = "asc"; else if (headers[n].classList.contains("sort-asc")) dir = "desc";
+        var table = document.getElementById("skinTable"), 
+            rows = Array.from(table.rows).slice(1), 
+            headers = table.getElementsByTagName("TH"),
+            isQualCol = (n === 1),
+            dir = "desc";
+
+        // 获取当前状态
+        var currentHeader = headers[n];
+        var isAsc = false;
+
+        if (isQualCol) {
+            var btn = document.getElementById("qualSortBtn");
+            isAsc = btn.classList.contains("active-asc");
+            dir = isAsc ? "desc" : "asc";
+            // 重置所有按钮状态
+            btn.innerHTML = dir === "asc" ? "▲" : "▼";
+            btn.className = "sort-icon-btn active " + (dir === "asc" ? "active-asc" : "active-desc");
+        } else {
+            isAsc = currentHeader.classList.contains("sort-asc");
+            dir = isAsc ? "desc" : "asc";
+        }
+
         rows.sort((a, b) => {
             var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             if (isNaN(xVal)) xVal = -999999; if (isNaN(yVal)) yVal = -999999;
             return dir === "asc" ? xVal - yVal : yVal - xVal;
         });
+
         rows.forEach(row => table.tBodies[0].appendChild(row));
-        for (var j = 0; j < headers.length; j++) { if(headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
-        if(headers[n]) headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+
+        // 更新 UI 样式
+        for (var j = 0; j < headers.length; j++) {
+            if (headers[j]) headers[j].classList.remove("sort-asc", "sort-desc");
+        }
+        if (!isQualCol) {
+            currentHeader.classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+            document.getElementById("qualSortBtn").className = "sort-icon-btn";
+            document.getElementById("qualSortBtn").innerHTML = "⇅";
+        }
     }
 
     function filterTable(val) {
@@ -600,7 +632,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.53 (界面大改+映射修复)")
+        print("👑 王者荣耀榜单 V19.54 (极简品质栏+修正版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
