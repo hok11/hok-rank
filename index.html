@@ -33,7 +33,19 @@
 
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
-        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
+
+        /* 🔥 方案 C：悬浮卡片系 (Modern Grey) 表头 */
+        th { 
+            text-align: center; 
+            padding: 16px 2px; 
+            font-weight: 800; 
+            color: #333; /* 深灰 */
+            background-color: #f8f9fa; /* 高级浅灰 */
+            border-bottom: 3px solid #6366f1; /* 3px 紫色实线 */
+            font-size: 13px;
+            white-space: nowrap; 
+        }
+
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
@@ -86,7 +98,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 05:28</p>
+                <p>Update: 2026-01-04 05:43</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">

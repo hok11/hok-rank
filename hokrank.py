@@ -264,7 +264,7 @@ class SkinSystem:
         try:
             idx = int(input("序号: ")) - 1
             if 0 <= idx < len(target_list):
-                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); return
+                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
                 item = target_list[idx]
                 while True:
                     cur_s = "--" if item['score'] is None else item['score']
@@ -356,7 +356,19 @@ class SkinSystem:
 
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
-        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
+
+        /* 🔥 方案 C：悬浮卡片系 (Modern Grey) 表头 */
+        th { 
+            text-align: center; 
+            padding: 16px 2px; 
+            font-weight: 800; 
+            color: #333; /* 深灰 */
+            background-color: #f8f9fa; /* 高级浅灰 */
+            border-bottom: 3px solid #6366f1; /* 3px 紫色实线 */
+            font-size: 13px;
+            white-space: nowrap; 
+        }
+
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
@@ -576,7 +588,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀皮肤流水榜  ")
+        print("👑 王者荣耀榜单 V19.94 (Revenue Forecast 终极定稿版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
