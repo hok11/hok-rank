@@ -89,8 +89,8 @@ class SkinSystem:
         self._migrate_data_structure()
 
     def _get_list_price_by_quality(self, q_code):
-        # 3.5 (传限): 178.8 | 4 (传说): 168.8 | 6 (勇者): 48.8
         mapping = {0: 800.0, 1: 400.0, 2: 600.0, 3: 200.0, 3.5: 178.8, 4: 168.8, 5: 88.8, 6: 48.8}
+        if 0.5 <= q_code < 1: return 400.0
         return mapping.get(q_code, 0.0)
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
@@ -227,7 +227,7 @@ class SkinSystem:
         self.print_console_table(active_list, "当前新品榜")
 
         try:
-            print("格式: 品质代码(3.5/4/6...) 名字 [非0=复刻]")
+            print("格式: 品质代码(0.5-1/3.5/4/6...) 名字 [非0=复刻]")
             raw = input("输入: ").split()
             if len(raw) < 2: return
 
@@ -440,7 +440,7 @@ class SkinSystem:
         .dropdown-menu.show { display: block; }
         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .dropdown-item:hover { background: #f5f5f5; }
-        .sort-btn { cursor: pointer; color: #ccc; font-size: 12px; padding: 0 4px; }
+
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
@@ -449,10 +449,17 @@ class SkinSystem:
         td { padding: 12px 2px; vertical-align: middle; text-align: center; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
+
+        /* 🔥 核心视觉优化：滤色融合黑底动图 */
+        .quality-icon { 
+            height: 28px; width: auto; display: inline-block; 
+            mix-blend-mode: screen; /* 关键：过滤黑色背景使其透明 */
+            filter: contrast(1.1); transition: transform 0.2s; 
+        }
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
+
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
@@ -461,7 +468,7 @@ class SkinSystem:
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1></div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Last updated: {{ update_time }}</p></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -471,17 +478,13 @@ class SkinSystem:
                             <div class="qual-header">
                                 <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
                                 <div id="dropdownMenu" class="dropdown-menu">
-                                    <label class="dropdown-item">
-                                        <input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong>
-                                    </label>
-                                    <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                                    <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                    <hr style="margin:4px 0">
                                     {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                    <label class="dropdown-item">
-                                        <input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}
-                                    </label>
+                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
                                     {% endfor %}
                                 </div>
-                                <span id="qualSortBtn" class="sort-btn" onclick="sortTable(1, 'float')">⇅</span>
+                                <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
                             </div>
                         </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
@@ -495,19 +498,24 @@ class SkinSystem:
                 <tbody>
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
-                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
-                    <tr data-quality="{{ quality_map[skin.quality] }}">
-                        <td class="rank-col">{{ loop.index }}</td>
-                        <td class="quality-col" data-val="{{ skin.quality }}">
+                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
+
+                    {% set q_display_name = quality_map[skin.quality] %}
+                    {% if not q_display_name and skin.quality >= 0.5 and skin.quality < 1 %}{% set q_display_name = "无双" %}{% endif %}
+
+                    <tr data-quality="{{ q_display_name }}">
+                        <td>{{ loop.index }}</td>
+                        <td data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
-                            <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ q_cls }}">
+                            <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" 
+                                 onerror="this.onerror=function(){this.onerror=function(){this.src='./images/1.jpg'}; this.src='./images/{{ skin.quality }}.jpg'}; this.src='./images/{{ skin.quality }}.gif';">
                         </td>
                         <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
                             {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
-                            <div class="song-info"><span class="song-title">{{ skin.name }}</span></div>
+                            <div><span style="font-weight:700">{{ skin.name }}</span></div>
                         </div></td>
                         <td data-val="{{ skin.score }}" style="background-color: {{ rb }};">{{ skin.score }}</td>
                         <td data-val="{{ skin.real_score or -1 }}" style="background-color: {{ rb }}; color:#6366f1;">{{ skin.real_score or '--' }}</td>
@@ -529,21 +537,16 @@ class SkinSystem:
         if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false);
         updateFilter();
     }
-
     function handleSingleSelect(singleCb) {
         if (singleCb.checked) document.getElementById('selectAll').checked = false;
         updateFilter();
     }
-
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const others = Array.from(document.querySelectorAll('.q-check'));
-        const checkedOnes = others.filter(i => i.checked).map(i => i.value);
+        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
-
         if (main.checked || checkedOnes.length === 0) {
-            main.checked = true; others.forEach(cb => cb.checked = false);
-            btn.innerText = "全部品质";
+            main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
         } else {
             btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
@@ -552,7 +555,6 @@ class SkinSystem:
             });
         }
     }
-
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
@@ -589,7 +591,6 @@ class SkinSystem:
                            check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
             print("\n✅ 发布成功！")
-            print(f"🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
             print(f"\n❌ 发布失败: {e}")
 
@@ -598,19 +599,11 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.56 (互斥多选完整版)")
+        print("👑 王者荣耀榜单 V19.60 (黑底融合+功能补完版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
-        print("1. 添加皮肤")
-        print("2. 修改数据")
-        print("3. 修改标签")
-        print("4. >>> 发布到互联网 <<<")
-        print("5. 强制刷新HTML")
-        print("6. 查看榜单")
-        print("7. 🕷️ 自动抓取百度头像")
-        print("8. 📉 手动退榜")
-        print("0. 退出")
-        print("=" * 55)
+        print(
+            "1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. 发布互联网 | 5. 强制刷新HTML | 6. 查看榜单 | 7. 🕷️ 自动抓头像 | 8. 📉 手动退榜 | 0. 退出")
         cmd = input("指令: ").strip()
 
         if cmd == '1':
