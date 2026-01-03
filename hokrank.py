@@ -373,9 +373,13 @@ class SkinSystem:
                 target = self.get_total_skins()[idx]
                 op = input("设为: 1-复刻  2-新增: ")
                 if op == '1':
-                    target['is_rerun'] = True; target['is_new'] = False; print("✅ [复刻]")
+                    target['is_rerun'] = True;
+                    target['is_new'] = False;
+                    print("✅ [复刻]")
                 elif op == '2':
-                    target['is_rerun'] = False; target['is_new'] = True; print("✅ [新增]")
+                    target['is_rerun'] = False;
+                    target['is_new'] = True;
+                    print("✅ [新增]")
                 self.save_data();
                 self.generate_html()
         except:
@@ -384,29 +388,38 @@ class SkinSystem:
     def run_crawler_ui(self):
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0:
-            self.save_data(); self.generate_html(); print(f"\n🎉 更新了 {count} 张图片！")
+            self.save_data();
+            self.generate_html();
+            print(f"\n🎉 更新了 {count} 张图片！")
         else:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # HTML 保持不变 (含手机端适配)
+        # 🔥 修改点：viewport 缩放 + CSS zoom，整体缩小界面
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
+
+        /* 🔥 针对手机端的整体缩放 */
+        @media screen and (max-width: 600px) {
+            .chart-card { zoom: 0.85; -moz-transform: scale(0.85); -moz-transform-origin: top center; }
+            body { padding: 10px; }
+        }
+
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 96%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 600px; }
+        .table-container { width: 100%; overflow-x: visible; }
+        table { width: 96%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
         th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
         td { padding: 12px 6px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
@@ -512,7 +525,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.36 (自动挤出修复+输入流程优化)")
+        print("👑 王者荣耀榜单 V19.36 (界面比例缩放适配)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
