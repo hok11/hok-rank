@@ -38,7 +38,6 @@ class SkinCrawler:
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
-            # 🔥 找回被阉割的百度精准接口参数，保证搜索精准度
             params = {
                 "tn": "resultjson_com", "logid": "8388656667592781395", "ipn": "rj", "ct": "201326592", "is": "",
                 "fp": "result", "queryWord": keyword, "cl": "2", "lm": "-1", "ie": "utf-8", "oe": "utf-8",
@@ -262,9 +261,9 @@ class SkinSystem:
         c = input("选: ");
         target_list = self.get_total_skins()
         try:
-            idx = int(input("序号: ")) - 1
+            idx = int(input("总榜序号: ")) - 1
             if 0 <= idx < len(target_list):
-                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); return
+                if c == '2': del self.all_skins[idx]; self.save_data(); self.generate_html(); print("🗑️ 已删除"); return
                 item = target_list[idx]
                 while True:
                     cur_s = "--" if item['score'] is None else item['score']
@@ -336,7 +335,7 @@ class SkinSystem:
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 20px; 
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -357,13 +356,13 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 方案 C 改良版：加深灰色背景 */
+        /* 🔥 V19.96 修正：去除背景色，保留紫色底线 */
         th { 
             text-align: center; 
             padding: 16px 2px; 
             font-weight: 800; 
             color: #333; 
-            background-color: #e2e8f0; /* 加深的蓝灰色，更有质感 */
+            background-color: transparent; /* 修正为透明 */
             border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
@@ -392,12 +391,16 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 新增：排名列的金属银徽章 */
+        /* 🔥 V19.96 修正：青碧色 + 瘦长方形 */
         .badge-rank { 
-            display: inline-block; min-width: 24px; padding: 2px 6px; 
-            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%); /* 金属银渐变 */
-            color: #000; font-weight: 800; font-size: 11px; 
-            border-radius: 6px; box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+            display: inline-block; 
+            min-width: 18px; /* 进一步收窄 */
+            padding: 1px 4px; /* 减少内边距 */
+            background: #1fa6a4; /* 青碧色 */
+            color: #fff; 
+            font-weight: 800; font-size: 11px; 
+            border-radius: 4px; /* 圆角改小，接近长方形 */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
         }
 
         .badge { 
@@ -597,7 +600,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19")
+        print("👑 王者荣耀榜单 V19.96 (界面精修定稿版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
