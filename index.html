@@ -9,58 +9,43 @@
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-
-        @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.7; }
-            body { padding: 5px; align-items: center; }
-        }
-
+        @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; }
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
         th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
-
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
-        .multi-select-box { 
-            font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; 
-            color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center;
-        }
-        .dropdown-menu {
-            display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left;
-        }
+        .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
+        .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
         .dropdown-menu.show { display: block; }
         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
-        .dropdown-item:hover { background: #f5f5f5; }
-
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
         .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
-
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-
-        .quality-col { min-width: 60px; text-align: center; }
-        .quality-icon { 
-            height: 28px; width: auto; display: inline-block; 
-            vertical-align: middle; transition: transform 0.2s; 
-            object-fit: contain;
-        }
+        .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
 
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; }
+        .badge { 
+            position: absolute; top: -6px; right: -8px; padding: 2px 6px; font-size: 8px; 
+            font-weight: 900; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;
+        }
+        .badge-new { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #fff; }
+        .badge-return { background: linear-gradient(135deg, #e0e0e0, #9e9e9e); color: #333; }
+
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* 🔥 逻辑显示样式 */
-        .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
+        /* 🔥 视觉逻辑修复区 */
         .growth-down { color: #991b1b !important; }
         .growth-up-mid { color: #16a34a !important; }
         .growth-up-high { color: #ea580c !important; }
@@ -69,7 +54,7 @@
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 22:55</p></div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 23:21</p></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -100,7 +85,7 @@
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
                         </div></th>
-                        <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
+                        <th style="text-align:left; padding-left:20px;">Skin Name</th>
                         <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">Growth</th>
@@ -123,13 +108,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">孙悟空-无相</span></div>
                         </div></td>
                         <td data-val="200.0" style="background-color: #f3e8ff;">
-                            <span>200.0</span>
+                            200.0
                         </td>
                         <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>200.0</span>
+                            200.0
                         </td>
                         <td data-val="3.3" style="background-color: #f3e8ff;">
                             
@@ -155,13 +141,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
+                            <span class="badge badge-return">Limit Return</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">甄姬-雪境奇遇</span></div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
-                            <span>117.4</span>
+                            117.4
                         </td>
                         <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>117.4</span>
+                            117.4
                         </td>
                         <td data-val="0.1" style="background-color: #f3e8ff;">
                             
@@ -187,13 +174,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
+                            <span class="badge badge-return">Limit Return</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">瑶-真我赫兹</span></div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
-                            <span>80.8</span>
+                            80.8
                         </td>
                         <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>80.8</span>
+                            80.8
                         </td>
                         <td data-val="3.0" style="background-color: #f3e8ff;">
                             
@@ -219,13 +207,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">曹操-万灵伏威</span></div>
                         </div></td>
                         <td data-val="59.0" style="background-color: #ffffff;">
-                            <span>59.0</span>
+                            59.0
                         </td>
                         <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">
-                            <span>34.6</span>
+                            34.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -247,13 +236,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">安琪拉-糖果风暴</span></div>
                         </div></td>
                         <td data-val="44.1" style="background-color: #ffffff;">
-                            <span>44.1</span>
+                            44.1
                         </td>
                         <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">
-                            <span>5.4</span>
+                            5.4
                         </td>
                         <td data-val="4.2" style="background-color: #ffffff;">
                             
@@ -278,13 +268,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">孙权-径山谋武</span></div>
                         </div></td>
                         <td data-val="33.1" style="background-color: #ffffff;">
-                            <span>33.1</span>
+                            33.1
                         </td>
                         <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">
-                            <span>4.1</span>
+                            4.1
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -306,13 +297,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">蚩姹-极光幻客</span></div>
                         </div></td>
                         <td data-val="24.6" style="background-color: #ffffff;">
-                            <span>24.6</span>
+                            24.6
                         </td>
                         <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">
-                            <span>3.0</span>
+                            3.0
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -334,13 +326,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">蒙恬-苍云破阵</span></div>
                         </div></td>
                         <td data-val="20.9" style="background-color: #ffffff;">
-                            <span>20.9</span>
+                            20.9
                         </td>
                         <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">
-                            <span>2.6</span>
+                            2.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -362,13 +355,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
+                            <span class="badge badge-return">Limit Return</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">小乔-山海·琳琅生</span></div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
-                            <span>17.7</span>
+                            17.7
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="0.0" style="background-color: #e0f2fe;">
                             <div class="box-style">--</div>
@@ -390,13 +384,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
+                            <span class="badge badge-return">Limit Return</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">妲己-热情桑巴</span></div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
-                            <span>12.0</span>
+                            12.0
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="100.0" style="background-color: #ffffff;">
                             
@@ -422,13 +417,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
+                            <span class="badge badge-return">Limit Return</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">曜-山海·苍雷引</span></div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
-                            <span>7.2</span>
+                            7.2
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="-100.0" style="background-color: #e0f2fe;">
                             
@@ -454,13 +450,14 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
+                            <span class="badge badge-new">New Arrive</span>
                             <div class="song-info"><span class="song-title" style="font-weight:700">大乔-乘龙·忆丹青</span></div>
                         </div></td>
                         <td data-val="-9999999" style="background-color: #ffffff;">
-                            <span class="pts-null">Null</span>
+                            --
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            <span class="pts-null">Null</span>
+                            --
                         </td>
                         <td data-val="1.9" style="background-color: #ffffff;">
                             
@@ -481,22 +478,17 @@
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
-    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) {
-            img.src = './images/' + q + '.jpg';
-        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let qv = parseFloat(q);
-            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg';
+        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
+        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
+            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
         }
     }
-
     function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const others = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
