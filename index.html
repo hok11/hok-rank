@@ -3,21 +3,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
-        /* 🔥 舒适缩放：V19.39 经典比例 */
         @media screen and (max-width: 600px) {
             .chart-card { 
-                zoom: 0.85; 
-                -moz-transform: scale(0.85); 
+                zoom: 0.7; 
+                -moz-transform: scale(0.7); 
                 -moz-transform-origin: top center; 
             }
-            body { padding: 10px; }
+            body { padding: 5px; }
         }
 
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
@@ -25,16 +24,10 @@
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
 
-        /* 🔥 强制开启横向滑动，防止华为等浏览器截断 */
-        .table-container { 
-            width: 100%; 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
-        }
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 650px; }
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
 
-        /* 🔥 表头排序样式 */
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
             text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
@@ -44,7 +37,7 @@
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        td { padding: 12px 4px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
@@ -66,7 +59,7 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 17:02</p>
+            <p>Last updated: 2026-01-03 17:05</p>
         </div>
         <div class="table-container">
             <table id="skinTable">
