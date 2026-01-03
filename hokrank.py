@@ -145,6 +145,7 @@ class SkinSystem:
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
+    # ================= 业务逻辑 =================
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
@@ -155,6 +156,7 @@ class SkinSystem:
         active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
         return active[:LEADERBOARD_CAPACITY]
 
+    # ================= 打印逻辑 =================
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None: data_list = self.get_total_skins()
         print(f"\n====== 🏆 {title} (Items: {len(data_list)}) ======")
@@ -229,7 +231,7 @@ class SkinSystem:
                 growth = float(input("涨幅: ") or 0.0)
             self.all_skins.append({
                 "quality": q_code if not q_code.is_integer() else int(q_code),
-                "name": name, "is_rerun": is_rr, "is_new": not is_rerun, "on_leaderboard": is_on,
+                "name": name, "is_rerun": is_rerun, "is_new": not is_rerun, "on_leaderboard": is_on,
                 "score": rank_score, "real_score": self._calculate_real_score(rank_score, list_p, real_p),
                 "growth": growth, "list_price": list_p, "real_price": real_p, "local_img": None
             })
@@ -271,12 +273,13 @@ class SkinSystem:
                     if not raw or raw == '0': break
                     parts = raw.split()
                     if len(parts) < 2: continue
-                    if parts[0] == '1':
-                        item['score'] = float(parts[1])
-                    elif parts[0] == '2':
-                        item['growth'] = float(parts[1])
-                    elif parts[0] == '3':
-                        item['real_price'] = float(parts[1])
+                    opt, val_raw = parts[0], parts[1]
+                    if opt == '1':
+                        item['score'] = float(val_raw) if val_raw != 'null' else None
+                    elif opt == '2':
+                        item['growth'] = float(val_raw)
+                    elif opt == '3':
+                        item['real_price'] = float(val_raw)
                     item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
                                                                     item.get('real_price', 0))
                 self.save_data();
@@ -371,14 +374,15 @@ class SkinSystem:
         .quality-icon.brave-small { transform: scale(0.8); }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
+
+        .name-container { display: flex; flex-direction: column; gap: 2px; }
+        .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .badge { 
             display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
             font-weight: 900; border-radius: 3px; text-transform: uppercase;
         }
         .badge-new { background: #ffd700; color: #000; }
         .badge-return { background: #1d4ed8; color: #fff; }
-        .name-container { display: flex; flex-direction: column; gap: 2px; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
         .box-style { 
             display: inline-block; width: 75px; padding: 4px 0; 
@@ -474,7 +478,11 @@ class SkinSystem:
                             {% endif %}
                         </td>
                         <td data-val="{{ skin.list_price }}" style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
-                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="background-color: {{ rb }};">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</td>
+                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="background-color: {{ rb }};">
+                            <div class="box-style">
+                                {% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -484,6 +492,7 @@ class SkinSystem:
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
+    document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
     // 🔥 GIF同步：页面加载后强制重置GIF源
     window.onload = () => {
@@ -562,7 +571,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.90 (终极同步+四图+全修复版)")
+        print("👑 王者荣耀榜单 V19.91 (视觉统一全量版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
