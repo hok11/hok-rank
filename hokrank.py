@@ -418,15 +418,18 @@ class SkinSystem:
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
+
+        /* 🔥 移除锁定左上角的代码，恢复弹性居中展示和左右滑动能力 */
         @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.7; -moz-transform: scale(0.7); -moz-transform-origin: top center; }
-            body { padding: 5px; }
+            .chart-card { zoom: 0.7; }
+            body { padding: 5px; align-items: center; }
         }
+
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .chart-header h1 { font-size: 24px; font-weight: 800; }
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
         th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -441,13 +444,13 @@ class SkinSystem:
         .dropdown-menu.show { display: block; }
         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .dropdown-item:hover { background: #f5f5f5; }
-        .sort-btn { cursor: pointer; color: #ccc; font-size: 12px; padding: 0 4px; }
+
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
         .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        td { padding: 12px 2px; vertical-align: middle; text-align: center; white-space: nowrap; border: none; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
@@ -482,9 +485,7 @@ class SkinSystem:
                                     <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
                                     <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
                                     {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                    <label class="dropdown-item">
-                                        <input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}
-                                    </label>
+                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
                                     {% endfor %}
                                 </div>
                                 <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -557,6 +558,7 @@ class SkinSystem:
         const main = document.getElementById('selectAll');
         const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
+
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
@@ -567,6 +569,7 @@ class SkinSystem:
             });
         }
     }
+
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
@@ -611,7 +614,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.64 (图片修复+完整逻辑版)")
+        print("👑 王者荣耀榜单 V19.65 (全显+左右滑动解锁)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
