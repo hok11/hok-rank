@@ -12,15 +12,25 @@
         @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
-        /* 🔥 标题栏：支持右侧GIF */
-        .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; position: relative; }
-        .chart-header h1 { font-size: 24px; font-weight: 800; }
-        .header-gif { 
-            position: absolute; right: 20px; top: 50%; transform: translateY(-50%); 
-            width: 60px; height: 60px; border-radius: 8px; object-fit: cover; 
-            border: 2px solid rgba(255,255,255,0.5); 
+        /* 🔥 标题栏：Flex布局实现左2右2 */
+        .chart-header { 
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
+            display: flex; align-items: center; justify-content: center; gap: 20px;
         }
-        @media screen and (max-width: 600px) { .header-gif { width: 40px; height: 40px; right: 10px; } }
+        .header-content { text-align: center; flex: 1; }
+        .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2; }
+        .header-content p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+
+        .header-gifs-container { display: flex; gap: 10px; align-items: center; }
+        .header-gif { 
+            width: 55px; height: 55px; border-radius: 8px; object-fit: cover; 
+            border: 2px solid rgba(255,255,255,0.4); 
+            background: rgba(255,255,255,0.1);
+        }
+        @media screen and (max-width: 600px) { 
+            .chart-header { flex-direction: column; gap: 10px; padding: 15px; }
+            .header-gif { width: 40px; height: 40px; }
+        }
 
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
@@ -41,18 +51,19 @@
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
-        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
 
-        /* 🔥 角标位置与样式修正 */
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
+        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .badge { 
+            position: absolute; top: -6px; left: 60px; padding: 2px 6px; font-size: 8px; 
+            font-weight: 900; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;
+        }
+        .badge-new { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #fff; }
+        .badge-return { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #fff; } /* 深蓝底 */
+
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
-        .badge { 
-            display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
-            font-weight: 900; border-radius: 3px; text-transform: uppercase;
-        }
-        .badge-new { background: #ffd700; color: #000; }
-        .badge-return { background: #1d4ed8; color: #fff; } /* 银改深蓝 */
 
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
@@ -67,12 +78,22 @@
 <body>
     <div class="chart-card">
         <div class="chart-header">
-            <h1>Honor of Kings Skin Prediction</h1>
-            <p>Update: 2026-01-04 04:44</p>
-            
-            <img src="./show/zhaojun.gif" class="header-gif" alt="Show">
-            
+            <div class="header-gifs-container">
+                <img src="./show/DiaoChan.gif" class="header-gif">
+                <img src="./show/xishi.gif" class="header-gif">
+            </div>
+
+            <div class="header-content">
+                <h1>Honor of Kings Skin Prediction</h1>
+                <p>Update: 2026-01-04 04:51</p>
+            </div>
+
+            <div class="header-gifs-container">
+                <img src="./show/yuhuan.gif" class="header-gif">
+                <img src="./show/zhaojun.gif" class="header-gif">
+            </div>
         </div>
+
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -133,10 +154,10 @@
                             </div>
                         </div></td>
                         <td data-val="200.0" style="background-color: #f3e8ff;">
-                            <span>200.0</span>
+                            200.0
                         </td>
                         <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>200.0</span>
+                            200.0
                         </td>
                         <td data-val="3.3" style="background-color: #f3e8ff;">
                             
@@ -168,10 +189,10 @@
                             </div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
-                            <span>117.4</span>
+                            117.4
                         </td>
                         <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>117.4</span>
+                            117.4
                         </td>
                         <td data-val="0.1" style="background-color: #f3e8ff;">
                             
@@ -203,10 +224,10 @@
                             </div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
-                            <span>80.8</span>
+                            80.8
                         </td>
                         <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">
-                            <span>80.8</span>
+                            80.8
                         </td>
                         <td data-val="3.0" style="background-color: #f3e8ff;">
                             
@@ -239,10 +260,10 @@
                             </div>
                         </div></td>
                         <td data-val="59.0" style="background-color: #ffffff;">
-                            <span>59.0</span>
+                            59.0
                         </td>
                         <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">
-                            <span>34.6</span>
+                            34.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -271,10 +292,10 @@
                             </div>
                         </div></td>
                         <td data-val="44.1" style="background-color: #ffffff;">
-                            <span>44.1</span>
+                            44.1
                         </td>
                         <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">
-                            <span>5.4</span>
+                            5.4
                         </td>
                         <td data-val="4.2" style="background-color: #ffffff;">
                             
@@ -306,10 +327,10 @@
                             </div>
                         </div></td>
                         <td data-val="33.1" style="background-color: #ffffff;">
-                            <span>33.1</span>
+                            33.1
                         </td>
                         <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">
-                            <span>4.1</span>
+                            4.1
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -338,10 +359,10 @@
                             </div>
                         </div></td>
                         <td data-val="24.6" style="background-color: #ffffff;">
-                            <span>24.6</span>
+                            24.6
                         </td>
                         <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">
-                            <span>3.0</span>
+                            3.0
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -370,10 +391,10 @@
                             </div>
                         </div></td>
                         <td data-val="20.9" style="background-color: #ffffff;">
-                            <span>20.9</span>
+                            20.9
                         </td>
                         <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">
-                            <span>2.6</span>
+                            2.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
                             <div class="box-style">--</div>
@@ -401,10 +422,10 @@
                             </div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
-                            <span>17.7</span>
+                            17.7
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="0.0" style="background-color: #e0f2fe;">
                             <div class="box-style">--</div>
@@ -432,10 +453,10 @@
                             </div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
-                            <span>12.0</span>
+                            12.0
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="100.0" style="background-color: #ffffff;">
                             
@@ -467,10 +488,10 @@
                             </div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
-                            <span>7.2</span>
+                            7.2
                         </td>
                         <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
-                            <span>--</span>
+                            --
                         </td>
                         <td data-val="-100.0" style="background-color: #e0f2fe;">
                             
@@ -503,10 +524,10 @@
                             </div>
                         </div></td>
                         <td data-val="-9999999" style="background-color: #ffffff;">
-                            <span class="pts-null">Null</span>
+                            --
                         </td>
                         <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
-                            <span class="pts-null">Null</span>
+                            --
                         </td>
                         <td data-val="1.9" style="background-color: #ffffff;">
                             
@@ -529,27 +550,28 @@
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
-    /* 🔥 GIF 优先级机制修复 */
+    /* 🔥 GIF 优先级机制核心修复 */
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
-        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
+        if (img.src.indexOf('.gif') !== -1) { 
+            img.src = './images/' + q + '.jpg'; // gif不存在，找本品质jpg
+        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
+            let qv = parseFloat(q); 
+            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg'; // 本品质jpg不存在，找1.jpg
         }
     }
+
     function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
-        const main = document.getElementById('selectAll');
         const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const main = document.getElementById('selectAll');
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
         } else {
             btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
-                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
-            });
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => { r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none"; });
         }
     }
     function sortTable(n, type) {
