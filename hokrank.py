@@ -368,11 +368,6 @@ class SkinSystem:
             white-space: nowrap; 
         }
 
-        td:first-child {
-            padding: 0 !important;
-            height: 1px;
-        }
-
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
@@ -397,19 +392,21 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.2 赛博风格：黑底 + 荧光绿字 + 深紫边框 */
+        /* 🔥 V20.4：inline-block 结构，纯视觉霓虹换肤 */
         .rank-box { 
-            display: flex; 
-            width: 100%; height: 100%; 
-            align-items: center; justify-content: center; 
-            padding: 12px 0; 
-            border: 4px solid #4c1d95; /* 深紫边框 */
-            background: #000000;       /* 纯黑填充 */
-            color: #39ff14;            /* 荧光绿文字 */
-            font-weight: 900; 
+            display: inline-block; 
+            min-width: 18px; 
+            padding: 2px 6px; 
+
+            /* 新皮肤：深紫框(4px) + 紫底渐变 + 蓝字(20px) */
+            border: 4px solid #3c096c; 
+            background: linear-gradient(180deg, #7b2cbf 0%, #5a189a 100%); 
+            color: #00f2ff; 
             font-size: 20px; 
-            border-radius: 0; 
-            box-sizing: border-box; 
+            font-weight: 900; 
+
+            border-radius: 4px; /* 可改为0变直角 */
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
         }
 
         .badge { 
@@ -610,7 +607,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V20.2 (赛博夜视仪版)")
+        print("👑 王者荣耀榜单 V20.4 (完整修正版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
