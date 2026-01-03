@@ -146,6 +146,7 @@ class SkinSystem:
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
+    # ================= 业务逻辑 =================
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
@@ -156,6 +157,7 @@ class SkinSystem:
         active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
         return active[:LEADERBOARD_CAPACITY]
 
+    # ================= 打印逻辑 =================
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None: data_list = self.get_total_skins()
         print(f"\n====== 🏆 {title} (Items: {len(data_list)}) ======")
@@ -355,6 +357,7 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
+        /* 🔥 表头样式：透明背景，紫色底线 */
         th { 
             text-align: center; 
             padding: 8px 2px; 
@@ -364,12 +367,6 @@ class SkinSystem:
             border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
-        }
-
-        /* 🔥 V20.0 关键修改：移除 No. 列单元格的默认内边距，强制高度，实现满填充 */
-        td:first-child {
-            padding: 0 !important;
-            height: 1px; /* Hack: 强制单元格高度跟随内部元素 */
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -386,9 +383,9 @@ class SkinSystem:
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
-        .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); }
-        .quality-icon.brave-small { transform: scale(0.9); }
+        .quality-icon.legend-big { transform: scale(1.2); } /* 传说放大1.2 */
+        .quality-icon.epic-medium { transform: scale(1.1); } /* 史诗/传说限定放大1.1 */
+        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者放大0.9 */
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -396,19 +393,17 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.0 关键修改：排名框占满单元格，深紫色边框，超大字体 */
+        /* 🔥 排名角标样式：深紫黑边框，瘦长矩形，镂空效果 */
         .rank-box { 
-            display: flex;              /* 使用 Flex 布局 */
-            width: 100%; height: 100%;  /* 占满单元格宽高 */
-            align-items: center; justify-content: center; /* 完美居中 */
-            padding: 12px 0;            /* 上下内边距撑开高度 */
-            border: 3px solid #4c1d95;  /* 深紫色加粗边框 */
-            background: transparent;    /* 镂空 */
-            color: #000;                /* 黑色字体 */
+            display: inline-block; 
+            min-width: 18px; 
+            padding: 2px 4px; /* 紧凑内边距 */
+            border: 2px solid #1a0b2e; /* 深紫黑色边框 */
+            background: transparent;   /* 无填充，镂空 */
+            color: #000;               /* 黑色字体 */
             font-weight: 900; 
-            font-size: 24px;            /* 超大字体 */
-            border-radius: 0;           /* 直角 */
-            box-sizing: border-box;     /* 边框计入宽高 */
+            font-size: 16px; 
+            border-radius: 0;          /* 直角，长方形 */
         }
 
         .badge { 
@@ -532,12 +527,13 @@ class SkinSystem:
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
+    // 🔥 GIF同步：页面加载后强制重置GIF源
     window.onload = () => {
         sortTable(3, 'float');
         const gifs = document.querySelectorAll('.header-gif');
         if (gifs.length > 0) {
             gifs.forEach(g => {
-                let s = g.src; g.src = ''; g.src = s;
+                let s = g.src; g.src = ''; g.src = s; // 强制重载
             });
         }
     };
@@ -608,7 +604,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V20.0 (完美刻度版)")
+        print("👑 王者荣耀榜单 V19.99 (界面精修定稿版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
