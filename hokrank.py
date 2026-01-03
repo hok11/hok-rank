@@ -357,7 +357,6 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 表头样式：透明背景，紫色底线 */
         th { 
             text-align: center; 
             padding: 8px 2px; 
@@ -367,6 +366,12 @@ class SkinSystem:
             border-bottom: 3px solid #6366f1; 
             font-size: 13px;
             white-space: nowrap; 
+        }
+
+        /* 🔥 V20.1：保持 No.列单元格满填充 */
+        td:first-child {
+            padding: 0 !important;
+            height: 1px; /* Hack: 强制单元格高度跟随内部元素 */
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -383,9 +388,9 @@ class SkinSystem:
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
-        .quality-icon.legend-big { transform: scale(1.2); } /* 传说放大1.2 */
-        .quality-icon.epic-medium { transform: scale(1.1); } /* 史诗/传说限定放大1.1 */
-        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者放大0.9 */
+        .quality-icon.legend-big { transform: scale(1.2); }
+        .quality-icon.epic-medium { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -393,17 +398,19 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 排名角标样式：深紫黑边框，瘦长矩形，镂空效果 */
+        /* 🔥 V20.1 关键修改：排名框字体放大至20px，边框加粗至4px */
         .rank-box { 
-            display: inline-block; 
-            min-width: 18px; 
-            padding: 2px 4px; /* 紧凑内边距 */
-            border: 2px solid #1a0b2e; /* 深紫黑色边框 */
-            background: transparent;   /* 无填充，镂空 */
-            color: #000;               /* 黑色字体 */
+            display: flex; 
+            width: 100%; height: 100%; 
+            align-items: center; justify-content: center; 
+            padding: 12px 0; 
+            border: 4px solid #4c1d95; /* 3px -> 4px */
+            background: transparent; 
+            color: #000; 
             font-weight: 900; 
-            font-size: 16px; 
-            border-radius: 0;          /* 直角，长方形 */
+            font-size: 20px;           /* 16px -> 20px */
+            border-radius: 0; 
+            box-sizing: border-box; 
         }
 
         .badge { 
@@ -604,7 +611,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.99 (界面精修定稿版)")
+        print("👑 王者荣耀榜单 V20.1 (最终形态)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
