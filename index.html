@@ -3,17 +3,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
-        /* 🔥 针对手机端的整体缩放 */
+        /* 🔥 深度缩放适配手机端 */
         @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.85; -moz-transform: scale(0.85); -moz-transform-origin: top center; }
-            body { padding: 10px; }
+            .chart-card { 
+                zoom: 0.7; 
+                -moz-transform: scale(0.7); 
+                -moz-transform-origin: top center; 
+            }
+            body { padding: 5px; }
         }
 
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
@@ -21,23 +25,22 @@
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
         .table-container { width: 100%; overflow-x: visible; }
-        table { width: 96%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
-        th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
-        td { padding: 12px 6px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
+        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 40px; color: #333; }
-        .quality-col { width: 80px; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
+        .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-        .data-col { font-weight: 700; font-size: 15px; width: 80px; }
+        .data-col { font-weight: 700; font-size: 15px; width: 75px; }
         .real-pts { color: #6366f1; } 
-        .missing-data { color: #ccc; font-weight: 400; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .text-red { color: #b91c1c; } .text-black { color: #1f2937; } .text-green { color: #15803d; } .text-orange { color: #ff9900; } 
         .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; } .bg-price { color: #333; } 
@@ -47,7 +50,7 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 16:21</p>
+            <p>Last updated: 2026-01-03 16:24</p>
         </div>
         <div class="table-container">
             <table>
@@ -64,7 +67,7 @@
                     
                     <tr>
                         <td class="rank-col">1</td>
-                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
+                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
                             <div class="song-col">
                                 
@@ -77,15 +80,15 @@
                         </td>
                         <td class="data-col" style="background-color: #f3e8ff;">200.0</td>
                         <td class="data-col real-pts" style="background-color: #f3e8ff;">200.0</td>
-                        <td style="width: 80px; background-color: #f3e8ff;">
+                        <td style="width: 75px; background-color: #f3e8ff;">
                             
                                  
                                 
                                 <div class="box-style text-black">+3.3%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                     </tr>
                     
                     
@@ -93,7 +96,7 @@
                     
                     <tr>
                         <td class="rank-col">2</td>
-                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
+                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
                             <div class="song-col">
                                 
@@ -106,15 +109,15 @@
                         </td>
                         <td class="data-col" style="background-color: #f3e8ff;">117.4</td>
                         <td class="data-col real-pts" style="background-color: #f3e8ff;">117.4</td>
-                        <td style="width: 80px; background-color: #f3e8ff;">
+                        <td style="width: 75px; background-color: #f3e8ff;">
                             
                                  
                                 
                                 <div class="box-style text-black">+0.1%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                     </tr>
                     
                     
@@ -122,7 +125,7 @@
                     
                     <tr>
                         <td class="rank-col">3</td>
-                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon wushuang-big"></td>
+                        <td class="quality-col"><img src="./images/1.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
                             <div class="song-col">
                                 
@@ -135,22 +138,22 @@
                         </td>
                         <td class="data-col" style="background-color: #f3e8ff;">80.8</td>
                         <td class="data-col real-pts" style="background-color: #f3e8ff;">80.8</td>
-                        <td style="width: 80px; background-color: #f3e8ff;">
+                        <td style="width: 75px; background-color: #f3e8ff;">
                             
                                  
                                 
                                 <div class="box-style text-black">+3.0%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #f3e8ff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥400.0</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #f3e8ff;"><div class="box-style bg-price">¥400.0</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">4</td>
-                        <td class="quality-col"><img src="./images/4.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/4.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -163,18 +166,18 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">59.0</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;">34.6</td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             <div class="box-style bg-none">--</div>
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥168.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥99.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥168.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-price">¥99.0</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">5</td>
-                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -187,22 +190,22 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">44.1</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;">5.4</td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             
                                  
                                 
                                 <div class="box-style text-black">+4.2%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">6</td>
-                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -215,18 +218,18 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">33.1</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;">4.1</td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             <div class="box-style bg-none">--</div>
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">7</td>
-                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -239,18 +242,18 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">24.6</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;">3.0</td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             <div class="box-style bg-none">--</div>
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">8</td>
-                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/6.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -263,11 +266,11 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">20.9</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;">2.6</td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             <div class="box-style bg-none">--</div>
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥48.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-price">¥6.0</div></td>
                     </tr>
                     
                     
@@ -275,7 +278,7 @@
                     
                     <tr>
                         <td class="rank-col">9</td>
-                        <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #e0f2fe;">
                             <div class="song-col">
                                 
@@ -288,18 +291,18 @@
                         </td>
                         <td class="data-col" style="background-color: #e0f2fe;">17.7</td>
                         <td class="data-col real-pts" style="background-color: #e0f2fe;"><span class="missing-data">--</span></td>
-                        <td style="width: 80px; background-color: #e0f2fe;">
+                        <td style="width: 75px; background-color: #e0f2fe;">
                             <div class="box-style bg-none">--</div>
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
                     </tr>
                     
                     
                     
                     <tr>
                         <td class="rank-col">10</td>
-                        <td class="quality-col"><img src="./images/5.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/5.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
                                 
@@ -312,15 +315,15 @@
                         </td>
                         <td class="data-col" style="background-color: #ffffff;">12.0</td>
                         <td class="data-col real-pts" style="background-color: #ffffff;"><span class="missing-data">--</span></td>
-                        <td style="width: 80px; background-color: #ffffff;">
+                        <td style="width: 75px; background-color: #ffffff;">
                             
                                  
                                 
                                 <div class="box-style text-orange">+100.0%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #ffffff;"><div class="box-style bg-none">--</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #ffffff;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥88.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #ffffff;"><div class="box-style bg-none">--</div></td>
                     </tr>
                     
                     
@@ -328,7 +331,7 @@
                     
                     <tr>
                         <td class="rank-col">11</td>
-                        <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon "></td>
+                        <td class="quality-col"><img src="./images/3.5.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: #e0f2fe;">
                             <div class="song-col">
                                 
@@ -341,15 +344,15 @@
                         </td>
                         <td class="data-col" style="background-color: #e0f2fe;">7.2</td>
                         <td class="data-col real-pts" style="background-color: #e0f2fe;"><span class="missing-data">--</span></td>
-                        <td style="width: 80px; background-color: #e0f2fe;">
+                        <td style="width: 75px; background-color: #e0f2fe;">
                             
                                  
                                 
                                 <div class="box-style text-red">-100.0%</div>
                             
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
+                        <td style="width: 75px; padding-right:2px; background-color: #e0f2fe;"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥178.8</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: #e0f2fe;"><div class="box-style bg-none">--</div></td>
                     </tr>
                     
                 </tbody>

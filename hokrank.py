@@ -395,23 +395,27 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 修改点：viewport 缩放 + CSS zoom，整体缩小界面
+        # 🔥 V19.41 核心改进：深度缩放 initial-scale 调整至 0.6，zoom 调整至 0.7
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
-        /* 🔥 针对手机端的整体缩放 */
+        /* 🔥 深度缩放适配手机端 */
         @media screen and (max-width: 600px) {
-            .chart-card { zoom: 0.85; -moz-transform: scale(0.85); -moz-transform-origin: top center; }
-            body { padding: 10px; }
+            .chart-card { 
+                zoom: 0.7; 
+                -moz-transform: scale(0.7); 
+                -moz-transform-origin: top center; 
+            }
+            body { padding: 5px; }
         }
 
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
@@ -419,23 +423,22 @@ class SkinSystem:
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
         .table-container { width: 100%; overflow-x: visible; }
-        table { width: 96%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
-        th { text-align: center; padding: 12px 6px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
-        td { padding: 12px 6px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
+        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .rank-col { font-weight: 800; font-size: 18px; width: 40px; color: #333; }
-        .quality-col { width: 80px; text-align: center; }
+        .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
+        .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.4); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 10px; min-width: 200px; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
         .artist-name { font-size: 12px; color: #666; font-weight: 500; }
-        .data-col { font-weight: 700; font-size: 15px; width: 80px; }
+        .data-col { font-weight: 700; font-size: 15px; width: 75px; }
         .real-pts { color: #6366f1; } 
-        .missing-data { color: #ccc; font-weight: 400; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .text-red { color: #b91c1c; } .text-black { color: #1f2937; } .text-green { color: #15803d; } .text-orange { color: #ff9900; } 
         .bg-none { background-color: #f3f4f6; color: #888; box-shadow: none; font-weight: 400; } .bg-price { color: #333; } 
@@ -466,7 +469,7 @@ class SkinSystem:
                     {% endif %}
                     <tr>
                         <td class="rank-col">{{ loop.index }}</td>
-                        <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality <= 1 else '' }}"></td>
+                        <td class="quality-col"><img src="./images/{{ skin.quality }}.jpg" class="quality-icon"></td>
                         <td class="rounded-left" style="background-color: {{ row_bg }};">
                             <div class="song-col">
                                 {% set placeholder_bg = 'f3f4f6' %}
@@ -479,15 +482,15 @@ class SkinSystem:
                         </td>
                         <td class="data-col" style="background-color: {{ row_bg }};">{{ skin.score }}</td>
                         <td class="data-col real-pts" style="background-color: {{ row_bg }};">{% if skin.real_score %}{{ skin.real_score }}{% else %}<span class="missing-data">--</span>{% endif %}</td>
-                        <td style="width: 80px; background-color: {{ row_bg }};">
+                        <td style="width: 75px; background-color: {{ row_bg }};">
                             {% if skin.growth != 0 %}
                                 {% set g_cls = 'text-black' %} 
                                 {% if skin.growth >= 100 %}{% set g_cls = 'text-orange' %}{% elif skin.growth < 0 %}{% set g_cls = 'text-red' %}{% elif skin.growth >= 10 %}{% set g_cls = 'text-orange' %}{% elif skin.growth > 5 %}{% set g_cls = 'text-green' %}{% endif %}
                                 <div class="box-style {{ g_cls }}">{{ '+' if skin.growth > 0 else '' }}{{ skin.growth }}%</div>
                             {% else %}<div class="box-style bg-none">--</div>{% endif %}
                         </td>
-                        <td style="width: 80px; padding-right:5px; background-color: {{ row_bg }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
-                        <td class="rounded-right" style="width: 80px; padding-right:10px; background-color: {{ row_bg }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
+                        <td style="width: 75px; padding-right:2px; background-color: {{ row_bg }};"><div class="box-style bg-none" style="background-color: transparent; box-shadow:none; color:#333;">¥{{ skin.list_price }}</div></td>
+                        <td class="rounded-right" style="width: 75px; padding-right:5px; background-color: {{ row_bg }};">{% if skin.real_price > 0 %}<div class="box-style bg-price">¥{{ skin.real_price }}</div>{% else %}<div class="box-style bg-none">--</div>{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -525,7 +528,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.36 (界面比例缩放适配)")
+        print("👑 王者荣耀榜单 V19.41 (极致界面缩放)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
