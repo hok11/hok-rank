@@ -89,6 +89,7 @@ class SkinSystem:
         self._migrate_data_structure()
 
     def _get_list_price_by_quality(self, q_code):
+        # 3.5 (传限): 178.8 | 4 (传说): 168.8 | 6 (勇者): 48.8
         mapping = {0: 800.0, 1: 400.0, 2: 600.0, 3: 200.0, 3.5: 178.8, 4: 168.8, 5: 88.8, 6: 48.8}
         return mapping.get(q_code, 0.0)
 
@@ -403,7 +404,8 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        quality_map = {0: "珍品无双", 1: "无双", 2: "典藏", 3: "荣耀无双", 3.5: "传说限定", 4: "传说", 5: "史诗",
+        # 🔥 映射修正点
+        quality_map = {0: "珍品无双", 1: "无双", 2: "荣耀典藏", 3: "珍品传说", 3.5: "传说限定", 4: "传说", 5: "史诗",
                        6: "勇者"}
         html_template = """
 <!DOCTYPE html>
@@ -439,16 +441,19 @@ class SkinSystem:
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
-        .filter-select { display: block; width: 85%; margin: 5px auto 0; font-size: 10px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; color: #333; font-weight: bold; }
+        /* 🔥 筛选框样式：右侧布局 */
+        .filter-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; cursor: default; }
+        .filter-select { 
+            font-size: 10px; border-radius: 4px; border: 1px solid #ddd; padding: 2px 5px; color: #333; font-weight: bold; cursor: pointer;
+        }
 
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
-        .quality-col { width: 60px; text-align: center; }
+        .quality-col { width: 120px; text-align: center; } /* 拓宽以容纳图标+下拉框 */
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 🔥 品质图标缩放逻辑 */
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
         .quality-icon.legend-big { transform: scale(1.1); }
@@ -476,18 +481,21 @@ class SkinSystem:
                 <thead>
                     <tr>
                         <th onclick="sortTable(0, 'int')">No</th>
-                        <th>Qual
-                            <select class="filter-select" onclick="event.stopPropagation()" onchange="filterTable(this.value)">
-                                <option value="all">全部品质</option>
-                                <option value="珍品无双">珍品无双</option>
-                                <option value="无双">无双</option>
-                                <option value="典藏">典藏</option>
-                                <option value="荣耀无双">荣耀无双</option>
-                                <option value="传说限定">传说限定</option>
-                                <option value="传说">传说</option>
-                                <option value="史诗">史诗</option>
-                                <option value="勇者">勇者</option>
-                            </select>
+                        <th style="cursor:default;">
+                            <div class="filter-wrapper">
+                                <span onclick="sortTable(1, 'float')" style="cursor:pointer">图标</span>
+                                <select class="filter-select" onchange="filterTable(this.value)">
+                                    <option value="all">筛选</option>
+                                    <option value="珍品无双">珍品无双</option>
+                                    <option value="无双">无双</option>
+                                    <option value="荣耀典藏">荣耀典藏</option>
+                                    <option value="珍品传说">珍品传说</option>
+                                    <option value="传说限定">传说限定</option>
+                                    <option value="传说">传说</option>
+                                    <option value="史诗">史诗</option>
+                                    <option value="勇者">勇者</option>
+                                </select>
+                            </div>
                         </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th onclick="sortTable(3, 'float')">Rank Pts</th>
@@ -592,7 +600,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.52 (指令还原+精准视觉)")
+        print("👑 王者荣耀榜单 V19.53 (界面大改+映射修复)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
