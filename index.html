@@ -19,11 +19,10 @@
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
 
-        /* 🔥 表头排序样式 */
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
             text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
@@ -33,6 +32,8 @@
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
+        .filter-select { display: block; width: 85%; margin: 5px auto 0; font-size: 10px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; color: #333; font-weight: bold; }
+
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
@@ -40,9 +41,11 @@
         .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 🔥 品质图标样式与放大逻辑 */
+        /* 🔥 品质图标缩放逻辑 */
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
-        .quality-icon.wushuang-big { transform: scale(1.4); }
+        .quality-icon.wushuang-big { transform: scale(1.45); }
+        .quality-icon.legend-big { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.8); }
 
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
@@ -59,14 +62,26 @@
     <div class="chart-card">
         <div class="chart-header">
             <h1>Honor of Kings Skin Revenue Prediction</h1>
-            <p>Last updated: 2026-01-03 17:11</p>
+            <p>Last updated: 2026-01-03 17:16</p>
         </div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
                     <tr>
                         <th onclick="sortTable(0, 'int')">No</th>
-                        <th onclick="sortTable(1, 'float')">Qual</th>
+                        <th>Qual
+                            <select class="filter-select" onclick="event.stopPropagation()" onchange="filterTable(this.value)">
+                                <option value="all">全部品质</option>
+                                <option value="珍品无双">珍品无双</option>
+                                <option value="无双">无双</option>
+                                <option value="典藏">典藏</option>
+                                <option value="荣耀无双">荣耀无双</option>
+                                <option value="传说限定">传说限定</option>
+                                <option value="传说">传说</option>
+                                <option value="史诗">史诗</option>
+                                <option value="勇者">勇者</option>
+                            </select>
+                        </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th onclick="sortTable(4, 'float')">Real Pts</th>
@@ -79,9 +94,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="无双">
                         <td class="rank-col">1</td>
                         <td class="quality-col" data-val="1">
+                            
+                            
+                            
                             <img src="./images/1.jpg" class="quality-icon wushuang-big">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
@@ -107,9 +125,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="无双">
                         <td class="rank-col">2</td>
                         <td class="quality-col" data-val="1">
+                            
+                            
+                            
                             <img src="./images/1.jpg" class="quality-icon wushuang-big">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
@@ -135,9 +156,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="无双">
                         <td class="rank-col">3</td>
                         <td class="quality-col" data-val="1">
+                            
+                            
+                            
                             <img src="./images/1.jpg" class="quality-icon wushuang-big">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;">
@@ -163,10 +187,13 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="传说">
                         <td class="rank-col">4</td>
                         <td class="quality-col" data-val="4">
-                            <img src="./images/4.jpg" class="quality-icon ">
+                            
+                            
+                            
+                            <img src="./images/4.jpg" class="quality-icon legend-big">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
@@ -188,10 +215,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="勇者">
                         <td class="rank-col">5</td>
                         <td class="quality-col" data-val="6">
-                            <img src="./images/6.jpg" class="quality-icon ">
+                            
+                            
+                            <img src="./images/6.jpg" class="quality-icon brave-small">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
@@ -216,10 +245,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="勇者">
                         <td class="rank-col">6</td>
                         <td class="quality-col" data-val="6">
-                            <img src="./images/6.jpg" class="quality-icon ">
+                            
+                            
+                            <img src="./images/6.jpg" class="quality-icon brave-small">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
@@ -241,10 +272,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="勇者">
                         <td class="rank-col">7</td>
                         <td class="quality-col" data-val="6">
-                            <img src="./images/6.jpg" class="quality-icon ">
+                            
+                            
+                            <img src="./images/6.jpg" class="quality-icon brave-small">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
@@ -266,10 +299,12 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="勇者">
                         <td class="rank-col">8</td>
                         <td class="quality-col" data-val="6">
-                            <img src="./images/6.jpg" class="quality-icon ">
+                            
+                            
+                            <img src="./images/6.jpg" class="quality-icon brave-small">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
                             <div class="song-col">
@@ -291,9 +326,11 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="传说限定">
                         <td class="rank-col">9</td>
                         <td class="quality-col" data-val="3.5">
+                            
+                            
                             <img src="./images/3.5.jpg" class="quality-icon ">
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;">
@@ -316,9 +353,11 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="史诗">
                         <td class="rank-col">10</td>
                         <td class="quality-col" data-val="5">
+                            
+                            
                             <img src="./images/5.jpg" class="quality-icon ">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;">
@@ -344,9 +383,11 @@
                     
                     
                     
-                    <tr>
+                    <tr data-quality="传说限定">
                         <td class="rank-col">11</td>
                         <td class="quality-col" data-val="3.5">
+                            
+                            
                             <img src="./images/3.5.jpg" class="quality-icon ">
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;">
@@ -377,25 +418,26 @@
 
     <script>
     function sortTable(n, type) {
-        var table = document.getElementById("skinTable"), 
-            rows = Array.from(table.rows).slice(1), 
-            headers = table.getElementsByTagName("TH"),
-            dir = "desc";
-
+        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (n === 1) dir = "asc";
-        if (headers[n].classList.contains("sort-desc")) dir = "asc";
-        else if (headers[n].classList.contains("sort-asc")) dir = "desc";
-
+        if (headers[n].classList.contains("sort-desc")) dir = "asc"; else if (headers[n].classList.contains("sort-asc")) dir = "desc";
         rows.sort((a, b) => {
             var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             if (isNaN(xVal)) xVal = -999999; if (isNaN(yVal)) yVal = -999999;
             return dir === "asc" ? xVal - yVal : yVal - xVal;
         });
-
         rows.forEach(row => table.tBodies[0].appendChild(row));
-        for (var j = 0; j < headers.length; j++) headers[j].classList.remove("sort-asc", "sort-desc");
-        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+        for (var j = 0; j < headers.length; j++) { if(headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
+        if(headers[n]) headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+    }
+
+    function filterTable(val) {
+        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1);
+        rows.forEach(row => {
+            if (val === "all" || row.getAttribute("data-quality") === val) { row.style.display = ""; } 
+            else { row.style.display = "none"; }
+        });
     }
     window.onload = function() { sortTable(3, 'float'); };
     </script>

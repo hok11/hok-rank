@@ -89,7 +89,6 @@ class SkinSystem:
         self._migrate_data_structure()
 
     def _get_list_price_by_quality(self, q_code):
-        # 3.5 (传限): 178.8 | 4 (传说): 168.8 | 6 (勇者): 48.8
         mapping = {0: 800.0, 1: 400.0, 2: 600.0, 3: 200.0, 3.5: 178.8, 4: 168.8, 5: 88.8, 6: 48.8}
         return mapping.get(q_code, 0.0)
 
@@ -404,6 +403,8 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
+        quality_map = {0: "珍品无双", 1: "无双", 2: "典藏", 3: "荣耀无双", 3.5: "传说限定", 4: "传说", 5: "史诗",
+                       6: "勇者"}
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -425,11 +426,10 @@ class SkinSystem:
         .chart-header { background: var(--header-bg); padding: 25px 20px; text-align: center; color: white; margin-bottom: 10px; }
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
 
-        /* 🔥 表头排序样式 */
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
             text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
@@ -439,6 +439,8 @@ class SkinSystem:
         th.sort-asc::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc::after { content: ' ▼'; color: #6366f1; }
 
+        .filter-select { display: block; width: 85%; margin: 5px auto 0; font-size: 10px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; color: #333; font-weight: bold; }
+
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
@@ -446,9 +448,11 @@ class SkinSystem:
         .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* 🔥 品质图标样式与放大逻辑 */
+        /* 🔥 品质图标缩放逻辑 */
         .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
-        .quality-icon.wushuang-big { transform: scale(1.4); }
+        .quality-icon.wushuang-big { transform: scale(1.45); }
+        .quality-icon.legend-big { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.8); }
 
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
@@ -472,7 +476,19 @@ class SkinSystem:
                 <thead>
                     <tr>
                         <th onclick="sortTable(0, 'int')">No</th>
-                        <th onclick="sortTable(1, 'float')">Qual</th>
+                        <th>Qual
+                            <select class="filter-select" onclick="event.stopPropagation()" onchange="filterTable(this.value)">
+                                <option value="all">全部品质</option>
+                                <option value="珍品无双">珍品无双</option>
+                                <option value="无双">无双</option>
+                                <option value="典藏">典藏</option>
+                                <option value="荣耀无双">荣耀无双</option>
+                                <option value="传说限定">传说限定</option>
+                                <option value="传说">传说</option>
+                                <option value="史诗">史诗</option>
+                                <option value="勇者">勇者</option>
+                            </select>
+                        </th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th onclick="sortTable(4, 'float')">Real Pts</th>
@@ -485,10 +501,14 @@ class SkinSystem:
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
                     {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
-                    <tr>
+                    <tr data-quality="{{ quality_map[skin.quality] }}">
                         <td class="rank-col">{{ loop.index }}</td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
-                            <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ 'wushuang-big' if skin.quality <= 1 else '' }}">
+                            {% set q_cls = '' %}
+                            {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
+                            {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
+                            {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
+                            <img src="./images/{{ skin.quality }}.jpg" class="quality-icon {{ q_cls }}">
                         </td>
                         <td class="rounded-left" style="background-color: {{ rb }};">
                             <div class="song-col">
@@ -518,25 +538,26 @@ class SkinSystem:
 
     <script>
     function sortTable(n, type) {
-        var table = document.getElementById("skinTable"), 
-            rows = Array.from(table.rows).slice(1), 
-            headers = table.getElementsByTagName("TH"),
-            dir = "desc";
-
+        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (n === 1) dir = "asc";
-        if (headers[n].classList.contains("sort-desc")) dir = "asc";
-        else if (headers[n].classList.contains("sort-asc")) dir = "desc";
-
+        if (headers[n].classList.contains("sort-desc")) dir = "asc"; else if (headers[n].classList.contains("sort-asc")) dir = "desc";
         rows.sort((a, b) => {
             var xVal = parseFloat(a.getElementsByTagName("TD")[n].getAttribute("data-val") || a.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             var yVal = parseFloat(b.getElementsByTagName("TD")[n].getAttribute("data-val") || b.getElementsByTagName("TD")[n].innerText.replace(/[¥%]/g, ''));
             if (isNaN(xVal)) xVal = -999999; if (isNaN(yVal)) yVal = -999999;
             return dir === "asc" ? xVal - yVal : yVal - xVal;
         });
-
         rows.forEach(row => table.tBodies[0].appendChild(row));
-        for (var j = 0; j < headers.length; j++) headers[j].classList.remove("sort-asc", "sort-desc");
-        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+        for (var j = 0; j < headers.length; j++) { if(headers[j]) headers[j].classList.remove("sort-asc", "sort-desc"); }
+        if(headers[n]) headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+    }
+
+    function filterTable(val) {
+        var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1);
+        rows.forEach(row => {
+            if (val === "all" || row.getAttribute("data-quality") === val) { row.style.display = ""; } 
+            else { row.style.display = "none"; }
+        });
     }
     window.onload = function() { sortTable(3, 'float'); };
     </script>
@@ -544,7 +565,7 @@ class SkinSystem:
 </html>
         """
         t = Template(html_template)
-        html_content = t.render(total_skins=self.get_total_skins(),
+        html_content = t.render(total_skins=self.get_total_skins(), quality_map=quality_map,
                                 update_time=datetime.now().strftime("%Y-%m-%d %H:%M"))
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
@@ -571,7 +592,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.50 (功能完整补完版)")
+        print("👑 王者荣耀榜单 V19.52 (指令还原+精准视觉)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
