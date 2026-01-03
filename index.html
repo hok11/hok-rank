@@ -16,11 +16,6 @@
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
         th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
-        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
-        .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
-        .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
-        .dropdown-menu.show { display: block; }
-        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
         .col-sort { cursor: pointer; position: relative; }
         .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
         .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
@@ -33,19 +28,23 @@
         .quality-icon.legend-big { transform: scale(1.1); }
         .quality-icon.brave-small { transform: scale(0.8); }
 
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
+
+        /* 🔥 角标位置修正：名字下方，蓝色底 */
+        .name-container { display: flex; flex-direction: column; gap: 2px; }
+        .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .badge { 
-            position: absolute; top: -6px; right: -8px; padding: 2px 6px; font-size: 8px; 
-            font-weight: 900; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;
+            display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
+            font-weight: 900; border-radius: 3px; text-transform: uppercase;
         }
-        .badge-new { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #fff; }
-        .badge-return { background: linear-gradient(135deg, #e0e0e0, #9e9e9e); color: #333; }
+        .badge-new { background: #ffd700; color: #000; }
+        .badge-return { background: #1d4ed8; color: #fff; } /* 深蓝色底 */
 
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* 🔥 视觉逻辑修复区 */
+        /* 🔥 全配色回归 */
+        .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
         .growth-down { color: #991b1b !important; }
         .growth-up-mid { color: #16a34a !important; }
         .growth-up-high { color: #ea580c !important; }
@@ -54,33 +53,33 @@
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 23:21</p></div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 23:37</p></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
-                        <th><div class="qual-header">
-                            <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
-                            <div id="dropdownMenu" class="dropdown-menu">
-                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                        <th><div class="qual-header" style="position:relative; display:inline-flex; align-items:center;">
+                            <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
+                            <div id="dropdownMenu" class="dropdown-menu" style="display:none; position:absolute; top:110%; left:0; background:#fff; border:1px solid #ddd; z-index:1000; min-width:130px; text-align:left; padding:8px;">
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                <hr style="margin:4px 0">
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
                                 
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
+                                <label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
                                 
                             </div>
                             <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
@@ -108,8 +107,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">孙悟空-无相</span></div>
+                            <div class="name-container">
+                                <span class="song-title">孙悟空-无相</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="200.0" style="background-color: #f3e8ff;">
                             200.0
@@ -141,8 +143,10 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
-                            <span class="badge badge-return">Limit Return</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">甄姬-雪境奇遇</span></div>
+                            <div class="name-container">
+                                <span class="song-title">甄姬-雪境奇遇</span>
+                                <span class="badge badge-return">Limit Return</span>
+                            </div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
                             117.4
@@ -174,8 +178,10 @@
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
-                            <span class="badge badge-return">Limit Return</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">瑶-真我赫兹</span></div>
+                            <div class="name-container">
+                                <span class="song-title">瑶-真我赫兹</span>
+                                <span class="badge badge-return">Limit Return</span>
+                            </div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
                             80.8
@@ -207,8 +213,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">曹操-万灵伏威</span></div>
+                            <div class="name-container">
+                                <span class="song-title">曹操-万灵伏威</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="59.0" style="background-color: #ffffff;">
                             59.0
@@ -236,8 +245,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">安琪拉-糖果风暴</span></div>
+                            <div class="name-container">
+                                <span class="song-title">安琪拉-糖果风暴</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="44.1" style="background-color: #ffffff;">
                             44.1
@@ -268,8 +280,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">孙权-径山谋武</span></div>
+                            <div class="name-container">
+                                <span class="song-title">孙权-径山谋武</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="33.1" style="background-color: #ffffff;">
                             33.1
@@ -297,8 +312,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">蚩姹-极光幻客</span></div>
+                            <div class="name-container">
+                                <span class="song-title">蚩姹-极光幻客</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="24.6" style="background-color: #ffffff;">
                             24.6
@@ -326,8 +344,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">蒙恬-苍云破阵</span></div>
+                            <div class="name-container">
+                                <span class="song-title">蒙恬-苍云破阵</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="20.9" style="background-color: #ffffff;">
                             20.9
@@ -355,8 +376,10 @@
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
-                            <span class="badge badge-return">Limit Return</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">小乔-山海·琳琅生</span></div>
+                            <div class="name-container">
+                                <span class="song-title">小乔-山海·琳琅生</span>
+                                <span class="badge badge-return">Limit Return</span>
+                            </div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
                             17.7
@@ -384,8 +407,10 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
-                            <span class="badge badge-return">Limit Return</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">妲己-热情桑巴</span></div>
+                            <div class="name-container">
+                                <span class="song-title">妲己-热情桑巴</span>
+                                <span class="badge badge-return">Limit Return</span>
+                            </div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
                             12.0
@@ -417,8 +442,10 @@
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
-                            <span class="badge badge-return">Limit Return</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">曜-山海·苍雷引</span></div>
+                            <div class="name-container">
+                                <span class="song-title">曜-山海·苍雷引</span>
+                                <span class="badge badge-return">Limit Return</span>
+                            </div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
                             7.2
@@ -450,8 +477,11 @@
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
-                            <span class="badge badge-new">New Arrive</span>
-                            <div class="song-info"><span class="song-title" style="font-weight:700">大乔-乘龙·忆丹青</span></div>
+                            <div class="name-container">
+                                <span class="song-title">大乔-乘龙·忆丹青</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
                         </div></td>
                         <td data-val="-9999999" style="background-color: #ffffff;">
                             --
@@ -478,26 +508,29 @@
     <script>
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
+
+    /* 🔥 GIF 优先级机制核心修复 */
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
-        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
+        if (img.src.indexOf('.gif') !== -1) { 
+            img.src = './images/' + q + '.jpg'; // gif不存在，找本品质jpg
+        } else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
+            let qv = parseFloat(q); 
+            if (qv >= 0.5 && qv <= 1) img.src = './images/1.jpg'; // 本品质jpg不存在，找1.jpg
         }
     }
+
     function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
-        const main = document.getElementById('selectAll');
         const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const main = document.getElementById('selectAll');
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
             document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
         } else {
             btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
-                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
-            });
+            document.querySelectorAll('#skinTable tbody tr').forEach(r => { r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none"; });
         }
     }
     function sortTable(n, type) {
