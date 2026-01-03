@@ -12,10 +12,8 @@
         @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
-        /* 🔥 V19.98 修正：减少主标题下方的留白 */
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; 
-            margin-bottom: 2px; /* 从 10px 减少到 2px */
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 2px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -36,10 +34,10 @@
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 V19.98 修正：进一步压扁表头高度 */
+        /* 🔥 表头样式：透明背景，紫色底线 */
         th { 
             text-align: center; 
-            padding: 8px 2px; /* 从 10px 减少到 8px */
+            padding: 8px 2px; 
             font-weight: 800; 
             color: #333; 
             background-color: transparent; 
@@ -62,10 +60,9 @@
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
-        /* 🔥 V19.98 修正：图标放大10% */
-        .quality-icon.legend-big { transform: scale(1.2); } /* 传说(4) 1.1 -> 1.2 */
-        .quality-icon.epic-medium { transform: scale(1.1); } /* 新增：史诗(5) & 传说限定(3.5) 放大1.1 */
-        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者(6) 0.8 -> 0.9 */
+        .quality-icon.legend-big { transform: scale(1.2); } /* 传说放大1.2 */
+        .quality-icon.epic-medium { transform: scale(1.1); } /* 史诗/传说限定放大1.1 */
+        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者放大0.9 */
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -73,11 +70,17 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V19.98 修正：排名列样式重构 - 无角标，紫色大数字 */
-        .badge-rank { 
-            color: #6366f1; /* 紫色 */
+        /* 🔥 排名角标样式：深紫黑边框，瘦长矩形，镂空效果 */
+        .rank-box { 
+            display: inline-block; 
+            min-width: 18px; 
+            padding: 2px 4px; /* 紧凑内边距 */
+            border: 2px solid #1a0b2e; /* 深紫黑色边框 */
+            background: transparent;   /* 无填充，镂空 */
+            color: #000;               /* 黑色字体 */
             font-weight: 900; 
-            font-size: 16px; /* 加大字号 */
+            font-size: 16px; 
+            border-radius: 0;          /* 直角，长方形 */
         }
 
         .badge { 
@@ -110,7 +113,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 06:10</p>
+                <p>Update: 2026-01-04 06:17</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -162,7 +165,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="badge-rank">1</span></td>
+                        <td><span class="rank-box">1</span></td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -204,7 +207,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="badge-rank">2</span></td>
+                        <td><span class="rank-box">2</span></td>
                         <td class="quality-col" data-val="0.8">
                             
                             
@@ -245,7 +248,7 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="badge-rank">3</span></td>
+                        <td><span class="rank-box">3</span></td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -286,9 +289,8 @@
                     
                     
                     <tr data-quality="传说">
-                        <td><span class="badge-rank">4</span></td>
+                        <td><span class="rank-box">4</span></td>
                         <td class="quality-col" data-val="4">
-                            
                             
                             
                             
@@ -326,7 +328,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="badge-rank">5</span></td>
+                        <td><span class="rank-box">5</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -367,7 +369,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="badge-rank">6</span></td>
+                        <td><span class="rank-box">6</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -405,7 +407,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="badge-rank">7</span></td>
+                        <td><span class="rank-box">7</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -443,7 +445,7 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="badge-rank">8</span></td>
+                        <td><span class="rank-box">8</span></td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -481,7 +483,7 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td><span class="badge-rank">9</span></td>
+                        <td><span class="rank-box">9</span></td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -519,7 +521,7 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td><span class="badge-rank">10</span></td>
+                        <td><span class="rank-box">10</span></td>
                         <td class="quality-col" data-val="5">
                             
                             
@@ -561,7 +563,7 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td><span class="badge-rank">11</span></td>
+                        <td><span class="rank-box">11</span></td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -603,7 +605,7 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td><span class="badge-rank">12</span></td>
+                        <td><span class="rank-box">12</span></td>
                         <td class="quality-col" data-val="5">
                             
                             

@@ -38,6 +38,7 @@ class SkinCrawler:
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
+            # 🔥 找回被阉割的百度精准接口参数
             params = {
                 "tn": "resultjson_com", "logid": "8388656667592781395", "ipn": "rj", "ct": "201326592", "is": "",
                 "fp": "result", "queryWord": keyword, "cl": "2", "lm": "-1", "ie": "utf-8", "oe": "utf-8",
@@ -145,6 +146,7 @@ class SkinSystem:
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
+    # ================= 业务逻辑 =================
     def get_total_skins(self):
         data = self.all_skins[:]
         data.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
@@ -155,6 +157,7 @@ class SkinSystem:
         active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
         return active[:LEADERBOARD_CAPACITY]
 
+    # ================= 打印逻辑 =================
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None: data_list = self.get_total_skins()
         print(f"\n====== 🏆 {title} (Items: {len(data_list)}) ======")
@@ -332,10 +335,8 @@ class SkinSystem:
         @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
-        /* 🔥 V19.98 修正：减少主标题下方的留白 */
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; 
-            margin-bottom: 2px; /* 从 10px 减少到 2px */
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 2px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -356,10 +357,10 @@ class SkinSystem:
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
 
-        /* 🔥 V19.98 修正：进一步压扁表头高度 */
+        /* 🔥 表头样式：透明背景，紫色底线 */
         th { 
             text-align: center; 
-            padding: 8px 2px; /* 从 10px 减少到 8px */
+            padding: 8px 2px; 
             font-weight: 800; 
             color: #333; 
             background-color: transparent; 
@@ -382,10 +383,9 @@ class SkinSystem:
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
-        /* 🔥 V19.98 修正：图标放大10% */
-        .quality-icon.legend-big { transform: scale(1.2); } /* 传说(4) 1.1 -> 1.2 */
-        .quality-icon.epic-medium { transform: scale(1.1); } /* 新增：史诗(5) & 传说限定(3.5) 放大1.1 */
-        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者(6) 0.8 -> 0.9 */
+        .quality-icon.legend-big { transform: scale(1.2); } /* 传说放大1.2 */
+        .quality-icon.epic-medium { transform: scale(1.1); } /* 史诗/传说限定放大1.1 */
+        .quality-icon.brave-small { transform: scale(0.9); } /* 勇者放大0.9 */
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -393,11 +393,17 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V19.98 修正：排名列样式重构 - 无角标，紫色大数字 */
-        .badge-rank { 
-            color: #6366f1; /* 紫色 */
+        /* 🔥 排名角标样式：深紫黑边框，瘦长矩形，镂空效果 */
+        .rank-box { 
+            display: inline-block; 
+            min-width: 18px; 
+            padding: 2px 4px; /* 紧凑内边距 */
+            border: 2px solid #1a0b2e; /* 深紫黑色边框 */
+            background: transparent;   /* 无填充，镂空 */
+            color: #000;               /* 黑色字体 */
             font-weight: 900; 
-            font-size: 16px; /* 加大字号 */
+            font-size: 16px; 
+            border-radius: 0;          /* 直角，长方形 */
         }
 
         .badge { 
@@ -468,12 +474,11 @@ class SkinSystem:
                     {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
                     {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
                     <tr data-quality="{{ q_name }}">
-                        <td><span class="badge-rank">{{ loop.index }}</span></td>
+                        <td><span class="rank-box">{{ loop.index }}</span></td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
-                            {# 🔥 V19.98 修正：为史诗(5)和传说限定(3.5)应用新的放大样式 #}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
@@ -599,7 +604,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.98 (最终定稿界面版)")
+        print("👑 王者荣耀榜单 V19.99 (界面精修定稿版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
