@@ -58,12 +58,10 @@
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-
-        /* 🔥 V20.6 修正：图标放大比例 */
-        .quality-icon.wushuang-big { transform: scale(1.5); }  /* 1.45 -> 1.5 */
-        .quality-icon.legend-big { transform: scale(1.2); }    /* 1.1 -> 1.2 */
-        .quality-icon.epic-medium { transform: scale(1.1); }   /* 新增：史诗/传说限定 1.1 */
-        .quality-icon.brave-small { transform: scale(0.9); }   /* 0.8 -> 0.9 */
+        .quality-icon.wushuang-big { transform: scale(1.5); }
+        .quality-icon.legend-big { transform: scale(1.2); }
+        .quality-icon.epic-medium { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -71,11 +69,11 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.6 修正：蓝底白字 rank-box */
+        /* 🔥 V20.7 修正：收紧内边距和宽度，打造紧致方块 */
         .rank-box { 
             display: inline-block; 
-            min-width: 24px;       
-            padding: 4px 8px;      
+            min-width: 20px;       /* 24px -> 20px */
+            padding: 0px 5px;      /* 4px 8px -> 0px 5px */
 
             border: none;          
             background: #1d4ed8;   /* 深蓝 */
@@ -83,6 +81,7 @@
             font-size: 20px;       
             font-weight: 900; 
             text-align: center;    
+            line-height: 24px;     /* 增加行高控制，确保垂直居中 */
 
             border-radius: 4px;    
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -118,7 +117,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 06:53</p>
+                <p>Update: 2026-01-04 06:55</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -296,7 +295,6 @@
                     <tr data-quality="传说">
                         <td><span class="rank-box">4</span></td>
                         <td class="quality-col" data-val="4">
-                            
                             
                             
                             

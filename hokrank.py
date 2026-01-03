@@ -381,12 +381,10 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-
-        /* 🔥 V20.6 修正：图标放大比例 */
-        .quality-icon.wushuang-big { transform: scale(1.5); }  /* 1.45 -> 1.5 */
-        .quality-icon.legend-big { transform: scale(1.2); }    /* 1.1 -> 1.2 */
-        .quality-icon.epic-medium { transform: scale(1.1); }   /* 新增：史诗/传说限定 1.1 */
-        .quality-icon.brave-small { transform: scale(0.9); }   /* 0.8 -> 0.9 */
+        .quality-icon.wushuang-big { transform: scale(1.5); }
+        .quality-icon.legend-big { transform: scale(1.2); }
+        .quality-icon.epic-medium { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -394,11 +392,11 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.6 修正：蓝底白字 rank-box */
+        /* 🔥 V20.7 修正：收紧内边距和宽度，打造紧致方块 */
         .rank-box { 
             display: inline-block; 
-            min-width: 24px;       
-            padding: 4px 8px;      
+            min-width: 20px;       /* 24px -> 20px */
+            padding: 0px 5px;      /* 4px 8px -> 0px 5px */
 
             border: none;          
             background: #1d4ed8;   /* 深蓝 */
@@ -406,6 +404,7 @@ class SkinSystem:
             font-size: 20px;       
             font-weight: 900; 
             text-align: center;    
+            line-height: 24px;     /* 增加行高控制，确保垂直居中 */
 
             border-radius: 4px;    
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -484,7 +483,6 @@ class SkinSystem:
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
-                            {# 🔥 V20.6 修正：史诗/传说限定应用 epic-medium #}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
