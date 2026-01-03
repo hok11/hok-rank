@@ -275,39 +275,50 @@ class SkinSystem:
                     parts = raw.split()
                     if len(parts) < 2: continue
                     opt, val_raw = parts[0], parts[1]
-                    if opt == '1':
-                        item['score'] = float(val_raw) if val_raw != 'null' else None
-                    elif opt == '2':
-                        item['growth'] = float(val_raw)
-                    elif opt == '3':
-                        item['real_price'] = float(val_raw)
-                    item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
-                                                                    item.get('real_price', 0))
+                    try:
+                        if opt == '1':
+                            item['score'] = float(val_raw) if val_raw != 'null' else None
+                        elif opt == '2':
+                            item['growth'] = float(val_raw)
+                        elif opt == '3':
+                            item['real_price'] = float(val_raw)
+                        item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
+                                                                        item.get('real_price', 0))
+                        print("✅ 数据已暂存")
+                    except:
+                        print("❌ 格式错误")
                 self.save_data();
-                self.generate_html()
+                self.generate_html();
+                print("💾 全部更改已保存")
         except:
             pass
 
     def manage_status_ui(self):
         self.print_console_table()
         try:
-            idx = int(input("序号: ")) - 1;
-            target = self.get_total_skins()[idx]
-            op = input("1-复刻 2-新增: ")
-            if op == '1':
-                target['is_rerun'] = True; target['is_new'] = False
-            elif op == '2':
-                target['is_rerun'] = False; target['is_new'] = True
-            self.save_data();
-            self.generate_html();
-            print("✅ 更新成功")
+            idx = int(input("输入序号修改标签: ")) - 1
+            if 0 <= idx < len(self.get_total_skins()):
+                target = self.get_total_skins()[idx]
+                op = input("1-复刻 2-新增: ")
+                if op == '1':
+                    target['is_rerun'] = True; target['is_new'] = False
+                elif op == '2':
+                    target['is_rerun'] = False; target['is_new'] = True
+                self.save_data();
+                self.generate_html();
+                print("✅ 标签更新成功")
         except:
             pass
 
     def run_crawler_ui(self):
-        print("\n🕷️ 抓取头像...");
+        print("\n🕷️ 启动自动抓取程序...")
         count = self.crawler.fetch_images(self.all_skins)
-        if count > 0: self.save_data(); self.generate_html(); print(f"🎉 同步完成！")
+        if count > 0:
+            self.save_data();
+            self.generate_html();
+            print(f"\n🎉 成功同步了 {count} 张新皮肤头像！")
+        else:
+            print("\n⚠️ 未发现需要更新的图片记录")
 
     def get_header_gifs(self):
         show_dir = os.path.join(LOCAL_REPO_PATH, "show")
@@ -336,7 +347,7 @@ class SkinSystem:
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { 
-            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 2px; 
+            background: var(--header-bg); padding: 15px 20px; color: white; margin-bottom: 10px; 
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
@@ -356,18 +367,7 @@ class SkinSystem:
 
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
-
-        th { 
-            text-align: center; 
-            padding: 8px 2px; 
-            font-weight: 800; 
-            color: #333; 
-            background-color: transparent; 
-            border-bottom: 3px solid #6366f1; 
-            font-size: 13px;
-            white-space: nowrap; 
-        }
-
+        th { text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; white-space: nowrap; }
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
@@ -382,9 +382,8 @@ class SkinSystem:
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .quality-icon.wushuang-big { transform: scale(1.45); }
-        .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); }
-        .quality-icon.brave-small { transform: scale(0.9); }
+        .quality-icon.legend-big { transform: scale(1.1); }
+        .quality-icon.brave-small { transform: scale(0.8); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -392,21 +391,21 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.4：inline-block 结构，纯视觉霓虹换肤 */
+        /* 🔥 V20.5 关键修改：蓝底白字无边框 */
         .rank-box { 
             display: inline-block; 
-            min-width: 18px; 
-            padding: 2px 6px; 
+            min-width: 24px;       /* 稍微加宽一点点 */
+            padding: 4px 8px;      /* 舒适的内边距 */
 
-            /* 新皮肤：深紫框(4px) + 紫底渐变 + 蓝字(20px) */
-            border: 4px solid #3c096c; 
-            background: linear-gradient(180deg, #7b2cbf 0%, #5a189a 100%); 
-            color: #00f2ff; 
-            font-size: 20px; 
+            border: none;          /* 去除边框 */
+            background: #1d4ed8;   /* Limit Return 同款深蓝 */
+            color: #ffffff;        /* 纯白文字 */
+            font-size: 20px;       /* 保持20px大字号 */
             font-weight: 900; 
+            text-align: center;    /* 文字居中 */
 
-            border-radius: 4px; /* 可改为0变直角 */
-            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            border-radius: 4px;    /* 微圆角 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .badge { 
@@ -482,7 +481,6 @@ class SkinSystem:
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
-                            {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
                         </td>
@@ -607,7 +605,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V20.4 (完整修正版)")
+        print("👑 王者荣耀榜单 V2")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
