@@ -404,20 +404,19 @@ class SkinSystem:
             print("\n⚠️ 无新图片更新")
 
     def generate_html(self):
-        # 🔥 V19.45 重点：还原 V19.42 的极致缩小比例 (0.6/0.7)，同时开启滑动兼容
+        # 基于 V19.45 结构，仅修改 meta 标签允许深度手动捏合
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Prediction</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
 
-        /* 🔥 还原 19.42 极致缩放比例 */
         @media screen and (max-width: 600px) {
             .chart-card { 
                 zoom: 0.7; 
@@ -432,12 +431,10 @@ class SkinSystem:
         .chart-header h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: white; letter-spacing: -0.5px; }
         .chart-header p { font-size: 13px; font-weight: 600; opacity: 0.9; text-transform: uppercase; color: rgba(255,255,255,0.9); }
 
-        /* 🔥 允许滑动（防止被截断） */
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 700px; }
 
-        /* 🔥 表头排序样式 (新增) */
         th { 
             text-align: center; padding: 12px 2px; font-weight: 700; color: #111; border-bottom: 1px solid #eee; font-size: 12px; 
             text-transform: uppercase; white-space: nowrap; cursor: pointer; position: relative; transition: background 0.2s;
@@ -453,8 +450,7 @@ class SkinSystem:
         .rank-col { font-weight: 800; font-size: 18px; width: 35px; color: #333; }
         .quality-col { width: 60px; text-align: center; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; background-color: transparent; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); transition: transform 0.2s; }
-        .quality-icon.wushuang-big { transform: scale(1.4); }
+        .quality-icon { height: 28px; width: auto; display: inline-block; mix-blend-mode: multiply; filter: contrast(1.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
         .song-info { display: flex; flex-direction: column; justify-content: center; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; margin-bottom: 3px; }
@@ -533,10 +529,7 @@ class SkinSystem:
             headers = table.getElementsByTagName("TH"),
             dir = "desc";
 
-        // 品质列默认升序，其他降序
         if (n === 1) dir = "asc";
-
-        // 切换排序逻辑
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
         else if (headers[n].classList.contains("sort-asc")) dir = "desc";
 
@@ -552,7 +545,6 @@ class SkinSystem:
         for (var j = 0; j < headers.length; j++) headers[j].classList.remove("sort-asc", "sort-desc");
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
-    // 默认排序
     window.onload = function() { sortTable(3, 'float'); };
     </script>
 </body>
@@ -586,7 +578,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.45 (19.42比例+排序)")
+        print("👑 王者荣耀榜单 V19.48 (极致捏合缩放版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤")
