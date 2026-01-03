@@ -91,6 +91,19 @@
     "on_leaderboard": true
   },
   {
+    "quality": 6,
+    "name": "蒙恬-苍云破阵",
+    "is_rerun": false,
+    "is_new": true,
+    "on_leaderboard": true,
+    "score": 20.9,
+    "real_score": 2.6,
+    "growth": 0.0,
+    "list_price": 48.8,
+    "real_price": 6.0,
+    "local_img": null
+  },
+  {
     "quality": 3.5,
     "name": "小乔-山海·琳琅生",
     "is_rerun": true,
