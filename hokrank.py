@@ -177,7 +177,7 @@ class SkinSystem:
             list_p_str = f"¥{skin.get('list_price', 0)}"
             real_p_str = f"¥{skin.get('real_price', 0)}" if skin.get('real_price', 0) > 0 else "--"
             g_val = skin.get('growth', 0)
-            growth_str = f"+{g_val}%" if g_val > 0 else (f"{g_val}%" if g_val < 0 else "--")
+            growth_str = f"+{g_val}%" if (g_val != 0 and g_val is not None) else "--"
 
             status_str = "[🔥在榜]" if skin.get('on_leaderboard') else "[❌退榜]"
             q_val = skin['quality']
@@ -467,9 +467,11 @@ class SkinSystem:
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* 🔥 Null 样式 */
-        .pts-null { color: #f43f5e; font-weight: 800; font-style: italic; }
-        /* 🔥 1.9% 特殊紫色样式 */
+        /* 🔥 逻辑显示样式 */
+        .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
+        .growth-down { color: #991b1b !important; }
+        .growth-up-mid { color: #16a34a !important; }
+        .growth-up-high { color: #ea580c !important; }
         .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
     </style>
 </head>
@@ -481,19 +483,17 @@ class SkinSystem:
                 <thead>
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
-                        <th>
-                            <div class="qual-header">
-                                <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
-                                <div id="dropdownMenu" class="dropdown-menu">
-                                    <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                    <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
-                                    {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
-                                    {% endfor %}
-                                </div>
-                                <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
+                        <th><div class="qual-header">
+                            <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                                {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
+                                {% endfor %}
                             </div>
-                        </th>
+                            <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
+                        </div></th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
@@ -506,33 +506,36 @@ class SkinSystem:
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
                     {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
-
-                    {% set q_display_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
-
-                    <tr data-quality="{{ q_display_name }}">
+                    {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
+                    <tr data-quality="{{ q_name }}">
                         <td>{{ loop.index }}</td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
-                            <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" 
-                                 onerror="loadFallbackImg(this, '{{ skin.quality }}')">
+                            <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
                         </td>
                         <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
                             {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
                             <div class="song-info"><span class="song-title" style="font-weight:700">{{ skin.name }}</span></div>
                         </div></td>
-                        <td data-val="{{ skin.score if skin.score is not none else -999999 }}" style="background-color: {{ rb }};">
+                        <td data-val="{{ skin.score if skin.score is not none else -9999999 }}" style="background-color: {{ rb }};">
                             {% if skin.score is not none %}<span>{{ skin.score }}</span>{% else %}<span class="pts-null">Null</span>{% endif %}
                         </td>
-                        <td data-val="{{ skin.real_score if skin.real_score is not none else -999999 }}" style="background-color: {{ rb }}; color:#6366f1;">
+                        <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1;">
                             {% if skin.real_score is not none %}<span>{{ skin.real_score }}</span>{% elif skin.score is none %}<span class="pts-null">Null</span>{% else %}<span>--</span>{% endif %}
                         </td>
                         <td data-val="{{ skin.growth }}" style="background-color: {{ rb }};">
-                            <div class="box-style {{ 'growth-special' if skin.growth == 1.9 else '' }}">
-                                {{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}
-                            </div>
+                            {% if skin.growth == 0 or skin.growth is none %}<div class="box-style">--</div>
+                            {% else %}
+                                {% set g_cls = '' %}
+                                {% if skin.growth == 1.9 %}{% set g_cls = 'growth-special' %}
+                                {% elif skin.growth < 0 %}{% set g_cls = 'growth-down' %}
+                                {% elif skin.growth >= 10 %}{% set g_cls = 'growth-up-high' %}
+                                {% elif skin.growth >= 5 %}{% set g_cls = 'growth-up-mid' %}{% endif %}
+                                <div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>
+                            {% endif %}
                         </td>
                         <td data-val="{{ skin.list_price }}" style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
                         <td class="rounded-right" data-val="{{ skin.real_price }}" style="background-color: {{ rb }};">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</td>
@@ -560,7 +563,7 @@ class SkinSystem:
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const others = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
@@ -608,7 +611,7 @@ class SkinSystem:
             subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", f"Update {datetime.now().strftime('%H:%M')}"],
                            check=True)
             subprocess.run([GIT_EXECUTABLE_PATH, "push"], check=True)
-            print(f"\n✅ 发布成功！🌐 访问: https://hok11.github.io/hok-rank/")
+            print(f"\n✅ 发布成功！🌐 访问: https://{GITHUB_USERNAME}.github.io/hok-rank/")
         except Exception as e:
             print(f"\n❌ 发布失败: {e}")
 
@@ -617,14 +620,13 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V19.74 (1.9%彩蛋全量版)")
+        print("👑 王者荣耀榜单 V19.80 (配色修复+全量逻辑)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
-        print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布到互联网 <<<")
-        print("5. 强制刷新HTML | 6. 查看榜单 | 7. 🕷️ 自动抓取百度头像 | 8. 📉 手动退榜 | 0. 退出")
+        print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
+        print("5. 强制刷新HTML | 6. 查看榜单 | 7. 🕷️ 头像抓取 | 8. 📉 退榜 | 0. 退出")
         print("=" * 55)
         cmd = input("指令: ").strip()
-
         if cmd == '1':
             app.add_skin_ui()
         elif cmd == '2':

@@ -59,47 +59,47 @@
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
         .box-style { display: inline-block; width: 100%; padding: 6px 0; font-weight: 700; font-size: 12px; border-radius: 6px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        /* 🔥 Null 样式 */
-        .pts-null { color: #f43f5e; font-weight: 800; font-style: italic; }
-        /* 🔥 1.9% 特殊紫色样式 */
+        /* 🔥 逻辑显示样式 */
+        .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
+        .growth-down { color: #991b1b !important; }
+        .growth-up-mid { color: #16a34a !important; }
+        .growth-up-high { color: #ea580c !important; }
         .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
     </style>
 </head>
 <body>
     <div class="chart-card">
-        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 22:33</p></div>
+        <div class="chart-header"><h1>Honor of Kings Skin Prediction</h1><p>Update: 2026-01-03 22:55</p></div>
         <div class="table-container">
             <table id="skinTable">
                 <thead>
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
-                        <th>
-                            <div class="qual-header">
-                                <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
-                                <div id="dropdownMenu" class="dropdown-menu">
-                                    <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                    <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
-                                    
-                                    <label class="dropdown-item"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
-                                    
-                                </div>
-                                <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
+                        <th><div class="qual-header">
+                            <div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
+                            <div id="dropdownMenu" class="dropdown-menu">
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
+                                <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品无双" onchange="handleSingleSelect(this)"> 珍品无双</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="无双" onchange="handleSingleSelect(this)"> 无双</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="荣耀典藏" onchange="handleSingleSelect(this)"> 荣耀典藏</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="珍品传说" onchange="handleSingleSelect(this)"> 珍品传说</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说限定" onchange="handleSingleSelect(this)"> 传说限定</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="传说" onchange="handleSingleSelect(this)"> 传说</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="史诗" onchange="handleSingleSelect(this)"> 史诗</label>
+                                
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="勇者" onchange="handleSingleSelect(this)"> 勇者</label>
+                                
                             </div>
-                        </th>
+                            <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
+                        </div></th>
                         <th style="cursor:default; text-align:left; padding-left:20px;">Skin Name</th>
                         <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
@@ -112,17 +112,14 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="无双">
                         <td>1</td>
                         <td class="quality-col" data-val="1">
                             
                             
                             
-                            <img src="./images/1.gif" class="quality-icon wushuang-big" 
-                                 onerror="loadFallbackImg(this, '1')">
+                            <img src="./images/1.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '1')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
@@ -135,9 +132,11 @@
                             <span>200.0</span>
                         </td>
                         <td data-val="3.3" style="background-color: #f3e8ff;">
-                            <div class="box-style ">
-                                3.3%
-                            </div>
+                            
+                                
+                                
+                                <div class="box-style ">3.3%</div>
+                            
                         </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
@@ -145,17 +144,14 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="无双">
                         <td>2</td>
                         <td class="quality-col" data-val="0.8">
                             
                             
                             
-                            <img src="./images/0.8.gif" class="quality-icon wushuang-big" 
-                                 onerror="loadFallbackImg(this, '0.8')">
+                            <img src="./images/0.8.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '0.8')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
@@ -168,9 +164,11 @@
                             <span>117.4</span>
                         </td>
                         <td data-val="0.1" style="background-color: #f3e8ff;">
-                            <div class="box-style ">
-                                0.1%
-                            </div>
+                            
+                                
+                                
+                                <div class="box-style ">0.1%</div>
+                            
                         </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
@@ -178,17 +176,14 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="无双">
                         <td>3</td>
                         <td class="quality-col" data-val="1">
                             
                             
                             
-                            <img src="./images/1.gif" class="quality-icon wushuang-big" 
-                                 onerror="loadFallbackImg(this, '1')">
+                            <img src="./images/1.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '1')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
@@ -201,9 +196,11 @@
                             <span>80.8</span>
                         </td>
                         <td data-val="3.0" style="background-color: #f3e8ff;">
-                            <div class="box-style ">
-                                3.0%
-                            </div>
+                            
+                                
+                                
+                                <div class="box-style ">3.0%</div>
+                            
                         </td>
                         <td data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
                         <td class="rounded-right" data-val="400.0" style="background-color: #f3e8ff;">¥400.0</td>
@@ -211,17 +208,14 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="传说">
                         <td>4</td>
                         <td class="quality-col" data-val="4">
                             
                             
                             
-                            <img src="./images/4.gif" class="quality-icon legend-big" 
-                                 onerror="loadFallbackImg(this, '4')">
+                            <img src="./images/4.gif" class="quality-icon legend-big" onerror="loadFallbackImg(this, '4')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
@@ -234,9 +228,8 @@
                             <span>34.6</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                0.0%
-                            </div>
+                            <div class="box-style">--</div>
+                            
                         </td>
                         <td data-val="168.8" style="background-color: #ffffff;">¥168.8</td>
                         <td class="rounded-right" data-val="99.0" style="background-color: #ffffff;">¥99.0</td>
@@ -244,16 +237,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="勇者">
                         <td>5</td>
                         <td class="quality-col" data-val="6">
                             
                             
-                            <img src="./images/6.gif" class="quality-icon brave-small" 
-                                 onerror="loadFallbackImg(this, '6')">
+                            <img src="./images/6.gif" class="quality-icon brave-small" onerror="loadFallbackImg(this, '6')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
@@ -266,9 +256,11 @@
                             <span>5.4</span>
                         </td>
                         <td data-val="4.2" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                4.2%
-                            </div>
+                            
+                                
+                                
+                                <div class="box-style ">4.2%</div>
+                            
                         </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
@@ -276,16 +268,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="勇者">
                         <td>6</td>
                         <td class="quality-col" data-val="6">
                             
                             
-                            <img src="./images/6.gif" class="quality-icon brave-small" 
-                                 onerror="loadFallbackImg(this, '6')">
+                            <img src="./images/6.gif" class="quality-icon brave-small" onerror="loadFallbackImg(this, '6')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
@@ -298,9 +287,8 @@
                             <span>4.1</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                0.0%
-                            </div>
+                            <div class="box-style">--</div>
+                            
                         </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
@@ -308,16 +296,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="勇者">
                         <td>7</td>
                         <td class="quality-col" data-val="6">
                             
                             
-                            <img src="./images/6.gif" class="quality-icon brave-small" 
-                                 onerror="loadFallbackImg(this, '6')">
+                            <img src="./images/6.gif" class="quality-icon brave-small" onerror="loadFallbackImg(this, '6')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
@@ -330,9 +315,8 @@
                             <span>3.0</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                0.0%
-                            </div>
+                            <div class="box-style">--</div>
+                            
                         </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
@@ -340,16 +324,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="勇者">
                         <td>8</td>
                         <td class="quality-col" data-val="6">
                             
                             
-                            <img src="./images/6.gif" class="quality-icon brave-small" 
-                                 onerror="loadFallbackImg(this, '6')">
+                            <img src="./images/6.gif" class="quality-icon brave-small" onerror="loadFallbackImg(this, '6')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
@@ -362,9 +343,8 @@
                             <span>2.6</span>
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                0.0%
-                            </div>
+                            <div class="box-style">--</div>
+                            
                         </td>
                         <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
                         <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">¥6.0</td>
@@ -372,16 +352,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="传说限定">
                         <td>9</td>
                         <td class="quality-col" data-val="3.5">
                             
                             
-                            <img src="./images/3.5.gif" class="quality-icon " 
-                                 onerror="loadFallbackImg(this, '3.5')">
+                            <img src="./images/3.5.gif" class="quality-icon " onerror="loadFallbackImg(this, '3.5')">
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
@@ -390,13 +367,12 @@
                         <td data-val="17.7" style="background-color: #e0f2fe;">
                             <span>17.7</span>
                         </td>
-                        <td data-val="-999999" style="background-color: #e0f2fe; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
                             <span>--</span>
                         </td>
                         <td data-val="0.0" style="background-color: #e0f2fe;">
-                            <div class="box-style ">
-                                0.0%
-                            </div>
+                            <div class="box-style">--</div>
+                            
                         </td>
                         <td data-val="178.8" style="background-color: #e0f2fe;">¥178.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #e0f2fe;">--</td>
@@ -404,16 +380,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="史诗">
                         <td>10</td>
                         <td class="quality-col" data-val="5">
                             
                             
-                            <img src="./images/5.gif" class="quality-icon " 
-                                 onerror="loadFallbackImg(this, '5')">
+                            <img src="./images/5.gif" class="quality-icon " onerror="loadFallbackImg(this, '5')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
                             <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
@@ -422,13 +395,16 @@
                         <td data-val="12.0" style="background-color: #ffffff;">
                             <span>12.0</span>
                         </td>
-                        <td data-val="-999999" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
                             <span>--</span>
                         </td>
                         <td data-val="100.0" style="background-color: #ffffff;">
-                            <div class="box-style ">
-                                100.0%
-                            </div>
+                            
+                                
+                                
+                                
+                                <div class="box-style growth-up-high">100.0%</div>
+                            
                         </td>
                         <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #ffffff;">--</td>
@@ -436,16 +412,13 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="传说限定">
                         <td>11</td>
                         <td class="quality-col" data-val="3.5">
                             
                             
-                            <img src="./images/3.5.gif" class="quality-icon " 
-                                 onerror="loadFallbackImg(this, '3.5')">
+                            <img src="./images/3.5.gif" class="quality-icon " onerror="loadFallbackImg(this, '3.5')">
                         </td>
                         <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
                             <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
@@ -454,13 +427,16 @@
                         <td data-val="7.2" style="background-color: #e0f2fe;">
                             <span>7.2</span>
                         </td>
-                        <td data-val="-999999" style="background-color: #e0f2fe; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
                             <span>--</span>
                         </td>
                         <td data-val="-100.0" style="background-color: #e0f2fe;">
-                            <div class="box-style ">
-                                -100.0%
-                            </div>
+                            
+                                
+                                
+                                
+                                <div class="box-style growth-down">-100.0%</div>
+                            
                         </td>
                         <td data-val="178.8" style="background-color: #e0f2fe;">¥178.8</td>
                         <td class="rounded-right" data-val="0.0" style="background-color: #e0f2fe;">--</td>
@@ -468,31 +444,31 @@
                     
                     
                     
-
                     
-
                     <tr data-quality="史诗">
                         <td>12</td>
                         <td class="quality-col" data-val="5">
                             
                             
-                            <img src="./images/5.gif" class="quality-icon " 
-                                 onerror="loadFallbackImg(this, '5')">
+                            <img src="./images/5.gif" class="quality-icon " onerror="loadFallbackImg(this, '5')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="https://via.placeholder.com/48?text=大" class="album-art">
+                            <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
                             <div class="song-info"><span class="song-title" style="font-weight:700">大乔-乘龙·忆丹青</span></div>
                         </div></td>
-                        <td data-val="-999999" style="background-color: #ffffff;">
+                        <td data-val="-9999999" style="background-color: #ffffff;">
                             <span class="pts-null">Null</span>
                         </td>
-                        <td data-val="-999999" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
                             <span class="pts-null">Null</span>
                         </td>
                         <td data-val="1.9" style="background-color: #ffffff;">
-                            <div class="box-style growth-special">
-                                1.9%!
-                            </div>
+                            
+                                
+                                
+                                
+                                <div class="box-style growth-special">1.9%!</div>
+                            
                         </td>
                         <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
                         <td class="rounded-right" data-val="53.2" style="background-color: #ffffff;">¥53.2</td>
@@ -520,7 +496,7 @@
     function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
+        const others = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
         const btn = document.getElementById('multiSelectBtn');
         if (main.checked || checkedOnes.length === 0) {
             main.checked = true; btn.innerText = "全部品质";
