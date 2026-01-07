@@ -18,7 +18,75 @@
         }
         .header-content { text-align: center; flex: 1; }
         .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2; }
-        .header-content p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .header-content p { margin: 0; opacity: 0.9; font-size: 14px; }
+
+        /* 🔥 新增：说明按钮和头部布局容器 */
+        .info-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .info-btn {
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .info-btn:hover { opacity: 0.8; }
+
+        /* 🔥 新增：模态框样式 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        .close-btn:hover { color: black; }
+
+        .modal-list {
+            text-align: left;
+            margin-top: 15px;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
 
         .header-gifs-container { display: flex; gap: 10px; align-items: center; }
         .header-gif { 
@@ -135,7 +203,10 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-08 00:18</p>
+                <div class="info-container">
+                    <p>Update: 2026-01-08 01:02</p>
+                    <button class="info-btn" onclick="openModal()">说明</button>
+                </div>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -812,6 +883,54 @@
                     
 
                     
+                    <tr data-quality="珍品无双">
+                        <td>
+                            
+                            <span style="font-weight:bold; color:#999;">-</span>
+                            
+                        </td>
+                        <td class="quality-col" data-val="0">
+                            
+                            
+                            
+                            <img src="./images/0.gif" class="quality-icon rare-wushuang-big" onerror="loadFallbackImg(this, '0')">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffdcdc; padding-right:120px;"><div class="song-col">
+                            <img src="./skin_avatars/貂蝉-馥梦繁花.gif" class="album-art">
+                            <div class="name-container">
+                                <span class="song-title">貂蝉-馥梦繁花</span>
+                                <span class="badge badge-out">Out of Print</span>
+                                
+                            </div>
+                        </div></td>
+                        <td data-val="-9999999" style="background-color: #ffdcdc;">
+                            <div class="box-style">
+                                End
+                                
+                            </div>
+                        </td>
+                        <td data-val="-9999999" style="background-color: #ffdcdc; color:#6366f1; font-weight:bold;">
+                            --
+                        </td>
+                        <td data-val="3.2" style="background-color: #ffdcdc;">
+                            
+                                
+                                
+                                <div class="box-style ">3.2%</div>
+                            
+                        </td>
+                        <td data-val="800.0" style="background-color: #ffdcdc;">¥800.0</td>
+                        <td class="rounded-right" data-val="800.0" style="background-color: #ffdcdc;">
+                            <div class="box-style">
+                                ¥800.0
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    
+                    
+
+                    
                     <tr data-quality="史诗">
                         <td>
                             
@@ -857,59 +976,44 @@
                         </td>
                     </tr>
                     
-                    
-                    
-
-                    
-                    <tr data-quality="珍品无双">
-                        <td>
-                            
-                            <span style="font-weight:bold; color:#999;">-</span>
-                            
-                        </td>
-                        <td class="quality-col" data-val="0">
-                            
-                            
-                            
-                            <img src="./images/0.gif" class="quality-icon rare-wushuang-big" onerror="loadFallbackImg(this, '0')">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffdcdc; padding-right:120px;"><div class="song-col">
-                            <img src="./skin_avatars/貂蝉-馥梦繁花.gif" class="album-art">
-                            <div class="name-container">
-                                <span class="song-title">貂蝉-馥梦繁花</span>
-                                <span class="badge badge-out">Out of Print</span>
-                                
-                            </div>
-                        </div></td>
-                        <td data-val="-9999999" style="background-color: #ffdcdc;">
-                            <div class="box-style">
-                                End
-                                
-                            </div>
-                        </td>
-                        <td data-val="-9999999" style="background-color: #ffdcdc; color:#6366f1; font-weight:bold;">
-                            --
-                        </td>
-                        <td data-val="3.2" style="background-color: #ffdcdc;">
-                            
-                                
-                                
-                                <div class="box-style ">3.2%</div>
-                            
-                        </td>
-                        <td data-val="800.0" style="background-color: #ffdcdc;">¥800.0</td>
-                        <td class="rounded-right" data-val="800.0" style="background-color: #ffdcdc;">
-                            <div class="box-style">
-                                ¥800.0
-                            </div>
-                        </td>
-                    </tr>
-                    
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="text-align:center; margin-bottom:10px;">说明</h2>
+            <hr style="border:0; border-top:1px solid #eee;">
+            <ul class="modal-list">
+                
+                <li>本榜单数据仅供参考</li>
+                
+                <li>Rank pts:排位点数.直接由新品榜排位决定，新品榜代表首日销售额，销售额=获得该皮肤玩家数*定价.</li>
+                
+                <li>涨幅.代表该英雄出新皮肤当日全分段出场率提升，受其他限免/同分路新皮肤影响大.</li>
+                
+                <li>List p:官方定价.典藏取600，传说178.8...</li>
+                
+                <li>Real p:实际售价.比如99r传说，6r勇者.</li>
+                
+                <li>Real pts:真实点数，新品榜销售额的计价方式会导致皮肤真实卖气虚高，故采用Rankpts*Realp/Listp得到更真实反映卖气的点数.</li>
+                
+            </ul>
+        </div>
+    </div>
+
     <script>
+    // 模态框控制逻辑
+    function openModal() { document.getElementById('infoModal').style.display = 'block'; }
+    function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('infoModal')) {
+            closeModal();
+        }
+    }
+
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());

@@ -34,27 +34,21 @@ class SkinCrawler:
         print("\n🕷️ 正在启动百度图片搜索...")
         count = 0
         for skin in skin_list:
-            # 1. 构建标准文件名 (用于检测 GIF 或 JPG)
             safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
-
-            # 🔥 V22.0 核心升级：优先检测本地 GIF
             gif_filename = f"{safe_name}.gif"
             gif_path = os.path.join(self.save_dir, gif_filename)
 
             if os.path.exists(gif_path):
-                # 如果本地有 GIF，强制更新路径并跳过下载
                 current_path = f"skin_avatars/{gif_filename}"
                 if skin.get('local_img') != current_path:
                     skin['local_img'] = current_path
                     print(f"   🎥 锁定本地动态头像: {gif_filename}")
-                    count += 1  # 标记为有更新，以便触发保存
-                continue  # 跳过后续的 JPG 检查和下载
+                    count += 1
+                continue
 
-            # 2. 如果没有 GIF，检查是否已有 JPG 缓存
             if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])):
                 continue
 
-            # 3. 都没有，开始爬取 JPG
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
@@ -101,6 +95,7 @@ class SkinCrawler:
 class SkinSystem:
     def __init__(self):
         self.all_skins = []
+        self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]  # 默认说明
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
@@ -146,51 +141,67 @@ class SkinSystem:
             try:
                 with open(self.data_file, 'r', encoding='utf-8') as f:
                     loaded = json.load(f)
+
+                # 兼容旧数据结构，读取列表或字典
                 if isinstance(loaded, list):
                     self.all_skins = loaded
                 elif isinstance(loaded, dict):
-                    self.all_skins = loaded.get('total', []) + loaded.get('new', [])
+                    self.all_skins = loaded.get('skins', loaded.get('total', []))
+                    # 🔥 读取说明配置，如果没有则保持默认
+                    if 'instructions' in loaded:
+                        self.instructions = loaded['instructions']
+
                 seen = set();
                 unique = []
                 for s in self.all_skins:
                     if s['name'] not in seen: unique.append(s); seen.add(s['name'])
                 self.all_skins = unique
-                print(f"✅ 数据加载完毕 (库存库容: {len(self.all_skins)})")
+                print(f"✅ 数据加载完毕 (库存: {len(self.all_skins)} | 说明条目: {len(self.instructions)})")
             except Exception as e:
                 print(f"❌ 加载失败: {e}");
                 self.all_skins = []
         else:
             self.save_data()
 
+    def _get_sort_key(self, skin):
+        """
+        🔥 核心排序逻辑 V22.2
+        1. 绝版 (10) > 预设 (1) > 在榜 (0)
+        2. 如果是 绝版/预设：按品质数值升序（0是最高品质，6是最低）
+        3. 如果是 在榜：按分数降序
+        """
+        group_weight = 10 if skin.get('is_discontinued') else (1 if skin.get('is_preset') else 0)
+
+        if group_weight == 0:
+            # 在榜皮肤：按分数排
+            return (group_weight, skin.get('score') is None, -(skin.get('score') or 0))
+        else:
+            # 绝版或预设：按品质排 (数值越小品质越高，所以用正序)
+            return (group_weight, skin.get('quality', 99))
+
     def save_data(self):
         try:
             with open(self.data_file, 'w', encoding='utf-8') as f:
-                # 🔥 修正排序权重：普通(0) < 预设(1) < 绝版(10)
-                # 确保绝版永远在列表最底部
-                self.all_skins.sort(key=lambda x: (
-                    10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0),
-                    x.get('score') is None,
-                    -(x.get('score') or 0)
-                ))
-                json.dump(self.all_skins, f, ensure_ascii=False, indent=2)
+                # 使用新的排序键
+                self.all_skins.sort(key=self._get_sort_key)
+
+                # 🔥 保存为字典结构，包含 skins 和 instructions
+                data_to_save = {
+                    "skins": self.all_skins,
+                    "instructions": self.instructions
+                }
+                json.dump(data_to_save, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
     def get_total_skins(self):
         data = self.all_skins[:]
-        # 🔥 同步排序逻辑
-        data.sort(key=lambda x: (
-            10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0),
-            x.get('score') is None,
-            -(x.get('score') or 0)
-        ))
+        data.sort(key=self._get_sort_key)
         return data
 
     def get_active_leaderboard(self):
         active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
-        active.sort(
-            key=lambda x: (10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0), x.get('score') is None,
-                           -(x.get('score') or 0)))
+        active.sort(key=self._get_sort_key)
         return active[:LEADERBOARD_CAPACITY + 10]
 
     def print_console_table(self, data_list=None, title="榜单"):
@@ -318,6 +329,7 @@ class SkinSystem:
     def manage_preset_ui(self):
         presets = [s for s in self.all_skins if s.get('is_preset')]
         if not presets: print("\n⚠️ 当前没有预设皮肤。"); return
+        # 🔥 这里也会自动按品质排序显示，因为 presets 来自 all_skins
         print(f"\n====== 🚀 预设上线管理 (待机中: {len(presets)}) ======")
         for i, s in enumerate(presets): print(f"{i + 1}. {s['name']} (Q:{s['quality']} | 预估¥{s['real_price']})")
         print("0. 退出")
@@ -344,6 +356,46 @@ class SkinSystem:
                 print(f"✅ 上线成功！")
         except ValueError:
             pass
+
+    def manage_instructions_ui(self):
+        """🔥 新增：说明书管理界面"""
+        while True:
+            print(f"\n====== 📝 管理页面说明 (当前: {len(self.instructions)}条) ======")
+            for i, text in enumerate(self.instructions):
+                print(f"{i + 1}. {text}")
+            print("-" * 30)
+            print("1. 添加说明 | 2. 删除说明 | 3. 修改说明 | 0. 返回")
+            c = input("指令: ").strip()
+
+            if c == '1':
+                new_text = input("输入新说明内容: ").strip()
+                if new_text:
+                    self.instructions.append(new_text)
+                    self.save_data();
+                    self.generate_html()
+            elif c == '2':
+                try:
+                    idx = int(input("删除序号: ")) - 1
+                    if 0 <= idx < len(self.instructions):
+                        print(f"🗑️ 已删除: {self.instructions.pop(idx)}")
+                        self.save_data();
+                        self.generate_html()
+                except:
+                    pass
+            elif c == '3':
+                try:
+                    idx = int(input("修改序号: ")) - 1
+                    if 0 <= idx < len(self.instructions):
+                        print(f"原内容: {self.instructions[idx]}")
+                        new_text = input("新内容: ").strip()
+                        if new_text:
+                            self.instructions[idx] = new_text
+                            self.save_data();
+                            self.generate_html()
+                except:
+                    pass
+            elif c == '0':
+                break
 
     def retire_skin_ui(self):
         print("\n>>> 手动下榜...");
@@ -486,7 +538,75 @@ class SkinSystem:
         }
         .header-content { text-align: center; flex: 1; }
         .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2; }
-        .header-content p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .header-content p { margin: 0; opacity: 0.9; font-size: 14px; }
+
+        /* 🔥 新增：说明按钮和头部布局容器 */
+        .info-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .info-btn {
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .info-btn:hover { opacity: 0.8; }
+
+        /* 🔥 新增：模态框样式 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        .close-btn:hover { color: black; }
+
+        .modal-list {
+            text-align: left;
+            margin-top: 15px;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
 
         .header-gifs-container { display: flex; gap: 10px; align-items: center; }
         .header-gif { 
@@ -603,7 +723,10 @@ class SkinSystem:
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: {{ update_time }}</p>
+                <div class="info-container">
+                    <p>Update: {{ update_time }}</p>
+                    <button class="info-btn" onclick="openModal()">说明</button>
+                </div>
             </div>
             <div class="header-gifs-container">
                 {% if header_gifs|length >= 3 %}<img src="./show/{{ header_gifs[2] }}" class="header-gif">{% endif %}
@@ -701,7 +824,30 @@ class SkinSystem:
             </table>
         </div>
     </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="text-align:center; margin-bottom:10px;">说明</h2>
+            <hr style="border:0; border-top:1px solid #eee;">
+            <ul class="modal-list">
+                {% for item in instructions %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
     <script>
+    // 模态框控制逻辑
+    function openModal() { document.getElementById('infoModal').style.display = 'block'; }
+    function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('infoModal')) {
+            closeModal();
+        }
+    }
+
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
@@ -758,6 +904,7 @@ class SkinSystem:
         t = Template(html_template)
         html_content = t.render(total_skins=self.get_total_skins(), quality_map=quality_map,
                                 header_gifs=header_gifs,
+                                instructions=self.instructions,  # 🔥 传入说明数据
                                 update_time=datetime.now().strftime("%Y-%m-%d %H:%M"))
         try:
             with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
@@ -782,12 +929,12 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V22.1 (动态视界·物理放大版)")
+        print("👑 王者荣耀榜单 V22.2 (说明系统+品质排序版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
         print("5. 强制刷新HTML | 6. 查看榜单 | 7. 🕷️ 抓取头像 | 8. 📉 退榜")
-        print("9. 🚀 预设上线 | 0. 退出")
+        print("9. 🚀 预设上线 | 10. 📝 管理说明 | 0. 退出")
         cmd = input("指令: ").strip()
         if cmd == '1':
             app.add_skin_ui()
@@ -807,5 +954,7 @@ if __name__ == "__main__":
             app.retire_skin_ui()
         elif cmd == '9':
             app.manage_preset_ui()
+        elif cmd == '10':  # 🔥 新增入口
+            app.manage_instructions_ui()
         elif cmd == '0':
             break
