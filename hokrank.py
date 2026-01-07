@@ -225,7 +225,6 @@ class SkinSystem:
             if len(raw) < 2: return
             q_code = float(raw[0]);
             name = raw[1]
-            # 🔥 修复变量名问题：is_rr
             is_rr = (len(raw) >= 3 and raw[2] != '0')
             list_p = self._get_list_price_by_quality(q_code)
 
@@ -343,7 +342,7 @@ class SkinSystem:
     def modify_data_ui(self):
         self.print_console_table(self.get_total_skins())
         print("💡 快捷指令: [序号] [属性ID] [新值] (例如: 1 1 200)")
-        print("   属性ID: 1=分数, 2=涨幅, 3=实价")
+        print("   属性ID: 1=分数, 2=涨幅, 3=实价, 4=品质")
 
         raw = input("输入指令: ").strip().lower()
         if not raw: return
@@ -372,7 +371,7 @@ class SkinSystem:
                     while True:
                         cur_s = "--" if item['score'] is None else item['score']
                         print(
-                            f"\n修改: {item['name']} | 1.分:{cur_s} | 2.涨幅:{item['growth']} | 3.实价:{item['real_price']} | 0.保存")
+                            f"\n修改: {item['name']} | 1.分:{cur_s} | 2.涨幅:{item['growth']} | 3.实价:{item['real_price']} | 4.品质:{item['quality']} | 0.保存")
                         sub_raw = input("序号 数值: ").strip().lower()
                         if not sub_raw or sub_raw == '0': break
                         sub_parts = sub_raw.split()
@@ -585,7 +584,14 @@ class SkinSystem:
                 <tbody>
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
-                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#dcfce7' %}{% elif skin.quality == 2 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#fef9c3' %}{% endif %}
+                    {# 🔥 V21.8 尊享配色方案 #}
+                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}      {# 传说限定 (不变) #}
+                    {% elif skin.quality == 3 %}{% set rb = '#bfdbfe' %}    {# 🔥 珍品传说 (改为原Q2蓝色) #}
+                    {% elif skin.quality == 2 %}{% set rb = '#fff7cd' %}    {# 🔥 荣耀典藏 (改为淡金色) #}
+                    {% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %} {# 无双 (不变) #}
+                    {% elif skin.quality == 0 %}{% set rb = '#ffdcdc' %}    {# 🔥 珍品无双 (改为淡红色) #}
+                    {% endif %}
+
                     {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
                     <tr data-quality="{{ q_name }}">
                         <td>
@@ -727,7 +733,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V21.7 (完整终极版)")
+        print("👑 王者荣耀榜单 V21.8 (尊享配色版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
