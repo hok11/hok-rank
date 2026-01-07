@@ -28,6 +28,20 @@
     "local_img": "skin_avatars/妲己·线条小狗.jpg"
   },
   {
+    "quality": 6,
+    "name": "桑启-线条小狗",
+    "is_rerun": false,
+    "is_new": true,
+    "on_leaderboard": true,
+    "is_preset": true,
+    "score": null,
+    "real_score": null,
+    "growth": 0.0,
+    "list_price": 48.8,
+    "real_price": 0.0,
+    "local_img": "skin_avatars/桑启-线条小狗.jpg"
+  },
+  {
     "quality": 1,
     "name": "孙悟空-无相",
     "is_rerun": false,
