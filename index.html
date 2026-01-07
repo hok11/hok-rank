@@ -63,9 +63,13 @@
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
+
+        /* 🔥 V21.7 修正：品质图标缩放矩阵 */
         .quality-icon.wushuang-big { transform: scale(1.5); }
         .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); }
+        .quality-icon.epic-medium { transform: scale(1.1); } 
+        /* 🔥 V21.7 新增：荣耀典藏放大 1.4 */
+        .quality-icon.glory-big { transform: scale(1.4); }
         .quality-icon.brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -74,12 +78,11 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.7 样式继承 */
+        /* 🔥 V20.7 样式继承：蓝底白字 */
         .rank-box { 
             display: inline-block; 
             min-width: 20px;       
             padding: 0px 5px;      
-
             border: none;          
             background: #1d4ed8;   
             color: #ffffff;        
@@ -87,7 +90,6 @@
             font-weight: 900; 
             text-align: center;    
             line-height: 24px;     
-
             border-radius: 4px;    
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -123,7 +125,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-07 20:35</p>
+                <p>Update: 2026-01-07 20:45</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -184,12 +186,14 @@
                             
                             
                             
+                            
                             <img src="./images/1.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '1')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff; padding-right:120px;"><div class="song-col">
                             <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">孙悟空-无相</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -199,7 +203,7 @@
                                 200.0
                             </div>
                         </td>
-                        <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1;">
+                        <td data-val="200.0" style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">
                             200.0
                         </td>
                         <td data-val="3.3" style="background-color: #f3e8ff;">
@@ -230,14 +234,15 @@
                             
                             
                             
+                            
                             <img src="./images/0.8.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '0.8')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff; padding-right:120px;"><div class="song-col">
                             <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">甄姬-雪境奇遇</span>
-                                <span class="badge badge-return">Limit Return</span>
                                 
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
@@ -245,7 +250,7 @@
                                 117.4
                             </div>
                         </td>
-                        <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1;">
+                        <td data-val="117.4" style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">
                             117.4
                         </td>
                         <td data-val="0.1" style="background-color: #f3e8ff;">
@@ -276,14 +281,15 @@
                             
                             
                             
+                            
                             <img src="./images/1.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '1')">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff; padding-right:120px;"><div class="song-col">
                             <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">瑶-真我赫兹</span>
-                                <span class="badge badge-return">Limit Return</span>
                                 
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
@@ -291,7 +297,7 @@
                                 80.8
                             </div>
                         </td>
-                        <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1;">
+                        <td data-val="80.8" style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">
                             80.8
                         </td>
                         <td data-val="3.0" style="background-color: #f3e8ff;">
@@ -328,6 +334,7 @@
                             <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">曹操-万灵伏威</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -337,7 +344,7 @@
                                 59.0
                             </div>
                         </td>
-                        <td data-val="34.6" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="34.6" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             34.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
@@ -370,6 +377,7 @@
                             <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">安琪拉-糖果风暴</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -379,7 +387,7 @@
                                 44.1
                             </div>
                         </td>
-                        <td data-val="5.4" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="5.4" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             5.4
                         </td>
                         <td data-val="4.2" style="background-color: #ffffff;">
@@ -415,6 +423,7 @@
                             <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">孙权-径山谋武</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -424,7 +433,7 @@
                                 33.1
                             </div>
                         </td>
-                        <td data-val="4.1" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="4.1" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             4.1
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
@@ -457,6 +466,7 @@
                             <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">蚩姹-极光幻客</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -466,7 +476,7 @@
                                 24.6
                             </div>
                         </td>
-                        <td data-val="3.0" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="3.0" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             3.0
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
@@ -499,6 +509,7 @@
                             <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">蒙恬-苍云破阵</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -508,7 +519,7 @@
                                 20.9
                             </div>
                         </td>
-                        <td data-val="2.6" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="2.6" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             2.6
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">
@@ -542,8 +553,8 @@
                             <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">小乔-山海·琳琅生</span>
-                                <span class="badge badge-return">Limit Return</span>
                                 
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
@@ -551,7 +562,7 @@
                                 17.7
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="0.0" style="background-color: #e0f2fe;">
@@ -585,8 +596,8 @@
                             <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">妲己-热情桑巴</span>
-                                <span class="badge badge-return">Limit Return</span>
                                 
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
@@ -594,7 +605,7 @@
                                 12.0
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="100.0" style="background-color: #ffffff;">
@@ -632,8 +643,8 @@
                             <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">曜-山海·苍雷引</span>
-                                <span class="badge badge-return">Limit Return</span>
                                 
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
@@ -641,7 +652,7 @@
                                 7.2
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="-100.0" style="background-color: #e0f2fe;">
@@ -679,6 +690,7 @@
                             <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">大乔-乘龙·忆丹青</span>
+                                
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
@@ -688,7 +700,7 @@
                                 --
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="1.9" style="background-color: #ffffff;">
@@ -718,14 +730,16 @@
                         </td>
                         <td class="quality-col" data-val="2">
                             
+                             
                             
-                            <img src="./images/2.gif" class="quality-icon " onerror="loadFallbackImg(this, '2')">
+                            <img src="./images/2.gif" class="quality-icon glory-big" onerror="loadFallbackImg(this, '2')">
                         </td>
                         <td class="rounded-left" style="background-color: #bfdbfe; padding-right:120px;"><div class="song-col">
                             <img src="./skin_avatars/吕布·千魇归渊.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">吕布·千魇归渊</span>
-                                <span class="badge badge-new">New Arrival</span>
+                                
+                                <span class="badge badge-preset">Coming Soon</span>
                                 
                             </div>
                         </div></td>
@@ -734,7 +748,7 @@
                                 --
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #bfdbfe; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="0.0" style="background-color: #bfdbfe;">
@@ -767,7 +781,8 @@
                             <img src="./skin_avatars/妲己·线条小狗.jpg" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">妲己·线条小狗</span>
-                                <span class="badge badge-new">New Arrival</span>
+                                
+                                <span class="badge badge-preset">Coming Soon</span>
                                 
                             </div>
                         </div></td>
@@ -776,7 +791,7 @@
                                 --
                             </div>
                         </td>
-                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
                             --
                         </td>
                         <td data-val="0.0" style="background-color: #ffffff;">

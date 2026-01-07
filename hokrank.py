@@ -225,10 +225,8 @@ class SkinSystem:
             if len(raw) < 2: return
             q_code = float(raw[0]);
             name = raw[1]
-
-            # 🔥 V21.5 修正：正确判断是否为返场
+            # 🔥 修复变量名问题：is_rr
             is_rr = (len(raw) >= 3 and raw[2] != '0')
-
             list_p = self._get_list_price_by_quality(q_code)
 
             mode = input("模式: 1.立即上榜  2.不进榜  3.预设(Coming Soon): ").strip()
@@ -259,7 +257,6 @@ class SkinSystem:
                 real_p = float(input("实际价格: ") or 0.0);
                 growth = float(input("涨幅: ") or 0.0)
 
-            # 🔥 V21.5 修复：使用 is_rr 而不是 is_rerun
             self.all_skins.append({
                 "quality": q_code if not q_code.is_integer() else int(q_code),
                 "name": name, "is_rerun": is_rr, "is_new": not is_rr,
@@ -336,7 +333,6 @@ class SkinSystem:
                 new_q = float(val_raw)
                 item['quality'] = new_q if not new_q.is_integer() else int(new_q)
                 item['list_price'] = self._get_list_price_by_quality(item['quality'])
-                print(f"   ℹ️ 品质已变更为 {item['quality']}, 原价更新为 ¥{item['list_price']}")
 
             item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
                                                             item.get('real_price', 0))
@@ -347,7 +343,7 @@ class SkinSystem:
     def modify_data_ui(self):
         self.print_console_table(self.get_total_skins())
         print("💡 快捷指令: [序号] [属性ID] [新值] (例如: 1 1 200)")
-        print("   属性ID: 1=分数, 2=涨幅, 3=实价, 4=品质")
+        print("   属性ID: 1=分数, 2=涨幅, 3=实价")
 
         raw = input("输入指令: ").strip().lower()
         if not raw: return
@@ -376,7 +372,7 @@ class SkinSystem:
                     while True:
                         cur_s = "--" if item['score'] is None else item['score']
                         print(
-                            f"\n修改: {item['name']} | 1.分:{cur_s} | 2.涨幅:{item['growth']} | 3.实价:{item['real_price']} | 4.品质:{item['quality']} | 0.保存")
+                            f"\n修改: {item['name']} | 1.分:{cur_s} | 2.涨幅:{item['growth']} | 3.实价:{item['real_price']} | 0.保存")
                         sub_raw = input("序号 数值: ").strip().lower()
                         if not sub_raw or sub_raw == '0': break
                         sub_parts = sub_raw.split()
@@ -492,9 +488,13 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
+
+        /* 🔥 V21.7 修正：品质图标缩放矩阵 */
         .quality-icon.wushuang-big { transform: scale(1.5); }
         .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); }
+        .quality-icon.epic-medium { transform: scale(1.1); } 
+        /* 🔥 V21.7 新增：荣耀典藏放大 1.4 */
+        .quality-icon.glory-big { transform: scale(1.4); }
         .quality-icon.brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -503,12 +503,11 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.7 样式继承 */
+        /* 🔥 V20.7 样式继承：蓝底白字 */
         .rank-box { 
             display: inline-block; 
             min-width: 20px;       
             padding: 0px 5px;      
-
             border: none;          
             background: #1d4ed8;   
             color: #ffffff;        
@@ -516,7 +515,6 @@ class SkinSystem:
             font-weight: 900; 
             text-align: center;    
             line-height: 24px;     
-
             border-radius: 4px;    
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -600,6 +598,8 @@ class SkinSystem:
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
+                            {# 🔥 V21.7: 绑定荣耀典藏(2)专属样式 #}
+                            {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %} 
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
                             {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
@@ -609,9 +609,10 @@ class SkinSystem:
                             {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
                             <div class="name-container">
                                 <span class="song-title">{{ skin.name }}</span>
-                                {% if skin.is_new %}<span class="badge badge-new">New Arrival</span>
-                                {% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>
-                                {% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>{% endif %}
+                                {# 🔥 V21.6: 预设角标优先级置顶 #}
+                                {% if skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>
+                                {% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>
+                                {% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
                         </div></td>
                         <td data-val="{{ skin.score if skin.score is not none else -9999999 }}" style="background-color: {{ rb }};">
@@ -619,7 +620,7 @@ class SkinSystem:
                                 {{ skin.score if skin.score is not none else '--' }}
                             </div>
                         </td>
-                        <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1;">
+                        <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">
                             {{ skin.real_score if skin.real_score is not none else '--' }}
                         </td>
                         <td data-val="{{ skin.growth }}" style="background-color: {{ rb }};">
@@ -726,7 +727,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V21.5 (紧急修复+预设完善版)")
+        print("👑 王者荣耀榜单 V21.7 (完整终极版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
