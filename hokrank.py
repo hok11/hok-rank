@@ -132,8 +132,8 @@ class SkinSystem:
             if 'price' in skin: del skin['price']
             if 'on_leaderboard' not in skin:
                 skin['on_leaderboard'] = True if (
-                        skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
-                    'is_discontinued')) else False
+                            skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
+                        'is_discontinued')) else False
         self.save_data()
 
     def _get_base_score(self, x):
@@ -208,7 +208,7 @@ class SkinSystem:
                 score_str = "--" if s_val is None else str(s_val)
                 real_pts_str = "--" if skin.get('real_score') is None else str(skin['real_score'])
                 growth_str = f"+{skin.get('growth', 0)}%" if (
-                        skin.get('growth', 0) != 0 and skin.get('growth') is not None) else "--"
+                            skin.get('growth', 0) != 0 and skin.get('growth') is not None) else "--"
                 status_str = "[🔥在榜]" if skin.get('on_leaderboard') else "[❌退榜]"
 
             list_p_str = f"¥{skin.get('list_price', 0)}"
@@ -441,9 +441,7 @@ class SkinSystem:
         print("\n🕷️ 启动自动抓取程序...")
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0:
-            self.save_data();
-            self.generate_html();
-            print(f"\n🎉 同步了 {count} 张新图片！")
+            self.save_data(); self.generate_html(); print(f"\n🎉 同步了 {count} 张新图片！")
         else:
             print("\n⚠️ 暂无新图片需要抓取")
 
@@ -524,10 +522,6 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-
-        /* 🔥 新增：珍品无双(0)标签放大类 */
-        .quality-icon.rare-wushuang-big { transform: scale(1.5); }
-
         .quality-icon.wushuang-big { transform: scale(1.5); }
         .quality-icon.legend-big { transform: scale(1.2); }
         .quality-icon.epic-medium { transform: scale(1.1); } 
@@ -635,9 +629,7 @@ class SkinSystem:
                         </td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
-                            {# 🔥 逻辑修改：针对珍品无双(0)单独应用 1.5 倍类名 #}
-                            {% if skin.quality == 0 %}{% set q_cls = 'rare-wushuang-big' %}
-                            {% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set q_cls = 'wushuang-big' %}
+                            {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %} 
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
