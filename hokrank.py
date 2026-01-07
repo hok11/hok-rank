@@ -207,6 +207,7 @@ class SkinSystem:
                 growth_str = "--"
             elif skin.get('is_discontinued'):
                 status_str = "[💀绝版]"
+                # V23.1: 绝版显示 --
                 score_str = "--"
                 real_pts_str = "--"
                 growth_str = "--"
@@ -573,7 +574,7 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* 🔥 V23.2 自动去黑底特效 + 描述图列 */
+        /* 🔥 V23.7 核心隔离：滤镜只作用于 .desc-img，饱和度改为 4.0 */
         .desc-col {
             width: 100px; /* 固定列宽 */
             padding: 2px !important;
@@ -586,12 +587,9 @@ class SkinSystem:
             display: block;
             margin: 0 auto;
             border-radius: 4px;
-            /* 核心魔法：让黑色自动变透明 */
-            mix-blend-mode: screen; 
 
-            /* 🔥 V23.3 新增关键：增强对比度和饱和度 */
-            /* contrast(1.5) 提高50%对比度，让亮部更亮，暗部更暗 */
-            /* saturate(2.0) 提高50%饱和度，让金色更黄更鲜艳 */
+            /* [隔离区] 以下两行只对描述图生效 */
+            mix-blend-mode: screen; 
             filter: contrast(1.5) saturate(4.0);
         }
 
@@ -603,14 +601,11 @@ class SkinSystem:
         /* 🔥 V23.4 修复排序图标 */
         .col-sort { cursor: pointer; position: relative; } 
         .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
-
-        /* 当表头被 JS 添加了 sort-asc 类时，变为上三角 */
         th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
-
-        /* 当表头被 JS 添加了 sort-desc 类时，变为下三角 */
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
 
         /* 图标样式 & 物理放大 */
+        /* [隔离区] 这些类不受上方 filter 影响 */
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; transform: scale(1.1); }
         .wushuang-big { height: 45px !important; margin: -8px 0; }
@@ -618,8 +613,36 @@ class SkinSystem:
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
-        .song-title { font-weight: 700; font-size: 14px; }
-        .badge { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 900; border-radius: 3px; }
+
+        /* 🔥 V23.6 名字容器定宽与自适应 */
+        .name-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px;
+            width: 108px; /* 固定为"貂蝉-馥梦繁花"的大致宽度 */
+            align-items: center; /* 居中对齐 */
+        }
+
+        .song-title { 
+            font-weight: 700; 
+            font-size: 14px; 
+            color: #000;
+            white-space: nowrap; /* 强制不换行 */
+            transform-origin: center; /* 从中心缩放 */
+            display: inline-block;
+        }
+
+        .badge { 
+            display: block; /* 块级显示 */
+            width: 100%;    /* 填满容器宽度 */
+            text-align: center; /* 文字居中 */
+            padding: 1px 0; /* 调整内边距 */
+            font-size: 9px; 
+            font-weight: 900; 
+            border-radius: 3px; 
+            text-transform: uppercase;
+        }
+
         .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
         .rank-box { display: inline-block; min-width: 20px; background: #1d4ed8; color: #fff; font-size: 20px; font-weight: 900; border-radius: 4px; }
         .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -677,7 +700,7 @@ class SkinSystem:
                         </td>
                         <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
                             <img src="./{{ skin.local_img or 'placeholder.jpg' }}" class="album-art">
-                            <div style="display:flex; flex-direction:column;">
+                            <div class="name-container">
                                 <span class="song-title">{{ skin.name }}</span>
                                 {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>{% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>{% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>{% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
@@ -719,7 +742,34 @@ class SkinSystem:
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-    window.onload = () => { sortTable(4, 'float'); };
+
+    // 🔥 V23.6 核心逻辑：自动调整名字大小
+    window.onload = () => { 
+        sortTable(4, 'float'); 
+        adjustNameFontSize();
+    };
+
+    function adjustNameFontSize() {
+        const containers = document.querySelectorAll('.name-container');
+        // 设定的基准宽度 (与 CSS 中的 width: 108px 保持一致)
+        const maxWidth = 108; 
+
+        containers.forEach(container => {
+            const title = container.querySelector('.song-title');
+            if (title) {
+                // 获取文字实际渲染宽度
+                const actualWidth = title.scrollWidth;
+
+                if (actualWidth > maxWidth) {
+                    // 计算缩放比例
+                    const scale = maxWidth / actualWidth;
+                    // 应用缩放，保持居中
+                    title.style.transform = `scale(${scale})`;
+                }
+            }
+        });
+    }
+
     function loadFallbackImg(img, q) {
         if (img.src.indexOf('.gif') !== -1) img.src = './images/' + q + '.jpg';
         else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) { let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg'; }
@@ -778,7 +828,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V23.4 (排序修复+特效完整版)")
+        print("👑 王者荣耀榜单 V23.7 (饱和度增强+完整版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
