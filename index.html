@@ -62,12 +62,25 @@
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        /* 基础图标样式 */
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-        .quality-icon.wushuang-big { transform: scale(1.5); }
-        .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); } 
-        .quality-icon.glory-big { transform: scale(1.4); }
-        .quality-icon.brave-small { transform: scale(0.9); }
+
+        /* 🔥 核心物理拉大：针对珍品无双(0) */
+        .rare-wushuang-big { 
+            height: 60px !important;  /* 暴力拉大高度 */
+            width: auto !important;
+            margin: -15px 0;         /* 补偿间距 */
+            transform: scale(1.1);   /* 微调缩放 */
+        }
+
+        /* 针对无双(1)档位的放大 */
+        .wushuang-big { height: 45px !important; margin: -8px 0; }
+
+        .glory-big { transform: scale(1.4); }
+        .legend-big { transform: scale(1.2); }
+        .epic-medium { transform: scale(1.1); } 
+        .brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -122,7 +135,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-07 23:28</p>
+                <p>Update: 2026-01-08 00:18</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -669,55 +682,6 @@
                     
 
                     
-                    <tr data-quality="史诗">
-                        <td>
-                            
-                            <span style="font-weight:bold; color:#999;">-</span>
-                            
-                        </td>
-                        <td class="quality-col" data-val="5">
-                            
-                            
-                            
-                            <img src="./images/5.gif" class="quality-icon epic-medium" onerror="loadFallbackImg(this, '5')">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff; padding-right:120px;"><div class="song-col">
-                            <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
-                            <div class="name-container">
-                                <span class="song-title">大乔-乘龙·忆丹青</span>
-                                <span class="badge badge-out">Out of Print</span>
-                                
-                            </div>
-                        </div></td>
-                        <td data-val="-9999999" style="background-color: #ffffff;">
-                            <div class="box-style">
-                                End
-                                
-                            </div>
-                        </td>
-                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
-                            --
-                        </td>
-                        <td data-val="1.9" style="background-color: #ffffff;">
-                            
-                                
-                                
-                                
-                                <div class="box-style growth-special">1.9%!</div>
-                            
-                        </td>
-                        <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
-                        <td class="rounded-right" data-val="53.2" style="background-color: #ffffff;">
-                            <div class="box-style">
-                                ¥53.2
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    
-                    
-
-                    
                     <tr data-quality="荣耀典藏">
                         <td>
                             
@@ -848,6 +812,55 @@
                     
 
                     
+                    <tr data-quality="史诗">
+                        <td>
+                            
+                            <span style="font-weight:bold; color:#999;">-</span>
+                            
+                        </td>
+                        <td class="quality-col" data-val="5">
+                            
+                            
+                            
+                            <img src="./images/5.gif" class="quality-icon epic-medium" onerror="loadFallbackImg(this, '5')">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff; padding-right:120px;"><div class="song-col">
+                            <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
+                            <div class="name-container">
+                                <span class="song-title">大乔-乘龙·忆丹青</span>
+                                <span class="badge badge-out">Out of Print</span>
+                                
+                            </div>
+                        </div></td>
+                        <td data-val="-9999999" style="background-color: #ffffff;">
+                            <div class="box-style">
+                                End
+                                
+                            </div>
+                        </td>
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1; font-weight:bold;">
+                            --
+                        </td>
+                        <td data-val="1.9" style="background-color: #ffffff;">
+                            
+                                
+                                
+                                
+                                <div class="box-style growth-special">1.9%!</div>
+                            
+                        </td>
+                        <td data-val="88.8" style="background-color: #ffffff;">¥88.8</td>
+                        <td class="rounded-right" data-val="53.2" style="background-color: #ffffff;">
+                            <div class="box-style">
+                                ¥53.2
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    
+                    
+
+                    
                     <tr data-quality="珍品无双">
                         <td>
                             
@@ -858,7 +871,7 @@
                             
                             
                             
-                            <img src="./images/0.gif" class="quality-icon wushuang-big" onerror="loadFallbackImg(this, '0')">
+                            <img src="./images/0.gif" class="quality-icon rare-wushuang-big" onerror="loadFallbackImg(this, '0')">
                         </td>
                         <td class="rounded-left" style="background-color: #ffdcdc; padding-right:120px;"><div class="song-col">
                             <img src="./skin_avatars/貂蝉-馥梦繁花.gif" class="album-art">

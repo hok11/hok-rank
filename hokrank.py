@@ -132,8 +132,8 @@ class SkinSystem:
             if 'price' in skin: del skin['price']
             if 'on_leaderboard' not in skin:
                 skin['on_leaderboard'] = True if (
-                            skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
-                        'is_discontinued')) else False
+                        skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
+                    'is_discontinued')) else False
         self.save_data()
 
     def _get_base_score(self, x):
@@ -165,8 +165,10 @@ class SkinSystem:
     def save_data(self):
         try:
             with open(self.data_file, 'w', encoding='utf-8') as f:
+                # 🔥 修正排序权重：普通(0) < 预设(1) < 绝版(10)
+                # 确保绝版永远在列表最底部
                 self.all_skins.sort(key=lambda x: (
-                    1 if (x.get('is_preset') or x.get('is_discontinued')) else 0,
+                    10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0),
                     x.get('score') is None,
                     -(x.get('score') or 0)
                 ))
@@ -176,14 +178,19 @@ class SkinSystem:
 
     def get_total_skins(self):
         data = self.all_skins[:]
-        data.sort(key=lambda x: (1 if (x.get('is_preset') or x.get('is_discontinued')) else 0, x.get('score') is None,
-                                 -(x.get('score') or 0)))
+        # 🔥 同步排序逻辑
+        data.sort(key=lambda x: (
+            10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0),
+            x.get('score') is None,
+            -(x.get('score') or 0)
+        ))
         return data
 
     def get_active_leaderboard(self):
         active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
-        active.sort(key=lambda x: (1 if (x.get('is_preset') or x.get('is_discontinued')) else 0, x.get('score') is None,
-                                   -(x.get('score') or 0)))
+        active.sort(
+            key=lambda x: (10 if x.get('is_discontinued') else (1 if x.get('is_preset') else 0), x.get('score') is None,
+                           -(x.get('score') or 0)))
         return active[:LEADERBOARD_CAPACITY + 10]
 
     def print_console_table(self, data_list=None, title="榜单"):
@@ -208,7 +215,7 @@ class SkinSystem:
                 score_str = "--" if s_val is None else str(s_val)
                 real_pts_str = "--" if skin.get('real_score') is None else str(skin['real_score'])
                 growth_str = f"+{skin.get('growth', 0)}%" if (
-                            skin.get('growth', 0) != 0 and skin.get('growth') is not None) else "--"
+                        skin.get('growth', 0) != 0 and skin.get('growth') is not None) else "--"
                 status_str = "[🔥在榜]" if skin.get('on_leaderboard') else "[❌退榜]"
 
             list_p_str = f"¥{skin.get('list_price', 0)}"
@@ -441,7 +448,9 @@ class SkinSystem:
         print("\n🕷️ 启动自动抓取程序...")
         count = self.crawler.fetch_images(self.all_skins)
         if count > 0:
-            self.save_data(); self.generate_html(); print(f"\n🎉 同步了 {count} 张新图片！")
+            self.save_data();
+            self.generate_html();
+            print(f"\n🎉 同步了 {count} 张新图片！")
         else:
             print("\n⚠️ 暂无新图片需要抓取")
 
@@ -521,12 +530,25 @@ class SkinSystem:
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        /* 基础图标样式 */
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-        .quality-icon.wushuang-big { transform: scale(1.5); }
-        .quality-icon.legend-big { transform: scale(1.2); }
-        .quality-icon.epic-medium { transform: scale(1.1); } 
-        .quality-icon.glory-big { transform: scale(1.4); }
-        .quality-icon.brave-small { transform: scale(0.9); }
+
+        /* 🔥 核心物理拉大：针对珍品无双(0) */
+        .rare-wushuang-big { 
+            height: 60px !important;  /* 暴力拉大高度 */
+            width: auto !important;
+            margin: -15px 0;         /* 补偿间距 */
+            transform: scale(1.1);   /* 微调缩放 */
+        }
+
+        /* 针对无双(1)档位的放大 */
+        .wushuang-big { height: 45px !important; margin: -8px 0; }
+
+        .glory-big { transform: scale(1.4); }
+        .legend-big { transform: scale(1.2); }
+        .epic-medium { transform: scale(1.1); } 
+        .brave-small { transform: scale(0.9); }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
@@ -629,7 +651,8 @@ class SkinSystem:
                         </td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
-                            {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
+                            {% if skin.quality == 0 %}{% set q_cls = 'rare-wushuang-big' %}
+                            {% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set q_cls = 'wushuang-big' %}
                             {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %} 
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
@@ -759,7 +782,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V22.0 (动态视界版)")
+        print("👑 王者荣耀榜单 V22.1 (动态视界·物理放大版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")

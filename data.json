@@ -165,21 +165,6 @@
     "is_discontinued": false
   },
   {
-    "quality": 5,
-    "name": "大乔-乘龙·忆丹青",
-    "is_rerun": false,
-    "is_new": false,
-    "on_leaderboard": true,
-    "score": null,
-    "real_score": null,
-    "growth": 1.9,
-    "list_price": 88.8,
-    "real_price": 53.2,
-    "local_img": "skin_avatars/大乔-乘龙·忆丹青.jpg",
-    "is_preset": false,
-    "is_discontinued": true
-  },
-  {
     "quality": 2,
     "name": "吕布·千魇归渊",
     "is_rerun": false,
@@ -223,6 +208,21 @@
     "real_price": 0.0,
     "local_img": "skin_avatars/桑启-线条小狗.jpg",
     "is_discontinued": false
+  },
+  {
+    "quality": 5,
+    "name": "大乔-乘龙·忆丹青",
+    "is_rerun": false,
+    "is_new": false,
+    "on_leaderboard": true,
+    "score": null,
+    "real_score": null,
+    "growth": 1.9,
+    "list_price": 88.8,
+    "real_price": 53.2,
+    "local_img": "skin_avatars/大乔-乘龙·忆丹青.jpg",
+    "is_preset": false,
+    "is_discontinued": true
   },
   {
     "quality": 0,
