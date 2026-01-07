@@ -98,7 +98,7 @@ class SkinSystem:
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
 
-        # 🔥 V23.0 新增：初始化描述图文件夹
+        # 🔥 V23.0 初始化描述图文件夹
         self.desc_dir = os.path.join(LOCAL_REPO_PATH, "skin_descs")
         if not os.path.exists(self.desc_dir):
             os.makedirs(self.desc_dir)
@@ -146,8 +146,6 @@ class SkinSystem:
             try:
                 with open(self.data_file, 'r', encoding='utf-8') as f:
                     loaded = json.load(f)
-
-                # 兼容旧数据结构，读取列表或字典
                 if isinstance(loaded, list):
                     self.all_skins = loaded
                 elif isinstance(loaded, dict):
@@ -168,17 +166,12 @@ class SkinSystem:
             self.save_data()
 
     def _get_sort_key(self, skin):
-        """
-        🔥 核心排序逻辑
-        1. 绝版 (10) > 预设 (1) > 在榜 (0)
-        2. 如果是 绝版/预设：按品质数值升序（0是最高品质，6是最低）
-        3. 如果是 在榜：按分数降序
-        """
+        # 排序：10=绝版, 1=预设, 0=在榜
         group_weight = 10 if skin.get('is_discontinued') else (1 if skin.get('is_preset') else 0)
         if group_weight == 0:
             return (group_weight, skin.get('score') is None, -(skin.get('score') or 0))
         else:
-            # 绝版和预设按品质正序排列 (数值越小品质越高)
+            # 绝版/预设按品质正序
             return (group_weight, skin.get('quality', 99))
 
     def save_data(self):
@@ -214,7 +207,7 @@ class SkinSystem:
                 growth_str = "--"
             elif skin.get('is_discontinued'):
                 status_str = "[💀绝版]"
-                # 🔥 修改点：绝版在控制台显示为 "--"
+                # 🔥 V23.1 修正：绝版不再显示 End，改为 --
                 score_str = "--"
                 real_pts_str = "--"
                 growth_str = "--"
@@ -514,15 +507,13 @@ class SkinSystem:
                        6: "勇者"}
         header_gifs = self.get_header_gifs()
 
-        # 🔥 V23.0 逻辑：扫描 skin_descs 文件夹，构建皮肤描述图映射
+        # 🔥 V23.0 逻辑：扫描 skin_descs 文件夹
         desc_files = {}
         if os.path.exists(self.desc_dir):
             for f in os.listdir(self.desc_dir):
-                # 获取不带后缀的文件名
                 name_part = os.path.splitext(f)[0]
                 desc_files[name_part] = f
 
-        # 为每个皮肤对象注入 desc_img 属性 (仅用于本次渲染)
         display_skins = self.get_total_skins()
         for skin in display_skins:
             skin['desc_img'] = desc_files.get(skin['name'])
@@ -547,7 +538,6 @@ class SkinSystem:
         .header-content { text-align: center; flex: 1; }
         .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; }
 
-        /* 🔥 新增：说明按钮和头部布局容器 */
         .info-container {
             display: flex;
             align-items: center;
@@ -557,63 +547,21 @@ class SkinSystem:
         }
 
         .info-btn {
-            background: white;
-            color: black;
-            border: none;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
+            background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s;
         }
         .info-btn:hover { opacity: 0.8; }
 
-        /* 🔥 新增：模态框样式 */
+        /* 模态框样式 */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.5); 
-            backdrop-filter: blur(2px);
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
         }
-
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border-radius: 12px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            animation: fadeIn 0.3s;
+            background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 12px; width: 80%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: fadeIn 0.3s;
         }
-
         @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 20px;
-        }
+        .close-btn { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; line-height: 20px; }
         .close-btn:hover { color: black; }
-
-        .modal-list {
-            text-align: left;
-            margin-top: 15px;
-            padding-left: 20px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
-        }
+        .modal-list { text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #333; }
 
         .header-gifs-container { display: flex; gap: 10px; }
         .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
@@ -626,7 +574,7 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* 🔥 V23.0 新增样式：描述图列 */
+        /* 🔥 V23.2 自动去黑底特效 + 描述图列 */
         .desc-col {
             width: 100px; /* 固定列宽 */
             padding: 2px !important;
@@ -634,11 +582,13 @@ class SkinSystem:
         .desc-img {
             max-width: 100%;
             height: auto;
-            max-height: 50px; /* 限制高度，自适应 */
+            max-height: 50px; 
             object-fit: contain;
             display: block;
             margin: 0 auto;
             border-radius: 4px;
+            /* 🔥 核心魔法：让黑色自动变透明，保留发光 */
+            mix-blend-mode: screen; 
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
@@ -812,7 +762,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V23.1 (完全体)")
+        print("👑 王者荣耀榜单 V23.2 (特效版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
