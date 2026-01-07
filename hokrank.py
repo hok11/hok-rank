@@ -592,7 +592,7 @@ class SkinSystem:
             /* 🔥 V23.3 新增关键：增强对比度和饱和度 */
             /* contrast(1.5) 提高50%对比度，让亮部更亮，暗部更暗 */
             /* saturate(2.0) 提高50%饱和度，让金色更黄更鲜艳 */
-            filter: contrast(1.0) saturate(1.0);
+            filter: contrast(1.5) saturate(4.0);
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
