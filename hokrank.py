@@ -98,7 +98,7 @@ class SkinSystem:
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
 
-        # 🔥 V23.0 初始化描述图文件夹
+        # 🔥 初始化描述图文件夹
         self.desc_dir = os.path.join(LOCAL_REPO_PATH, "skin_descs")
         if not os.path.exists(self.desc_dir):
             os.makedirs(self.desc_dir)
@@ -207,7 +207,6 @@ class SkinSystem:
                 growth_str = "--"
             elif skin.get('is_discontinued'):
                 status_str = "[💀绝版]"
-                # 🔥 V23.1 修正：绝版不再显示 End，改为 --
                 score_str = "--"
                 real_pts_str = "--"
                 growth_str = "--"
@@ -587,15 +586,29 @@ class SkinSystem:
             display: block;
             margin: 0 auto;
             border-radius: 4px;
-            /* 🔥 核心魔法：让黑色自动变透明，保留发光 */
+            /* 核心魔法：让黑色自动变透明 */
             mix-blend-mode: screen; 
+
+            /* 🔥 V23.3 新增关键：增强对比度和饱和度 */
+            /* contrast(1.5) 提高50%对比度，让亮部更亮，暗部更暗 */
+            /* saturate(1.5) 提高50%饱和度，让金色更黄更鲜艳 */
+            filter: contrast(1.5) saturate(1.5);
         }
 
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; cursor: pointer; background: white; min-width: 85px; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
         .dropdown-menu.show { display: block; }
-        .col-sort { cursor: pointer; } .col-sort::after { content: ' ⇅'; color: #ccc; }
+
+        /* 🔥 V23.4 修复排序图标 */
+        .col-sort { cursor: pointer; position: relative; } 
+        .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
+
+        /* 当表头被 JS 添加了 sort-asc 类时，变为上三角 */
+        th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
+
+        /* 当表头被 JS 添加了 sort-desc 类时，变为下三角 */
+        th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
 
         /* 图标样式 & 物理放大 */
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
@@ -724,6 +737,11 @@ class SkinSystem:
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
+        // 清除所有头的状态
+        Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+        // 添加当前头的状态
+        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+
         rows.sort((a, b) => {
             var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%!]/g, ''));
             var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%!]/g, ''));
@@ -731,8 +749,6 @@ class SkinSystem:
             return dir === "asc" ? x - y : y - x;
         });
         rows.forEach(r => table.tBodies[0].appendChild(r));
-        Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
-        headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
     }
     </script>
 </body>
@@ -762,7 +778,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V23.2 (特效版)")
+        print("👑 王者荣耀榜单 V23.4 (排序修复+特效完整版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
