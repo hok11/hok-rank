@@ -123,7 +123,6 @@ class SkinSystem:
         for skin in self.all_skins:
             skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
             if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
-
             if 'is_preset' not in skin: skin['is_preset'] = False
             if 'is_discontinued' not in skin: skin['is_discontinued'] = False
 
@@ -179,6 +178,7 @@ class SkinSystem:
         if group_weight == 0:
             return (group_weight, skin.get('score') is None, -(skin.get('score') or 0))
         else:
+            # 绝版和预设按品质正序排列 (数值越小品质越高)
             return (group_weight, skin.get('quality', 99))
 
     def save_data(self):
@@ -214,7 +214,8 @@ class SkinSystem:
                 growth_str = "--"
             elif skin.get('is_discontinued'):
                 status_str = "[💀绝版]"
-                score_str = "End"
+                # 🔥 修改点：绝版在控制台显示为 "--"
+                score_str = "--"
                 real_pts_str = "--"
                 growth_str = "--"
             else:
@@ -725,7 +726,9 @@ class SkinSystem:
                             {% endif %}
                         </td>
 
-                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ rb }};"><div class="box-style">{% if skin.is_discontinued %}End{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
+                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ rb }};"><div class="box-style">
+                            {% if skin.is_discontinued %}{{ '--' }}{% else %}{{ skin.score or '--' }}{% endif %}
+                        </div></td>
                         <td style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
                         <td style="background-color: {{ rb }};">
                             {% if skin.growth %}
@@ -809,7 +812,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V23.0 (完全体)")
+        print("👑 王者荣耀榜单 V23.1 (完全体)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
