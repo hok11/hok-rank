@@ -34,7 +34,27 @@ class SkinCrawler:
         print("\n🕷️ 正在启动百度图片搜索...")
         count = 0
         for skin in skin_list:
-            if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])): continue
+            # 1. 构建标准文件名 (用于检测 GIF 或 JPG)
+            safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
+
+            # 🔥 V22.0 核心升级：优先检测本地 GIF
+            gif_filename = f"{safe_name}.gif"
+            gif_path = os.path.join(self.save_dir, gif_filename)
+
+            if os.path.exists(gif_path):
+                # 如果本地有 GIF，强制更新路径并跳过下载
+                current_path = f"skin_avatars/{gif_filename}"
+                if skin.get('local_img') != current_path:
+                    skin['local_img'] = current_path
+                    print(f"   🎥 锁定本地动态头像: {gif_filename}")
+                    count += 1  # 标记为有更新，以便触发保存
+                continue  # 跳过后续的 JPG 检查和下载
+
+            # 2. 如果没有 GIF，检查是否已有 JPG 缓存
+            if skin.get('local_img') and os.path.exists(os.path.join(LOCAL_REPO_PATH, skin['local_img'])):
+                continue
+
+            # 3. 都没有，开始爬取 JPG
             parts = skin['name'].split('-')
             keyword = f"{parts[1]} {parts[0]}" if len(parts) >= 2 else skin['name']
             url = "https://image.baidu.com/search/acjson"
@@ -64,7 +84,7 @@ class SkinCrawler:
                             continue
                     print(f"   🔍 搜索 [{keyword}] -> 成功!")
                     img_resp = requests.get(img_url, headers=self.headers, timeout=10)
-                    safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
+
                     file_name = f"{safe_name}.jpg"
                     file_path = os.path.join(self.save_dir, file_name)
                     with open(file_path, 'wb') as f:
@@ -104,6 +124,7 @@ class SkinSystem:
             if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
 
             if 'is_preset' not in skin: skin['is_preset'] = False
+            if 'is_discontinued' not in skin: skin['is_discontinued'] = False
 
             cur_score = skin.get('score')
             skin['real_score'] = self._calculate_real_score(cur_score, skin['list_price'], skin['real_price'])
@@ -111,7 +132,8 @@ class SkinSystem:
             if 'price' in skin: del skin['price']
             if 'on_leaderboard' not in skin:
                 skin['on_leaderboard'] = True if (
-                            skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset')) else False
+                            skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
+                        'is_discontinued')) else False
         self.save_data()
 
     def _get_base_score(self, x):
@@ -143,21 +165,26 @@ class SkinSystem:
     def save_data(self):
         try:
             with open(self.data_file, 'w', encoding='utf-8') as f:
-                self.all_skins.sort(
-                    key=lambda x: (0 if x.get('is_preset') else 1, x.get('score') is None, -(x.get('score') or 0)))
+                self.all_skins.sort(key=lambda x: (
+                    1 if (x.get('is_preset') or x.get('is_discontinued')) else 0,
+                    x.get('score') is None,
+                    -(x.get('score') or 0)
+                ))
                 json.dump(self.all_skins, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"❌ 存档失败: {e}")
 
     def get_total_skins(self):
         data = self.all_skins[:]
-        data.sort(key=lambda x: (x.get('is_preset', False), x.get('score') is None, -(x.get('score') or 0)))
+        data.sort(key=lambda x: (1 if (x.get('is_preset') or x.get('is_discontinued')) else 0, x.get('score') is None,
+                                 -(x.get('score') or 0)))
         return data
 
     def get_active_leaderboard(self):
         active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
-        active.sort(key=lambda x: (x.get('is_preset', False), x.get('score') is None, -(x.get('score') or 0)))
-        return active[:LEADERBOARD_CAPACITY + 5]
+        active.sort(key=lambda x: (1 if (x.get('is_preset') or x.get('is_discontinued')) else 0, x.get('score') is None,
+                                   -(x.get('score') or 0)))
+        return active[:LEADERBOARD_CAPACITY + 10]
 
     def print_console_table(self, data_list=None, title="榜单"):
         if data_list is None: data_list = self.get_total_skins()
@@ -169,6 +196,11 @@ class SkinSystem:
             if skin.get('is_preset'):
                 status_str = "[🕒预设]"
                 score_str = "Wait"
+                real_pts_str = "--"
+                growth_str = "--"
+            elif skin.get('is_discontinued'):
+                status_str = "[💀绝版]"
+                score_str = "End"
                 real_pts_str = "--"
                 growth_str = "--"
             else:
@@ -195,7 +227,8 @@ class SkinSystem:
             self.print_console_table(self.get_total_skins(), "总榜")
 
     def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
-        valid_list = [s for s in active_list if not s.get('is_preset') and s.get('score') is not None]
+        valid_list = [s for s in active_list if
+                      not s.get('is_preset') and not s.get('is_discontinued') and s.get('score') is not None]
         if rank_input == 1:
             old_top1_score = valid_list[0]['score'] if valid_list else 0
             return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
@@ -212,7 +245,8 @@ class SkinSystem:
                 t += 1
 
     def _auto_prune_leaderboard(self):
-        active = [s for s in self.all_skins if s.get('on_leaderboard', False) and not s.get('is_preset')]
+        active = [s for s in self.all_skins if
+                  s.get('on_leaderboard', False) and not s.get('is_preset') and not s.get('is_discontinued')]
         active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
         if len(active) > LEADERBOARD_CAPACITY:
             for skin in active[LEADERBOARD_CAPACITY:]: skin['on_leaderboard'] = False
@@ -228,10 +262,11 @@ class SkinSystem:
             is_rr = (len(raw) >= 3 and raw[2] != '0')
             list_p = self._get_list_price_by_quality(q_code)
 
-            mode = input("模式: 1.立即上榜  2.不进榜  3.预设(Coming Soon): ").strip()
+            mode = input("模式: 1.上榜 2.不上榜 3.预设(Coming) 4.绝版(Out): ").strip()
 
             is_on = False;
-            is_preset = False
+            is_preset = False;
+            is_discontinued = False
             rank_score = None;
             real_p = 0.0;
             growth = 0.0
@@ -241,7 +276,10 @@ class SkinSystem:
                 is_on = True
                 rp_in = input("预估实价 (回车0): ").strip()
                 real_p = float(rp_in) if rp_in else 0.0
-                print("🕒 已设为预设皮肤，已进入自动抓取队列。")
+            elif mode == '4':
+                is_discontinued = True;
+                is_on = True
+                print("💀 已设为绝版皮肤。")
             elif mode == '1':
                 is_on = True
                 rank = int(input("插入排名: "));
@@ -259,7 +297,7 @@ class SkinSystem:
             self.all_skins.append({
                 "quality": q_code if not q_code.is_integer() else int(q_code),
                 "name": name, "is_rerun": is_rr, "is_new": not is_rr,
-                "on_leaderboard": is_on, "is_preset": is_preset,
+                "on_leaderboard": is_on, "is_preset": is_preset, "is_discontinued": is_discontinued,
                 "score": rank_score, "real_score": self._calculate_real_score(rank_score, list_p, real_p),
                 "growth": growth, "list_price": list_p, "real_price": real_p, "local_img": None
             })
@@ -273,24 +311,19 @@ class SkinSystem:
     def manage_preset_ui(self):
         presets = [s for s in self.all_skins if s.get('is_preset')]
         if not presets: print("\n⚠️ 当前没有预设皮肤。"); return
-
         print(f"\n====== 🚀 预设上线管理 (待机中: {len(presets)}) ======")
         for i, s in enumerate(presets): print(f"{i + 1}. {s['name']} (Q:{s['quality']} | 预估¥{s['real_price']})")
         print("0. 退出")
-
         try:
             sel = int(input("选择要上线的皮肤序号: ")) - 1
             if 0 <= sel < len(presets):
                 target = presets[sel]
                 print(f"\n🎉 正在上线: [{target['name']}]")
                 active_list = self.get_active_leaderboard()
-
-                rank = int(input("插入排名: "))
-                def_rp = target.get('real_price', 0)
-                rp_in = input(f"实际价格 (默认{def_rp}): ").strip()
-                rp = float(rp_in) if rp_in else def_rp
+                rank = int(input("插入排名: "));
+                rp_in = input(f"实际价格 (默认{target.get('real_price', 0)}): ").strip()
+                rp = float(rp_in) if rp_in else target.get('real_price', 0)
                 gt = float(input("涨幅: "))
-
                 rank_score = round(self.calculate_insertion_score(rank, active_list, rp, gt), 1)
 
                 target['is_preset'] = False
@@ -298,11 +331,10 @@ class SkinSystem:
                 target['real_price'] = rp;
                 target['growth'] = gt
                 target['real_score'] = self._calculate_real_score(rank_score, target['list_price'], rp)
-
                 self._auto_prune_leaderboard();
                 self.save_data();
-                self.generate_html()
-                print(f"✅ [{target['name']}] 已成功上线！")
+                self.generate_html();
+                print(f"✅ 上线成功！")
         except ValueError:
             pass
 
@@ -332,7 +364,6 @@ class SkinSystem:
                 new_q = float(val_raw)
                 item['quality'] = new_q if not new_q.is_integer() else int(new_q)
                 item['list_price'] = self._get_list_price_by_quality(item['quality'])
-
             item['real_score'] = self._calculate_real_score(item['score'], item['list_price'],
                                                             item.get('real_price', 0))
             return True
@@ -342,63 +373,67 @@ class SkinSystem:
     def modify_data_ui(self):
         self.print_console_table(self.get_total_skins())
         print("💡 快捷指令: [序号] [属性ID] [新值] (例如: 1 1 200)")
-        print("   属性ID: 1=分数, 2=涨幅, 3=实价, 4=品质")
-
+        print("   属性ID: 1=分数, 2=涨幅, 3=实价")
         raw = input("输入指令: ").strip().lower()
         if not raw: return
-        parts = raw.split()
+        parts = raw.split();
         target_list = self.get_total_skins()
-
         try:
             if len(parts) >= 3:
                 idx = int(parts[0]) - 1
-                opt = parts[1]
-                val = parts[2]
                 if 0 <= idx < len(target_list):
-                    item = target_list[idx]
-                    if self._apply_modification(item, opt, val):
+                    if self._apply_modification(target_list[idx], parts[1], parts[2]):
                         self.save_data();
-                        self.generate_html()
-                        print(f"✅ 快捷修改成功: {item['name']}")
-                    else:
-                        print("❌ 数值格式错误")
-
+                        self.generate_html();
+                        print(f"✅ 快捷修改成功")
             elif len(parts) == 1:
                 idx = int(parts[0]) - 1
                 if 0 <= idx < len(target_list):
                     if raw == 'delete': del self.all_skins[idx]; self.save_data(); print("🗑️ 已删除"); return
                     item = target_list[idx]
                     while True:
-                        cur_s = "--" if item['score'] is None else item['score']
                         print(
-                            f"\n修改: {item['name']} | 1.分:{cur_s} | 2.涨幅:{item['growth']} | 3.实价:{item['real_price']} | 4.品质:{item['quality']} | 0.保存")
-                        sub_raw = input("序号 数值: ").strip().lower()
-                        if not sub_raw or sub_raw == '0': break
-                        sub_parts = sub_raw.split()
-                        if len(sub_parts) < 2: continue
-                        if self._apply_modification(item, sub_parts[0], sub_parts[1]):
-                            print("   ✅ 已暂存")
-                        else:
-                            print("   ❌ 格式错误")
+                            f"\n修改: {item['name']} | 1.分:{item.get('score')} | 2.涨幅:{item.get('growth')} | 3.实价:{item.get('real_price')} | 0.保存")
+                        sub = input("序号 数值: ").strip()
+                        if not sub or sub == '0': break
+                        sp = sub.split()
+                        if len(sp) >= 2: self._apply_modification(item, sp[0], sp[1])
                     self.save_data();
                     self.generate_html();
-                    print("💾 全部更改已保存")
+                    print("💾 保存成功")
         except:
             pass
 
     def manage_status_ui(self):
         self.print_console_table()
         try:
-            idx = int(input("序号: ")) - 1;
-            target = self.get_total_skins()[idx]
-            op = input("1-复刻 2-新增: ")
-            if op == '1':
-                target['is_rerun'] = True; target['is_new'] = False
-            elif op == '2':
-                target['is_rerun'] = False; target['is_new'] = True
-            self.save_data();
-            self.generate_html();
-            print("✅ 更新成功")
+            idx = int(input("输入序号修改状态: ")) - 1
+            if 0 <= idx < len(self.get_total_skins()):
+                target = self.get_total_skins()[idx]
+                print(f"当前: {target['name']}")
+                print("1. 设为新增 (New Arrival)")
+                print("2. 设为返场 (Limit Return)")
+                print("3. 设为预设 (Coming Soon)")
+                print("4. 设为绝版 (Out of Print)")
+                op = input("选择状态: ").strip()
+
+                target['is_new'] = False;
+                target['is_rerun'] = False;
+                target['is_preset'] = False;
+                target['is_discontinued'] = False
+                if op == '1':
+                    target['is_new'] = True
+                elif op == '2':
+                    target['is_rerun'] = True
+                elif op == '3':
+                    target['is_preset'] = True
+                elif op == '4':
+                    target['is_discontinued'] = True
+                target['on_leaderboard'] = True
+
+                self.save_data();
+                self.generate_html();
+                print("✅ 状态更新成功")
         except:
             pass
 
@@ -487,12 +522,9 @@ class SkinSystem:
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-
-        /* 🔥 V21.7 修正：品质图标缩放矩阵 */
         .quality-icon.wushuang-big { transform: scale(1.5); }
         .quality-icon.legend-big { transform: scale(1.2); }
         .quality-icon.epic-medium { transform: scale(1.1); } 
-        /* 🔥 V21.7 新增：荣耀典藏放大 1.4 */
         .quality-icon.glory-big { transform: scale(1.4); }
         .quality-icon.brave-small { transform: scale(0.9); }
 
@@ -502,7 +534,6 @@ class SkinSystem:
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.7 样式继承：蓝底白字 */
         .rank-box { 
             display: inline-block; 
             min-width: 20px;       
@@ -525,6 +556,7 @@ class SkinSystem:
         .badge-new { background: #ffd700; color: #000; }
         .badge-return { background: #1d4ed8; color: #fff; }
         .badge-preset { background: #06b6d4; color: #fff; }
+        .badge-out { background: #4b5563; color: #fff; }
 
         .box-style { 
             display: inline-block; width: 75px; padding: 4px 0; 
@@ -584,18 +616,12 @@ class SkinSystem:
                 <tbody>
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
-                    {# 🔥 V21.8 尊享配色方案 #}
-                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}      {# 传说限定 (不变) #}
-                    {% elif skin.quality == 3 %}{% set rb = '#bfdbfe' %}    {# 🔥 珍品传说 (改为原Q2蓝色) #}
-                    {% elif skin.quality == 2 %}{% set rb = '#fff7cd' %}    {# 🔥 荣耀典藏 (改为淡金色) #}
-                    {% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %} {# 无双 (不变) #}
-                    {% elif skin.quality == 0 %}{% set rb = '#ffdcdc' %}    {# 🔥 珍品无双 (改为淡红色) #}
-                    {% endif %}
+                    {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 2 %}{% set rb = '#fff7cd' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#ffdcdc' %}{% endif %}
 
                     {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
                     <tr data-quality="{{ q_name }}">
                         <td>
-                            {% if not skin.is_preset %}
+                            {% if not skin.is_preset and not skin.is_discontinued %}
                             <span class="rank-box">{{ loop.index }}</span>
                             {% else %}
                             <span style="font-weight:bold; color:#999;">-</span>
@@ -604,7 +630,6 @@ class SkinSystem:
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
                             {% if skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
-                            {# 🔥 V21.7: 绑定荣耀典藏(2)专属样式 #}
                             {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %} 
                             {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
                             {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
@@ -615,15 +640,16 @@ class SkinSystem:
                             {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
                             <div class="name-container">
                                 <span class="song-title">{{ skin.name }}</span>
-                                {# 🔥 V21.6: 预设角标优先级置顶 #}
-                                {% if skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>
+                                {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>
+                                {% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>
                                 {% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>
                                 {% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
                         </div></td>
                         <td data-val="{{ skin.score if skin.score is not none else -9999999 }}" style="background-color: {{ rb }};">
                             <div class="box-style">
-                                {{ skin.score if skin.score is not none else '--' }}
+                                {% if skin.is_discontinued %}End
+                                {% else %}{{ skin.score if skin.score is not none else '--' }}{% endif %}
                             </div>
                         </td>
                         <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">
@@ -705,7 +731,7 @@ class SkinSystem:
     </script>
 </body>
 </html>
-"""
+        """
         t = Template(html_template)
         html_content = t.render(total_skins=self.get_total_skins(), quality_map=quality_map,
                                 header_gifs=header_gifs,
@@ -733,7 +759,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V21.8 (尊享配色版)")
+        print("👑 王者荣耀榜单 V22.0 (动态视界版)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
