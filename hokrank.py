@@ -95,8 +95,14 @@ class SkinCrawler:
 class SkinSystem:
     def __init__(self):
         self.all_skins = []
-        self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]  # 默认说明
+        self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
+
+        # 🔥 V23.0 新增：初始化描述图文件夹
+        self.desc_dir = os.path.join(LOCAL_REPO_PATH, "skin_descs")
+        if not os.path.exists(self.desc_dir):
+            os.makedirs(self.desc_dir)
+
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
         self._migrate_data_structure()
@@ -147,7 +153,6 @@ class SkinSystem:
                     self.all_skins = loaded
                 elif isinstance(loaded, dict):
                     self.all_skins = loaded.get('skins', loaded.get('total', []))
-                    # 🔥 读取说明配置，如果没有则保持默认
                     if 'instructions' in loaded:
                         self.instructions = loaded['instructions']
 
@@ -165,31 +170,22 @@ class SkinSystem:
 
     def _get_sort_key(self, skin):
         """
-        🔥 核心排序逻辑 V22.2
+        🔥 核心排序逻辑
         1. 绝版 (10) > 预设 (1) > 在榜 (0)
         2. 如果是 绝版/预设：按品质数值升序（0是最高品质，6是最低）
         3. 如果是 在榜：按分数降序
         """
         group_weight = 10 if skin.get('is_discontinued') else (1 if skin.get('is_preset') else 0)
-
         if group_weight == 0:
-            # 在榜皮肤：按分数排
             return (group_weight, skin.get('score') is None, -(skin.get('score') or 0))
         else:
-            # 绝版或预设：按品质排 (数值越小品质越高，所以用正序)
             return (group_weight, skin.get('quality', 99))
 
     def save_data(self):
         try:
             with open(self.data_file, 'w', encoding='utf-8') as f:
-                # 使用新的排序键
                 self.all_skins.sort(key=self._get_sort_key)
-
-                # 🔥 保存为字典结构，包含 skins 和 instructions
-                data_to_save = {
-                    "skins": self.all_skins,
-                    "instructions": self.instructions
-                }
+                data_to_save = {"skins": self.all_skins, "instructions": self.instructions}
                 json.dump(data_to_save, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"❌ 存档失败: {e}")
@@ -329,7 +325,6 @@ class SkinSystem:
     def manage_preset_ui(self):
         presets = [s for s in self.all_skins if s.get('is_preset')]
         if not presets: print("\n⚠️ 当前没有预设皮肤。"); return
-        # 🔥 这里也会自动按品质排序显示，因为 presets 来自 all_skins
         print(f"\n====== 🚀 预设上线管理 (待机中: {len(presets)}) ======")
         for i, s in enumerate(presets): print(f"{i + 1}. {s['name']} (Q:{s['quality']} | 预估¥{s['real_price']})")
         print("0. 退出")
@@ -518,18 +513,30 @@ class SkinSystem:
                        6: "勇者"}
         header_gifs = self.get_header_gifs()
 
+        # 🔥 V23.0 逻辑：扫描 skin_descs 文件夹，构建皮肤描述图映射
+        desc_files = {}
+        if os.path.exists(self.desc_dir):
+            for f in os.listdir(self.desc_dir):
+                # 获取不带后缀的文件名
+                name_part = os.path.splitext(f)[0]
+                desc_files[name_part] = f
+
+        # 为每个皮肤对象注入 desc_img 属性 (仅用于本次渲染)
+        display_skins = self.get_total_skins()
+        for skin in display_skins:
+            skin['desc_img'] = desc_files.get(skin['name'])
+
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, minimum-scale=0.1, maximum-scale=3.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Forecast</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-        @media screen and (max-width: 600px) { .chart-card { zoom: 0.7; } body { padding: 5px; align-items: center; } }
         .chart-card { background: white; width: 100%; max-width: 950px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { 
@@ -537,8 +544,7 @@ class SkinSystem:
             display: flex; align-items: center; justify-content: center; gap: 20px;
         }
         .header-content { text-align: center; flex: 1; }
-        .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2; }
-        .header-content p { margin: 0; opacity: 0.9; font-size: 14px; }
+        .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; }
 
         /* 🔥 新增：说明按钮和头部布局容器 */
         .info-container {
@@ -608,130 +614,63 @@ class SkinSystem:
             color: #333;
         }
 
-        .header-gifs-container { display: flex; gap: 10px; align-items: center; }
-        .header-gif { 
-            width: 55px; height: 55px; border-radius: 8px; object-fit: cover; 
-            border: 2px solid rgba(255,255,255,0.4); 
-            background: rgba(255,255,255,0.1);
-        }
-        @media screen and (max-width: 600px) { 
-            .chart-header { flex-direction: column; gap: 10px; padding: 15px; }
-            .header-gif { width: 40px; height: 40px; }
-        }
+        .header-gifs-container { display: flex; gap: 10px; }
+        .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
 
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 750px; }
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 800px; }
+        th { text-align: center; padding: 8px 2px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; }
 
-        th { 
-            text-align: center; 
-            padding: 8px 2px; 
-            font-weight: 800; 
-            color: #333; 
-            background-color: transparent; 
-            border-bottom: 3px solid #6366f1; 
-            font-size: 13px;
-            white-space: nowrap; 
-        }
-
-        td:first-child {
-            padding: 0 !important;
-            height: 1px;
-        }
-
-        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
-        .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
-        .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
-        .dropdown-menu.show { display: block; }
-        .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 12px; color: #444; }
-        .col-sort { cursor: pointer; position: relative; }
-        .col-sort::after { content: ' ⇅'; font-size: 10px; color: #ccc; margin-left: 5px; }
-        .col-sort.sort-asc::after { content: ' ▲'; color: #6366f1; }
-        .col-sort.sort-desc::after { content: ' ▼'; color: #6366f1; }
-        td { padding: 12px 2px; vertical-align: middle; text-align: center; background-color: transparent; border: none; white-space: nowrap; }
+        td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* 基础图标样式 */
-        .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-
-        /* 🔥 核心物理拉大：针对珍品无双(0) */
-        .rare-wushuang-big { 
-            height: 60px !important;  /* 暴力拉大高度 */
-            width: auto !important;
-            margin: -15px 0;         /* 补偿间距 */
-            transform: scale(1.1);   /* 微调缩放 */
+        /* 🔥 V23.0 新增样式：描述图列 */
+        .desc-col {
+            width: 100px; /* 固定列宽 */
+            padding: 2px !important;
         }
-
-        /* 针对无双(1)档位的放大 */
-        .wushuang-big { height: 45px !important; margin: -8px 0; }
-
-        .glory-big { transform: scale(1.4); }
-        .legend-big { transform: scale(1.2); }
-        .epic-medium { transform: scale(1.1); } 
-        .brave-small { transform: scale(0.9); }
-
-        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; position: relative; }
-
-        .name-container { display: flex; flex-direction: column; gap: 2px; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; }
-
-        .rank-box { 
-            display: inline-block; 
-            min-width: 20px;       
-            padding: 0px 5px;      
-            border: none;          
-            background: #1d4ed8;   
-            color: #ffffff;        
-            font-size: 20px;       
-            font-weight: 900; 
-            text-align: center;    
-            line-height: 24px;     
-            border-radius: 4px;    
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .badge { 
-            display: inline-block; width: fit-content; padding: 1px 5px; font-size: 9px; 
-            font-weight: 900; border-radius: 3px; text-transform: uppercase;
-        }
-        .badge-new { background: #ffd700; color: #000; }
-        .badge-return { background: #1d4ed8; color: #fff; }
-        .badge-preset { background: #06b6d4; color: #fff; }
-        .badge-out { background: #4b5563; color: #fff; }
-
-        .box-style { 
-            display: inline-block; width: 75px; padding: 4px 0; 
-            font-weight: 700; font-size: 12px; border-radius: 6px; 
-            background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .desc-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 50px; /* 限制高度，自适应 */
+            object-fit: contain;
+            display: block;
             margin: 0 auto;
+            border-radius: 4px;
         }
 
-        .pts-null { color: inherit; font-style: italic; opacity: 0.6; }
-        .growth-down { color: #991b1b !important; }
-        .growth-up-mid { color: #16a34a !important; }
-        .growth-up-high { color: #ea580c !important; }
-        .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
+        .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
+        .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; cursor: pointer; background: white; min-width: 85px; }
+        .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
+        .dropdown-menu.show { display: block; }
+        .col-sort { cursor: pointer; } .col-sort::after { content: ' ⇅'; color: #ccc; }
+
+        /* 图标样式 & 物理放大 */
+        .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
+        .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; transform: scale(1.1); }
+        .wushuang-big { height: 45px !important; margin: -8px 0; }
+        .glory-big { transform: scale(1.4); } .legend-big { transform: scale(1.2); } .epic-medium { transform: scale(1.1); } .brave-small { transform: scale(0.9); }
+
+        .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
+        .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
+        .song-title { font-weight: 700; font-size: 14px; }
+        .badge { display: inline-block; padding: 1px 5px; font-size: 9px; font-weight: 900; border-radius: 3px; }
+        .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
+        .rank-box { display: inline-block; min-width: 20px; background: #1d4ed8; color: #fff; font-size: 20px; font-weight: 900; border-radius: 4px; }
+        .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
     </style>
 </head>
 <body>
     <div class="chart-card">
         <div class="chart-header">
-            <div class="header-gifs-container">
-                {% if header_gifs|length >= 1 %}<img src="./show/{{ header_gifs[0] }}" class="header-gif">{% endif %}
-                {% if header_gifs|length >= 2 %}<img src="./show/{{ header_gifs[1] }}" class="header-gif">{% endif %}
-            </div>
+            <div class="header-gifs-container">{% for g in header_gifs[:2] %}<img src="./show/{{ g }}" class="header-gif">{% endfor %}</div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container">
-                    <p>Update: {{ update_time }}</p>
-                    <button class="info-btn" onclick="openModal()">说明</button>
-                </div>
+                <div class="info-container"><p>Update: {{ update_time }}</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
-            <div class="header-gifs-container">
-                {% if header_gifs|length >= 3 %}<img src="./show/{{ header_gifs[2] }}" class="header-gif">{% endif %}
-                {% if header_gifs|length >= 4 %}<img src="./show/{{ header_gifs[3] }}" class="header-gif">{% endif %}
-            </div>
+            <div class="header-gifs-container">{% for g in header_gifs[2:4] %}<img src="./show/{{ g }}" class="header-gif">{% endfor %}</div>
         </div>
 
         <div class="table-container">
@@ -739,85 +678,65 @@ class SkinSystem:
                 <thead>
                     <tr>
                         <th class="col-sort" onclick="sortTable(0, 'int')">No</th>
-                        <th><div class="qual-header">
-                            <div id="multiSelectBtn" class="multi-select-box" style="border:1px solid #ddd; padding:4px 8px; cursor:pointer;" onclick="toggleMenu(event)">全部品质</div>
+                        <th><div class="qual-header"><div id="multiSelectBtn" class="multi-select-box" onclick="toggleMenu(event)">全部品质</div>
                             <div id="dropdownMenu" class="dropdown-menu">
-                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> <strong>全部品质</strong></label>
-                                <hr style="margin:4px 0">
-                                {% for qname in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
-                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ qname }}" onchange="handleSingleSelect(this)"> {{ qname }}</label>
+                                <label class="dropdown-item"><input type="checkbox" id="selectAll" value="all" checked onchange="handleSelectAll(this)"> 全选</label><hr>
+                                {% for q in ["珍品无双", "无双", "荣耀典藏", "珍品传说", "传说限定", "传说", "史诗", "勇者"] %}
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ q }}" onchange="handleSingleSelect(this)"> {{ q }}</label>
                                 {% endfor %}
-                            </div>
-                            <span class="col-sort" style="padding-left:10px" onclick="sortTable(1, 'float')"></span>
-                        </div></th>
-                        <th style="text-align:left; padding-left:20px; padding-right:120px;">Skin Name</th>
-                        <th class="col-sort" onclick="sortTable(3, 'float')">Rank Pts</th>
-                        <th class="col-sort" onclick="sortTable(4, 'float')">Real Pts</th>
-                        <th class="col-sort" onclick="sortTable(5, 'float')">Growth</th>
-                        <th class="col-sort" onclick="sortTable(6, 'float')">List P</th>
-                        <th class="col-sort" onclick="sortTable(7, 'float')">Real P</th>
+                            </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
+                        <th style="text-align:left; padding-left:20px;">Skin Name</th>
+
+                        <th></th>
+
+                        <th class="col-sort" onclick="sortTable(4, 'float')">Rank Pts</th>
+                        <th class="col-sort" onclick="sortTable(5, 'float')">Real Pts</th>
+                        <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
+                        <th class="col-sort" onclick="sortTable(7, 'float')">List P</th>
+                        <th class="col-sort" onclick="sortTable(8, 'float')">Real P</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for skin in total_skins %}
                     {% set rb = '#ffffff' %}
                     {% if skin.quality == 3.5 %}{% set rb = '#e0f2fe' %}{% elif skin.quality == 3 %}{% set rb = '#bfdbfe' %}{% elif skin.quality == 2 %}{% set rb = '#fff7cd' %}{% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set rb = '#f3e8ff' %}{% elif skin.quality == 0 %}{% set rb = '#ffdcdc' %}{% endif %}
-
                     {% set q_name = quality_map[skin.quality] or ("无双" if 0.5 <= skin.quality < 1 else "") %}
+
                     <tr data-quality="{{ q_name }}">
-                        <td>
-                            {% if not skin.is_preset and not skin.is_discontinued %}
-                            <span class="rank-box">{{ loop.index }}</span>
-                            {% else %}
-                            <span style="font-weight:bold; color:#999;">-</span>
-                            {% endif %}
-                        </td>
+                        <td>{% if not skin.is_preset and not skin.is_discontinued %}<span class="rank-box">{{ loop.index }}</span>{% else %}-{% endif %}</td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             {% set q_cls = '' %}
-                            {% if skin.quality == 0 %}{% set q_cls = 'rare-wushuang-big' %}
-                            {% elif skin.quality == 1 or (skin.quality >= 0.5 and skin.quality < 1) %}{% set q_cls = 'wushuang-big' %}
-                            {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %} 
-                            {% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
-                            {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}
-                            {% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
+                            {% if skin.quality == 0 %}{% set q_cls = 'rare-wushuang-big' %}{% elif skin.quality >= 0.5 and skin.quality <= 1 %}{% set q_cls = 'wushuang-big' %}
+                            {% elif skin.quality == 2 %}{% set q_cls = 'glory-big' %}{% elif skin.quality == 4 %}{% set q_cls = 'legend-big' %}
+                            {% elif skin.quality == 5 or skin.quality == 3.5 %}{% set q_cls = 'epic-medium' %}{% elif skin.quality == 6 %}{% set q_cls = 'brave-small' %}{% endif %}
                             <img src="./images/{{ skin.quality }}.gif" class="quality-icon {{ q_cls }}" onerror="loadFallbackImg(this, '{{ skin.quality }}')">
                         </td>
-                        <td class="rounded-left" style="background-color: {{ rb }}; padding-right:120px;"><div class="song-col">
-                            {% if skin.local_img %}<img src="./{{ skin.local_img }}" class="album-art">{% else %}<img src="https://via.placeholder.com/48?text={{ skin.name[0] }}" class="album-art">{% endif %}
-                            <div class="name-container">
+                        <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
+                            <img src="./{{ skin.local_img or 'placeholder.jpg' }}" class="album-art">
+                            <div style="display:flex; flex-direction:column;">
                                 <span class="song-title">{{ skin.name }}</span>
-                                {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>
-                                {% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>
-                                {% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>
-                                {% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
+                                {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>{% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>{% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>{% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
                         </div></td>
-                        <td data-val="{{ skin.score if skin.score is not none else -9999999 }}" style="background-color: {{ rb }};">
-                            <div class="box-style">
-                                {% if skin.is_discontinued %}End
-                                {% else %}{{ skin.score if skin.score is not none else '--' }}{% endif %}
-                            </div>
-                        </td>
-                        <td data-val="{{ skin.real_score if skin.real_score is not none else -9999999 }}" style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">
-                            {{ skin.real_score if skin.real_score is not none else '--' }}
-                        </td>
-                        <td data-val="{{ skin.growth }}" style="background-color: {{ rb }};">
-                            {% if skin.growth == 0 or skin.growth is none %}<div class="box-style">--</div>
-                            {% else %}
-                                {% set g_cls = '' %}
-                                {% if skin.growth == 1.9 %}{% set g_cls = 'growth-special' %}
-                                {% elif skin.growth < 0 %}{% set g_cls = 'growth-down' %}
-                                {% elif skin.growth >= 10 %}{% set g_cls = 'growth-up-high' %}
-                                {% elif skin.growth >= 5 %}{% set g_cls = 'growth-up-mid' %}{% endif %}
-                                <div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>
+
+                        <td class="desc-col" style="background-color: {{ rb }};">
+                            {% if skin.desc_img %}
+                            <img src="./skin_descs/{{ skin.desc_img }}" class="desc-img">
                             {% endif %}
                         </td>
-                        <td data-val="{{ skin.list_price }}" style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
-                        <td class="rounded-right" data-val="{{ skin.real_price }}" style="background-color: {{ rb }};">
-                            <div class="box-style">
-                                {% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}
-                            </div>
+
+                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ rb }};"><div class="box-style">{% if skin.is_discontinued %}End{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
+                        <td style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
+                        <td style="background-color: {{ rb }};">
+                            {% if skin.growth %}
+                            {% set g_cls = '' %}
+                            {% if skin.growth == 1.9 %}{% set g_cls = 'growth-special' %}{% elif skin.growth < 0 %}{% set g_cls = 'growth-down' %}
+                            {% elif skin.growth >= 10 %}{% set g_cls = 'growth-up-high' %}{% elif skin.growth >= 5 %}{% set g_cls = 'growth-up-mid' %}{% endif %}
+                            <div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>
+                            {% else %}--{% endif %}
                         </td>
+                        <td style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
+                        <td class="rounded-right" style="background-color: {{ rb }};"><div class="box-style">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -825,64 +744,29 @@ class SkinSystem:
         </div>
     </div>
 
-    <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 style="text-align:center; margin-bottom:10px;">说明</h2>
-            <hr style="border:0; border-top:1px solid #eee;">
-            <ul class="modal-list">
-                {% for item in instructions %}
-                <li>{{ item }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+    <div id="infoModal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><h2 style="text-align:center;">说明</h2><hr><ul class="modal-list">{% for item in instructions %}<li>{{ item }}</li>{% endfor %}</ul></div></div>
 
     <script>
-    // 模态框控制逻辑
     function openModal() { document.getElementById('infoModal').style.display = 'block'; }
     function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('infoModal')) {
-            closeModal();
-        }
-    }
-
+    window.onclick = function(e) { if (e.target == document.getElementById('infoModal')) closeModal(); }
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-
-    window.onload = () => {
-        sortTable(3, 'float');
-        const gifs = document.querySelectorAll('.header-gif');
-        if (gifs.length > 0) {
-            gifs.forEach(g => {
-                let s = g.src; g.src = ''; g.src = s; 
-            });
-        }
-    };
-
+    window.onload = () => { sortTable(4, 'float'); };
     function loadFallbackImg(img, q) {
-        if (img.src.indexOf('.gif') !== -1) { img.src = './images/' + q + '.jpg'; }
-        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) {
-            let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg';
-        }
+        if (img.src.indexOf('.gif') !== -1) img.src = './images/' + q + '.jpg';
+        else if (img.src.indexOf('.jpg') !== -1 && img.src.indexOf('1.jpg') === -1) { let v = parseFloat(q); if (v >= 0.5 && v <= 1) img.src = './images/1.jpg'; }
     }
-    function handleSelectAll(mainCb) { if (mainCb.checked) document.querySelectorAll('.q-check').forEach(cb => cb.checked = false); updateFilter(); }
-    function handleSingleSelect(singleCb) { if (singleCb.checked) document.getElementById('selectAll').checked = false; updateFilter(); }
+    function handleSelectAll(cb) { if(cb.checked) document.querySelectorAll('.q-check').forEach(c=>c.checked=false); updateFilter(); }
+    function handleSingleSelect(cb) { if(cb.checked) document.getElementById('selectAll').checked=false; updateFilter(); }
     function updateFilter() {
         const main = document.getElementById('selectAll');
-        const checkedOnes = Array.from(document.querySelectorAll('.q-check')).filter(i => i.checked).map(i => i.value);
-        const btn = document.getElementById('multiSelectBtn');
-        if (main.checked || checkedOnes.length === 0) {
-            main.checked = true; btn.innerText = "全部品质";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => r.style.display = "");
-        } else {
-            btn.innerText = checkedOnes.length === 1 ? checkedOnes[0] : "筛选中";
-            document.querySelectorAll('#skinTable tbody tr').forEach(r => {
-                r.style.display = checkedOnes.includes(r.getAttribute('data-quality')) ? "" : "none";
-            });
-        }
+        const checked = Array.from(document.querySelectorAll('.q-check')).filter(c=>c.checked).map(c=>c.value);
+        document.getElementById('multiSelectBtn').innerText = (main.checked || checked.length===0) ? "全部品质" : (checked.length===1 ? checked[0] : "筛选中");
+        document.querySelectorAll('#skinTable tbody tr').forEach(r => {
+            r.style.display = (main.checked || checked.length===0 || checked.includes(r.getAttribute('data-quality'))) ? "" : "none";
+        });
     }
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
@@ -903,15 +787,11 @@ class SkinSystem:
         """
         t = Template(html_template)
         html_content = t.render(total_skins=self.get_total_skins(), quality_map=quality_map,
-                                header_gifs=header_gifs,
-                                instructions=self.instructions,  # 🔥 传入说明数据
+                                header_gifs=header_gifs, instructions=self.instructions,
                                 update_time=datetime.now().strftime("%Y-%m-%d %H:%M"))
-        try:
-            with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
-                f.write(html_content)
-            print("📄 HTML 刷新完成")
-        except Exception as e:
-            print(f"❌ 路径错误: {e}")
+        with open(os.path.join(LOCAL_REPO_PATH, "index.html"), "w", encoding='utf-8') as f:
+            f.write(html_content)
+        print("📄 HTML 刷新完成")
 
     def deploy_to_github(self):
         print("\n🚀 正在同步至 GitHub...");
@@ -929,7 +809,7 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         print("\n" + "=" * 55)
-        print("👑 王者荣耀榜单 V22.2 (说明系统+品质排序版)")
+        print("👑 王者荣耀榜单 V23.0 (完全体)")
         print(f"📊 当前库存 {len(app.all_skins)}")
         print("-" * 55)
         print("1. 添加皮肤 | 2. 修改数据 | 3. 修改标签 | 4. >>> 发布互联网 <<<")
