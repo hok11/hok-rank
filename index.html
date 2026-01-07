@@ -45,6 +45,11 @@
             white-space: nowrap; 
         }
 
+        td:first-child {
+            padding: 0 !important;
+            height: 1px;
+        }
+
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; color: #333; font-weight: bold; cursor: pointer; background: white; min-width: 85px; text-align: center; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
@@ -69,19 +74,19 @@
         .name-container { display: flex; flex-direction: column; gap: 2px; }
         .song-title { font-weight: 700; font-size: 14px; color: #000; }
 
-        /* 🔥 V20.7 修正：收紧内边距和宽度，打造紧致方块 */
+        /* 🔥 V20.7 样式继承 */
         .rank-box { 
             display: inline-block; 
-            min-width: 20px;       /* 24px -> 20px */
-            padding: 0px 5px;      /* 4px 8px -> 0px 5px */
+            min-width: 20px;       
+            padding: 0px 5px;      
 
             border: none;          
-            background: #1d4ed8;   /* 深蓝 */
-            color: #ffffff;        /* 纯白 */
+            background: #1d4ed8;   
+            color: #ffffff;        
             font-size: 20px;       
             font-weight: 900; 
             text-align: center;    
-            line-height: 24px;     /* 增加行高控制，确保垂直居中 */
+            line-height: 24px;     
 
             border-radius: 4px;    
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -93,6 +98,7 @@
         }
         .badge-new { background: #ffd700; color: #000; }
         .badge-return { background: #1d4ed8; color: #fff; }
+        .badge-preset { background: #06b6d4; color: #fff; }
 
         .box-style { 
             display: inline-block; width: 75px; padding: 4px 0; 
@@ -117,7 +123,7 @@
             </div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <p>Update: 2026-01-04 06:55</p>
+                <p>Update: 2026-01-07 20:35</p>
             </div>
             <div class="header-gifs-container">
                 <img src="./show/yuhuan.gif" class="header-gif">
@@ -169,7 +175,11 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="rank-box">1</span></td>
+                        <td>
+                            
+                            <span class="rank-box">1</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -211,7 +221,11 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="rank-box">2</span></td>
+                        <td>
+                            
+                            <span class="rank-box">2</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="0.8">
                             
                             
@@ -223,6 +237,7 @@
                             <div class="name-container">
                                 <span class="song-title">甄姬-雪境奇遇</span>
                                 <span class="badge badge-return">Limit Return</span>
+                                
                             </div>
                         </div></td>
                         <td data-val="117.4" style="background-color: #f3e8ff;">
@@ -252,7 +267,11 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="rank-box">3</span></td>
+                        <td>
+                            
+                            <span class="rank-box">3</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="1">
                             
                             
@@ -264,6 +283,7 @@
                             <div class="name-container">
                                 <span class="song-title">瑶-真我赫兹</span>
                                 <span class="badge badge-return">Limit Return</span>
+                                
                             </div>
                         </div></td>
                         <td data-val="80.8" style="background-color: #f3e8ff;">
@@ -293,7 +313,11 @@
                     
                     
                     <tr data-quality="传说">
-                        <td><span class="rank-box">4</span></td>
+                        <td>
+                            
+                            <span class="rank-box">4</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="4">
                             
                             
@@ -332,7 +356,11 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="rank-box">5</span></td>
+                        <td>
+                            
+                            <span class="rank-box">5</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -373,7 +401,11 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="rank-box">6</span></td>
+                        <td>
+                            
+                            <span class="rank-box">6</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -411,7 +443,11 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="rank-box">7</span></td>
+                        <td>
+                            
+                            <span class="rank-box">7</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -449,7 +485,11 @@
                     
                     
                     <tr data-quality="勇者">
-                        <td><span class="rank-box">8</span></td>
+                        <td>
+                            
+                            <span class="rank-box">8</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="6">
                             
                             
@@ -487,7 +527,11 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td><span class="rank-box">9</span></td>
+                        <td>
+                            
+                            <span class="rank-box">9</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -499,6 +543,7 @@
                             <div class="name-container">
                                 <span class="song-title">小乔-山海·琳琅生</span>
                                 <span class="badge badge-return">Limit Return</span>
+                                
                             </div>
                         </div></td>
                         <td data-val="17.7" style="background-color: #e0f2fe;">
@@ -525,7 +570,11 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td><span class="rank-box">10</span></td>
+                        <td>
+                            
+                            <span class="rank-box">10</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="5">
                             
                             
@@ -537,6 +586,7 @@
                             <div class="name-container">
                                 <span class="song-title">妲己-热情桑巴</span>
                                 <span class="badge badge-return">Limit Return</span>
+                                
                             </div>
                         </div></td>
                         <td data-val="12.0" style="background-color: #ffffff;">
@@ -567,7 +617,11 @@
                     
                     
                     <tr data-quality="传说限定">
-                        <td><span class="rank-box">11</span></td>
+                        <td>
+                            
+                            <span class="rank-box">11</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="3.5">
                             
                             
@@ -579,6 +633,7 @@
                             <div class="name-container">
                                 <span class="song-title">曜-山海·苍雷引</span>
                                 <span class="badge badge-return">Limit Return</span>
+                                
                             </div>
                         </div></td>
                         <td data-val="7.2" style="background-color: #e0f2fe;">
@@ -609,7 +664,11 @@
                     
                     
                     <tr data-quality="史诗">
-                        <td><span class="rank-box">12</span></td>
+                        <td>
+                            
+                            <span class="rank-box">12</span>
+                            
+                        </td>
                         <td class="quality-col" data-val="5">
                             
                             
@@ -648,6 +707,90 @@
                         </td>
                     </tr>
                     
+                    
+                    
+                    
+                    <tr data-quality="荣耀典藏">
+                        <td>
+                            
+                            <span style="font-weight:bold; color:#999;">-</span>
+                            
+                        </td>
+                        <td class="quality-col" data-val="2">
+                            
+                            
+                            <img src="./images/2.gif" class="quality-icon " onerror="loadFallbackImg(this, '2')">
+                        </td>
+                        <td class="rounded-left" style="background-color: #bfdbfe; padding-right:120px;"><div class="song-col">
+                            <img src="./skin_avatars/吕布·千魇归渊.jpg" class="album-art">
+                            <div class="name-container">
+                                <span class="song-title">吕布·千魇归渊</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td data-val="-9999999" style="background-color: #bfdbfe;">
+                            <div class="box-style">
+                                --
+                            </div>
+                        </td>
+                        <td data-val="-9999999" style="background-color: #bfdbfe; color:#6366f1;">
+                            --
+                        </td>
+                        <td data-val="0.0" style="background-color: #bfdbfe;">
+                            <div class="box-style">--</div>
+                            
+                        </td>
+                        <td data-val="600.0" style="background-color: #bfdbfe;">¥600.0</td>
+                        <td class="rounded-right" data-val="0.0" style="background-color: #bfdbfe;">
+                            <div class="box-style">
+                                --
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td>
+                            
+                            <span style="font-weight:bold; color:#999;">-</span>
+                            
+                        </td>
+                        <td class="quality-col" data-val="6">
+                            
+                            
+                            <img src="./images/6.gif" class="quality-icon brave-small" onerror="loadFallbackImg(this, '6')">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff; padding-right:120px;"><div class="song-col">
+                            <img src="./skin_avatars/妲己·线条小狗.jpg" class="album-art">
+                            <div class="name-container">
+                                <span class="song-title">妲己·线条小狗</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td data-val="-9999999" style="background-color: #ffffff;">
+                            <div class="box-style">
+                                --
+                            </div>
+                        </td>
+                        <td data-val="-9999999" style="background-color: #ffffff; color:#6366f1;">
+                            --
+                        </td>
+                        <td data-val="0.0" style="background-color: #ffffff;">
+                            <div class="box-style">--</div>
+                            
+                        </td>
+                        <td data-val="48.8" style="background-color: #ffffff;">¥48.8</td>
+                        <td class="rounded-right" data-val="6.0" style="background-color: #ffffff;">
+                            <div class="box-style">
+                                ¥6.0
+                            </div>
+                        </td>
+                    </tr>
+                    
                 </tbody>
             </table>
         </div>
@@ -657,13 +800,12 @@
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
 
-    // 🔥 GIF同步：页面加载后强制重置GIF源
     window.onload = () => {
         sortTable(3, 'float');
         const gifs = document.querySelectorAll('.header-gif');
         if (gifs.length > 0) {
             gifs.forEach(g => {
-                let s = g.src; g.src = ''; g.src = s; // 强制重载
+                let s = g.src; g.src = ''; g.src = s; 
             });
         }
     };
@@ -706,4 +848,3 @@
     </script>
 </body>
 </html>
-        

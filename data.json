@@ -1,5 +1,33 @@
 [
   {
+    "quality": 2,
+    "name": "吕布·千魇归渊",
+    "is_rerun": false,
+    "is_new": true,
+    "on_leaderboard": true,
+    "is_preset": true,
+    "score": null,
+    "real_score": null,
+    "growth": 0.0,
+    "list_price": 600.0,
+    "real_price": 0.0,
+    "local_img": "skin_avatars/吕布·千魇归渊.jpg"
+  },
+  {
+    "quality": 6,
+    "name": "妲己·线条小狗",
+    "is_rerun": false,
+    "is_new": true,
+    "on_leaderboard": true,
+    "is_preset": true,
+    "score": null,
+    "real_score": null,
+    "growth": 0.0,
+    "list_price": 48.8,
+    "real_price": 6.0,
+    "local_img": "skin_avatars/妲己·线条小狗.jpg"
+  },
+  {
     "quality": 1,
     "name": "孙悟空-无相",
     "is_rerun": false,
@@ -10,7 +38,8 @@
     "real_price": 400.0,
     "list_price": 400.0,
     "real_score": 200.0,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 0.8,
@@ -23,7 +52,8 @@
     "real_price": 400.0,
     "list_price": 400.0,
     "real_score": 117.4,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 1,
@@ -36,7 +66,8 @@
     "real_price": 400.0,
     "list_price": 400.0,
     "real_score": 80.8,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 4,
@@ -49,7 +80,8 @@
     "real_price": 99.0,
     "list_price": 168.8,
     "real_score": 34.6,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 6,
@@ -62,7 +94,8 @@
     "real_price": 6.0,
     "list_price": 48.8,
     "real_score": 5.4,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 6,
@@ -75,7 +108,8 @@
     "real_price": 6.0,
     "list_price": 48.8,
     "real_score": 4.1,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 6,
@@ -88,7 +122,8 @@
     "real_price": 6.0,
     "list_price": 48.8,
     "real_score": 3.0,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 6,
@@ -101,7 +136,8 @@
     "growth": 0.0,
     "list_price": 48.8,
     "real_price": 6.0,
-    "local_img": "skin_avatars/蒙恬-苍云破阵.jpg"
+    "local_img": "skin_avatars/蒙恬-苍云破阵.jpg",
+    "is_preset": false
   },
   {
     "quality": 3.5,
@@ -114,7 +150,8 @@
     "real_price": 0.0,
     "list_price": 178.8,
     "real_score": null,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 5,
@@ -127,7 +164,8 @@
     "real_price": 0.0,
     "list_price": 88.8,
     "real_score": null,
-    "on_leaderboard": true
+    "on_leaderboard": true,
+    "is_preset": false
   },
   {
     "quality": 3.5,
@@ -140,7 +178,8 @@
     "real_price": 0.0,
     "list_price": 178.8,
     "real_score": null,
-    "on_leaderboard": false
+    "on_leaderboard": false,
+    "is_preset": false
   },
   {
     "quality": 5,
@@ -153,6 +192,7 @@
     "growth": 1.9,
     "list_price": 88.8,
     "real_price": 53.2,
-    "local_img": "skin_avatars/大乔-乘龙·忆丹青.jpg"
+    "local_img": "skin_avatars/大乔-乘龙·忆丹青.jpg",
+    "is_preset": false
   }
 ]
