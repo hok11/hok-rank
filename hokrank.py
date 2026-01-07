@@ -619,7 +619,7 @@ class SkinSystem:
             display: flex; 
             flex-direction: column; 
             gap: 2px;
-            width: 108px; /* 固定为"貂蝉-馥梦繁花"的大致宽度 */
+            width: 86px; /* 固定为"貂蝉-馥梦繁花"的大致宽度 */
             align-items: center; /* 居中对齐 */
         }
 
@@ -751,8 +751,8 @@ class SkinSystem:
 
     function adjustNameFontSize() {
         const containers = document.querySelectorAll('.name-container');
-        // 设定的基准宽度 (与 CSS 中的 width: 108px 保持一致)
-        const maxWidth = 108; 
+        // 设定的基准宽度 (与 CSS 中的 width: 86px 保持一致)
+        const maxWidth = 86; 
 
         containers.forEach(container => {
             const title = container.querySelector('.song-title');
