@@ -97,16 +97,17 @@ class SkinSystem:
     def __init__(self):
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
-        # V24.4: 默认品质配置 (包含 scale 字段)
+
+        # 🔥 V24.9: 默认配置 (含颜色、缩放)
         self.quality_config = {
-            "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.4},
-            "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.2},
-            "2": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.2},
-            "3": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0},
-            "3.5": {"price": 178.8, "parent": None, "name": "传说限定", "scale": 1.0},
-            "4": {"price": 168.8, "parent": None, "name": "传说", "scale": 1.0},
-            "5": {"price": 88.8, "parent": None, "name": "史诗", "scale": 1.0},
-            "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9},
+            "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
+            "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+            "2": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
+            "3": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
+            "3.5": {"price": 178.8, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "4": {"price": 168.8, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "5": {"price": 88.8, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+            "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
         }
 
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
@@ -137,9 +138,16 @@ class SkinSystem:
         if not self.all_skins: return
         print("🛠️ 正在执行核心数据迁移与完整性校准...")
 
-        # 确保所有配置都有 scale
+        # 智能修复颜色和缩放
+        name_color_map = {
+            "珍品无双": "#ffdcdc", "无双": "#f3e8ff", "荣耀典藏": "#fff7cd",
+            "珍品传说": "#bfdbfe", "传说限定": "#e0f2fe"
+        }
+
         for k, v in self.quality_config.items():
             if 'scale' not in v: v['scale'] = 1.0
+            if 'bg_color' not in v:
+                v['bg_color'] = name_color_map.get(v.get('name'), "#ffffff")
 
         for skin in self.all_skins:
             skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
@@ -283,16 +291,17 @@ class SkinSystem:
     def manage_quality_ui(self):
         while True:
             print("\n====== 💎 品质管理系统 ======")
-            print(f"{'代号':<8} {'定价':<10} {'倍数(Scale)':<12} {'父级':<8} {'名称'}")
-            print("-" * 65)
+            print(f"{'代号':<8} {'定价':<10} {'倍数':<8} {'颜色':<10} {'父级':<8} {'名称'}")
+            print("-" * 75)
             sorted_keys = sorted(self.quality_config.keys(), key=lambda k: float(k))
             for k in sorted_keys:
                 v = self.quality_config[k]
                 parent = str(v.get('parent')) if v.get('parent') else "--"
                 scale_val = v.get('scale', 1.0)
-                print(f"{k:<8} ¥{v['price']:<10} {scale_val:<12} {parent:<8} {v.get('name', '')}")
-            print("-" * 65)
-            print("1. 新增品质 | 2. 修改品质 (快捷:3000 1 400) | 3. 标签大小管理 | 0. 返回")
+                color_val = v.get('bg_color', '#ffffff')
+                print(f"{k:<8} ¥{v['price']:<10} {scale_val:<8} {color_val:<10} {parent:<8} {v.get('name', '')}")
+            print("-" * 75)
+            print("1. 新增品质 | 2. 修改品质 (快捷:3000 1 400) | 3. 标签大小 | 0. 返回")
             c = input("指令: ").strip()
 
             if c == '1':
@@ -303,14 +312,19 @@ class SkinSystem:
                 if type_c == '1':
                     name = input("输入描述名称: ").strip()
                     price = float(input("设定定价: "))
-                    self.quality_config[code] = {"price": price, "parent": None, "name": name, "scale": 1.0}
+                    color = input("背景色 (回车默认白色 #ffffff): ").strip() or "#ffffff"
+                    self.quality_config[code] = {"price": price, "parent": None, "name": name, "scale": 1.0,
+                                                 "bg_color": color}
                 elif type_c == '2':
                     parent = input("输入父级代号 (如 1): ").strip()
                     if parent not in self.quality_config: print("❌ 父级不存在"); continue
                     price = self.quality_config[parent]['price']
                     name = self.quality_config[parent]['name']
-                    self.quality_config[code] = {"price": price, "parent": parent, "name": name, "scale": 1.0}
-                    print(f"🔗 已自动关联父级: {name} (¥{price})")
+                    scale = self.quality_config[parent].get('scale', 1.0)
+                    color = self.quality_config[parent].get('bg_color', '#ffffff')
+                    self.quality_config[code] = {"price": price, "parent": parent, "name": name, "scale": scale,
+                                                 "bg_color": color}
+                    print(f"🔗 已自动关联父级属性")
                 self.save_data();
                 print("✅ 添加成功")
 
@@ -334,9 +348,9 @@ class SkinSystem:
                         except:
                             print("❌ 格式错误")
                     else:
-                        print("⚠️ 快捷修改代号风险较高，请使用详细菜单操作。")
+                        print("⚠️ 快捷修改只支持改价")
                 else:
-                    print(f"当前选中: {target} | 1.修改定价 | 2.修改代号(自动重命名文件/映射)")
+                    print(f"当前选中: {target} | 1.修改定价 | 2.修改代号 | 3.修改颜色")
                     sub_c = input("操作: ").strip()
                     if sub_c == '1':
                         try:
@@ -349,8 +363,8 @@ class SkinSystem:
                         except:
                             pass
                     elif sub_c == '2':
-                        new_code = input("输入新代号 (如 100): ").strip()
-                        if new_code in self.quality_config: print("❌ 新代号已存在"); continue
+                        new_code = input("输入新代号: ").strip()
+                        if new_code in self.quality_config: print("❌ 已存在"); continue
                         config_data = self.quality_config.pop(target)
                         self.quality_config[new_code] = config_data
                         for k, v in self.quality_config.items():
@@ -372,11 +386,17 @@ class SkinSystem:
                                 if os.path.exists(old_f):
                                     try:
                                         os.rename(old_f, new_f); renamed_files.append(f"{target}{ext}->{new_code}{ext}")
-                                    except Exception as e:
-                                        print(f"❌ 重命名失败 {old_f}: {e}")
+                                    except:
+                                        pass
                         self.save_data();
-                        self.generate_html()
-                        print(f"✅ 代号修改完成！受影响皮肤: {count} | 文件重命名: {renamed_files}")
+                        self.generate_html();
+                        print("✅ 完成")
+                    elif sub_c == '3':
+                        new_col = input("输入新颜色 (如 #ffffff): ").strip()
+                        self.quality_config[target]['bg_color'] = new_col
+                        self.save_data();
+                        self.generate_html();
+                        print("✅ 颜色已更新")
 
             elif c == '3':
                 print(">>> 标签大小管理")
@@ -628,7 +648,9 @@ class SkinSystem:
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
 
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
-        .wushuang-big { margin: -8px 0; }
+        /* 🔥 V24.9: 强制高度 (供珍品无双/无双系列使用) */
+        .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; }
+        .wushuang-big { height: 45px !important; margin: -8px 0; }
 
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
@@ -677,37 +699,48 @@ class SkinSystem:
                     {% for skin in total_skins %}
                     {% set q_str = skin.quality|string %}
                     {% set q_cfg = quality_config.get(q_str, {}) %}
-                    {% set parent_id = q_cfg.parent|string if q_cfg.parent else 'None' %}
-                    {% set display_img_id = parent_id if parent_id != 'None' else q_str %}
+                    {% set parent_id = q_cfg.parent|string if q_cfg.parent else none %}
 
-                    {# 🔥 V24.4: 读取缩放倍数 #}
-                    {% set scale_val = q_cfg.get('scale', 1.0) %}
+                    {# 1. 确定显示图片ID #}
+                    {% set display_img_id = parent_id if parent_id else q_str %}
 
-                    {% set rb = '#ffffff' %}
-                    {% if display_img_id == '3.5' %}{% set rb = '#e0f2fe' %}{% elif display_img_id == '3' %}{% set rb = '#bfdbfe' %}{% elif display_img_id == '2' %}{% set rb = '#fff7cd' %}{% elif display_img_id == '1' %}{% set rb = '#f3e8ff' %}{% elif display_img_id == '0' %}{% set rb = '#ffdcdc' %}{% endif %}
+                    {# 2. 确定配置来源(用于取颜色和名字判断) #}
+                    {% set root_cfg = quality_config.get(display_img_id, q_cfg) %}
+
+                    {# 3. 获取属性 #}
+                    {% set scale_val = q_cfg.get('scale', 1.0) %}  {# 缩放优先用自己的 #}
+                    {% set bg_c = root_cfg.get('bg_color', '#ffffff') %} {# 颜色用根的 #}
+
+                    {# 4. 判定强制高度类 (核心修复：根据名称判断，不怕改代号) #}
+                    {% set q_cls = '' %}
+                    {% if root_cfg.name == '珍品无双' %}
+                        {% set q_cls = 'rare-wushuang-big' %}
+                    {% elif root_cfg.name == '无双' %}
+                        {% set q_cls = 'wushuang-big' %}
+                    {% endif %}
 
                     <tr data-quality="{{ q_cfg.name }}">
                         <td>{% if not skin.is_preset and not skin.is_discontinued %}<span class="rank-box">{{ loop.index }}</span>{% else %}-{% endif %}</td>
                         <td class="quality-col" data-val="{{ skin.quality }}">
                             <img src="./images/{{ q_str }}.gif" 
                                  data-q="{{ q_str }}" data-p="{{ parent_id }}" 
-                                 class="quality-icon"
+                                 class="quality-icon {{ q_cls }}"
                                  style="transform: scale({{ scale_val }});" 
                                  onerror="loadFallbackImg(this)">
                         </td>
-                        <td class="rounded-left" style="background-color: {{ rb }};"><div class="song-col">
+                        <td class="rounded-left" style="background-color: {{ bg_c }};"><div class="song-col">
                             <img src="./{{ skin.local_img or 'placeholder.jpg' }}" class="album-art">
                             <div class="name-container">
                                 <span class="song-title">{{ skin.name }}</span>
                                 {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>{% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>{% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>{% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
                         </div></td>
-                        <td class="desc-col" style="background-color: {{ rb }};">{% if skin.desc_img %}<img src="./skin_descs/{{ skin.desc_img }}" class="desc-img">{% endif %}</td>
-                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ rb }};"><div class="box-style">{% if skin.is_discontinued %}{{ '--' }}{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
-                        <td style="background-color: {{ rb }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
-                        <td style="background-color: {{ rb }};">{% if skin.growth %}{% set g_cls = '' %}{% if skin.growth == 1.9 %}{% set g_cls = 'growth-special' %}{% elif skin.growth < 0 %}{% set g_cls = 'growth-down' %}{% elif skin.growth >= 10 %}{% set g_cls = 'growth-up-high' %}{% elif skin.growth >= 5 %}{% set g_cls = 'growth-up-mid' %}{% endif %}<div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>{% else %}--{% endif %}</td>
-                        <td style="background-color: {{ rb }};">¥{{ skin.list_price }}</td>
-                        <td class="rounded-right" style="background-color: {{ rb }};"><div class="box-style">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
+                        <td class="desc-col" style="background-color: {{ bg_c }};">{% if skin.desc_img %}<img src="./skin_descs/{{ skin.desc_img }}" class="desc-img">{% endif %}</td>
+                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.is_discontinued %}{{ '--' }}{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
+                        <td style="background-color: {{ bg_c }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
+                        <td style="background-color: {{ bg_c }};">{% if skin.growth %}{% set g_cls = '' %}{% if skin.growth == 1.9 %}{% set g_cls = 'growth-special' %}{% elif skin.growth < 0 %}{% set g_cls = 'growth-down' %}{% elif skin.growth >= 10 %}{% set g_cls = 'growth-up-high' %}{% elif skin.growth >= 5 %}{% set g_cls = 'growth-up-mid' %}{% endif %}<div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>{% else %}--{% endif %}</td>
+                        <td style="background-color: {{ bg_c }};">¥{{ skin.list_price }}</td>
+                        <td class="rounded-right" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -765,7 +798,7 @@ class SkinSystem:
         });
         rows.forEach(r => table.tBodies[0].appendChild(r));
     }
-</script>
+    </script>
 </body>
 </html>
         """
@@ -796,8 +829,8 @@ if __name__ == "__main__":
     app = SkinSystem()
     while True:
         # Header
-        print("\n" + "="*60)
-        print(f"👑 王者荣耀榜单 V24.4 (标签缩放+窄列版) | 📊 当前库存: {len(app.all_skins)}")
+        print("\n" + "=" * 60)
+        print(f"👑 王者荣耀榜单 V24.9 (全能修复终极版) | 📊 当前库存: {len(app.all_skins)}")
         print("-" * 60)
 
         # Row 1
@@ -807,15 +840,27 @@ if __name__ == "__main__":
         print("-" * 60)
 
         cmd = input("👉 请输入指令: ").strip()
-        if cmd == '1': app.add_skin_ui()
-        elif cmd == '2': app.modify_data_ui()
-        elif cmd == '3': app.manage_status_ui()
-        elif cmd == '4': app.deploy_to_github()
-        elif cmd == '5': app.generate_html()
-        elif cmd == '6': app.view_rank_ui()
-        elif cmd == '7': app.run_crawler_ui()
-        elif cmd == '8': app.retire_skin_ui()
-        elif cmd == '9': app.manage_preset_ui()
-        elif cmd == '10': app.manage_instructions_ui()
-        elif cmd == '11': app.manage_quality_ui()
-        elif cmd == '0': break
+        if cmd == '1':
+            app.add_skin_ui()
+        elif cmd == '2':
+            app.modify_data_ui()
+        elif cmd == '3':
+            app.manage_status_ui()
+        elif cmd == '4':
+            app.deploy_to_github()
+        elif cmd == '5':
+            app.generate_html()
+        elif cmd == '6':
+            app.view_rank_ui()
+        elif cmd == '7':
+            app.run_crawler_ui()
+        elif cmd == '8':
+            app.retire_skin_ui()
+        elif cmd == '9':
+            app.manage_preset_ui()
+        elif cmd == '10':
+            app.manage_instructions_ui()
+        elif cmd == '11':
+            app.manage_quality_ui()
+        elif cmd == '0':
+            break

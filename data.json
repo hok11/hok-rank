@@ -270,55 +270,78 @@
       "price": 800.0,
       "parent": null,
       "name": "珍品无双",
-      "scale": 1.1
+      "scale": 1.1,
+      "bg_color": "#ffdcdc"
     },
     "5000": {
       "price": 400.0,
       "parent": null,
       "name": "无双",
-      "scale": 1.0
+      "scale": 1.0,
+      "bg_color": "#f3e8ff"
     },
     "2500": {
       "price": 600.0,
       "parent": null,
       "name": "荣耀典藏",
-      "scale": 1.4
+      "scale": 1.4,
+      "bg_color": "#fff7cd"
     },
     "1000": {
       "price": 200.0,
       "parent": null,
       "name": "珍品传说",
-      "scale": 1.0
+      "scale": 1.0,
+      "bg_color": "#bfdbfe"
     },
     "500": {
       "price": 178.8,
       "parent": null,
       "name": "传说限定",
-      "scale": 1.1
+      "scale": 1.1,
+      "bg_color": "#e0f2fe"
     },
     "250": {
       "price": 168.8,
       "parent": null,
       "name": "传说",
-      "scale": 1.0
+      "scale": 1.0,
+      "bg_color": "#ffffff"
     },
     "100": {
       "price": 88.8,
       "parent": null,
       "name": "史诗",
-      "scale": 1.1
+      "scale": 1.1,
+      "bg_color": "#ffffff"
     },
     "1": {
       "price": 48.8,
       "parent": null,
       "name": "勇者",
-      "scale": 0.9
+      "scale": 0.9,
+      "bg_color": "#ffffff"
     },
     "7500": {
       "price": 400.0,
       "parent": "5000",
       "name": "无双",
-      "scale": 1.0
+      "scale": 1.0,
+      "bg_color": "#f3e8ff"
+    },
+    "0.1": {
+      "price": 88.8,
+      "parent": "100",
+      "name": "史诗",
+      "scale": 1.0,
+      "bg_color": "#ffffff"
+    },
+    "50": {
+      "price": 18.8,
+      "parent": null,
+      "name": "战令限定",
+      "scale": 1.0,
+      "bg_color": "#ffffff"
     }
   }
 }
