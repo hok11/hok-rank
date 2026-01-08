@@ -141,7 +141,7 @@
       "growth": 0.0,
       "list_price": 18.8,
       "real_price": 0.0,
-      "local_img": null,
+      "local_img": "skin_avatars/小乔-线条小狗.jpg",
       "desc_img": null
     },
     {
@@ -363,7 +363,7 @@
       "price": 48.8,
       "parent": "1",
       "name": "勇者",
-      "scale": 0.9,
+      "scale": 1.1,
       "bg_color": "#ffffff"
     }
   }
