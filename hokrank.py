@@ -98,7 +98,7 @@ class SkinSystem:
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
 
-        # 🔥 V24.9: 默认配置 (含颜色、缩放)
+        # V24.9: 默认配置 (含颜色、缩放)
         self.quality_config = {
             "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
             "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
@@ -134,11 +134,21 @@ class SkinSystem:
         if real_price <= 0 or list_price <= 0: return None
         return round(rank_score * (real_price / list_price), 1)
 
+    # 🔥 辅助函数：安全输入浮点数（解决空车报错）
+    def _safe_input_float(self, prompt, default=0.0):
+        raw = input(prompt).strip()
+        if not raw:
+            return default
+        try:
+            return float(raw)
+        except ValueError:
+            print(f"⚠️ 输入格式错误，已使用默认值 {default}")
+            return default
+
     def _migrate_data_structure(self):
         if not self.all_skins: return
         print("🛠️ 正在执行核心数据迁移与完整性校准...")
 
-        # 智能修复颜色和缩放
         name_color_map = {
             "珍品无双": "#ffdcdc", "无双": "#f3e8ff", "荣耀典藏": "#fff7cd",
             "珍品传说": "#bfdbfe", "传说限定": "#e0f2fe"
@@ -301,7 +311,7 @@ class SkinSystem:
                 color_val = v.get('bg_color', '#ffffff')
                 print(f"{k:<8} ¥{v['price']:<10} {scale_val:<8} {color_val:<10} {parent:<8} {v.get('name', '')}")
             print("-" * 75)
-            print("1. 新增品质 | 2. 修改品质 (快捷:3000 1 400) | 3. 标签大小 | 0. 返回")
+            print("1. 新增品质 | 2. 修改品质 (快捷:3000 1 400) | 3. 标签大小 | 4. 删除代号 | 0. 返回")
             c = input("指令: ").strip()
 
             if c == '1':
@@ -418,11 +428,42 @@ class SkinSystem:
                 else:
                     print("❌ 格式错误")
 
+            # 🔥 V25.0: 新增删除代号 (必须库里无皮肤)
+            elif c == '4':
+                target = input("输入要删除的代号: ").strip()
+                if target not in self.quality_config:
+                    print("❌ 代号不存在")
+                    continue
+
+                # 检查是否有皮肤正在使用该代号
+                usage_count = 0
+                for skin in self.all_skins:
+                    if str(skin['quality']) == target:
+                        usage_count += 1
+
+                if usage_count > 0:
+                    print(f"❌ 删除失败：当前有 {usage_count} 个皮肤属于该品质，请先修改这些皮肤的品质。")
+                else:
+                    del self.quality_config[target]
+                    self.save_data()
+                    print(f"🗑️ 品质代号 {target} 已删除")
+
             elif c == '0':
                 break
 
     def add_skin_ui(self):
-        active_list = self.get_active_leaderboard()
+        # 🔥 V25.0: 添加皮肤时显示品质列表
+        print("\n=== 🏷️ 可用品质列表 ===")
+        sorted_keys = sorted(self.quality_config.keys(), key=lambda k: float(k))
+        for k in sorted_keys:
+            v = self.quality_config[k]
+            print(f" 代号 {k:<6} | {v['name']} (¥{v['price']})")
+        print("-" * 30)
+
+        # 🔔 新增：提前展示榜单供参考
+        print("\n--- 📊 当前新品榜参考 (决定排名用) ---")
+        self.print_console_table(self.get_active_leaderboard(), "实时参考榜")
+
         print(f"\n>>> 添加新皮肤")
         try:
             raw = input("品质 名字 [返场输入1, 新增输入0]: ").split()
@@ -441,22 +482,23 @@ class SkinSystem:
             real_p = 0.0;
             growth = 0.0
             if mode == '3':
-                is_preset = True; is_on = True; real_p = float(input("预估实价: ") or 0)
+                is_preset = True; is_on = True;
+                real_p = self._safe_input_float("预估实价: ")
             elif mode == '4':
                 is_discontinued = True; is_on = True
             elif mode == '1':
                 is_on = True;
-                rank = int(input("排名: "));
-                rp = float(input("实价: "));
-                gt = float(input("涨幅: "))
-                rank_score = round(self.calculate_insertion_score(rank, active_list, rp, gt), 1);
+                rank = int(self._safe_input_float("排名: "));
+                rp = self._safe_input_float("实价: ");
+                gt = self._safe_input_float("涨幅: ")
+                rank_score = round(self.calculate_insertion_score(rank, self.get_active_leaderboard(), rp, gt), 1);
                 real_p = rp;
                 growth = gt
             else:
                 s_in = input("分数: ");
                 rank_score = float(s_in) if s_in else None
-                real_p = float(input("实价: ") or 0);
-                growth = float(input("涨幅: ") or 0)
+                real_p = self._safe_input_float("实价: ");
+                growth = self._safe_input_float("涨幅: ")
 
             self.all_skins.append({
                 "quality": q_code, "name": name, "is_rerun": is_rr, "is_new": not is_rr,
@@ -471,29 +513,60 @@ class SkinSystem:
         except Exception as e:
             print(f"❌ 错误: {e}")
 
+    # 🔥 V25.1: 修复预设上线逻辑 (防空报错 + 灵活算分)
     def manage_preset_ui(self):
         presets = [s for s in self.all_skins if s.get('is_preset')]
         if not presets: print("无预设"); return
-        for i, s in enumerate(presets): print(f"{i + 1}. {s['name']}")
+
+        print("\n=== 🕒 待上线预设皮肤 ===")
+        for i, s in enumerate(presets): print(f"{i + 1}. {s['name']} (当前估价: {s.get('real_price')})")
+
         try:
-            sel = int(input("序号: ")) - 1
-            if 0 <= sel < len(presets):
-                t = presets[sel]
-                active = self.get_active_leaderboard()
-                rank = int(input("排名: "));
-                rp = float(input(f"实价({t.get('real_price')}): ") or t.get('real_price', 0));
-                gt = float(input("涨幅: "))
-                t['is_preset'] = False;
-                t['score'] = round(self.calculate_insertion_score(rank, active, rp, gt), 1)
-                t['real_price'] = rp;
-                t['growth'] = gt;
-                t['real_score'] = self._calculate_real_score(t['score'], t['list_price'], rp)
-                self._auto_prune_leaderboard();
-                self.save_data();
-                self.generate_html();
-                print("✅ 上线")
-        except:
-            pass
+            sel_idx = int(input("请输入要上线的序号: ")) - 1
+            if not (0 <= sel_idx < len(presets)): return
+            t = presets[sel_idx]
+
+            # 1. 公共数据输入 (使用 _safe_input_float 防止回车报错)
+            rp = self._safe_input_float(f"最终实价 (预设:{t.get('real_price')}): ", default=t.get('real_price', 0))
+            gt = self._safe_input_float("涨幅 (默认0): ", default=0.0)
+
+            # 2. 状态选择
+            is_on_board = input("是否上榜? (y/n 默认y): ").strip().lower()
+            if is_on_board == 'n':
+                # 情况A: 不上榜 -> 直接自定义点数
+                t['on_leaderboard'] = False
+                manual_score = self._safe_input_float("请输入自定义排位点数 (默认None): ", default=-1)
+                t['score'] = manual_score if manual_score != -1 else None
+            else:
+                # 情况B: 上榜
+                t['on_leaderboard'] = True
+                calc_method = input("计算方式: 1.根据排名自动计算(几何平均) 2.手动输入点数: ").strip()
+
+                if calc_method == '2':
+                    # B1: 上榜但手动分
+                    t['score'] = self._safe_input_float("请输入排位点数: ")
+                else:
+                    # B2: 上榜且自动计算 (展示榜单)
+                    print("\n--- 📊 当前新品榜参考 ---")
+                    active = self.get_active_leaderboard()
+                    self.print_console_table(active, "实时参考榜")
+                    rank = int(self._safe_input_float(f"请输入 [{t['name']}] 上线后的排名: "))
+                    t['score'] = round(self.calculate_insertion_score(rank, active, rp, gt), 1)
+
+            # 3. 统一更新状态
+            t['is_preset'] = False
+            t['is_new'] = True  # 转正即视为新品
+            t['real_price'] = rp
+            t['growth'] = gt
+            t['real_score'] = self._calculate_real_score(t['score'], t['list_price'], rp)
+
+            self._auto_prune_leaderboard()
+            self.save_data()
+            self.generate_html()
+            print(f"✅ 成功上线！皮肤 [{t['name']}] | RankPts: {t['score']} | OnBoard: {t['on_leaderboard']}")
+
+        except Exception as e:
+            print(f"❌ 操作失败: {e}")
 
     def manage_instructions_ui(self):
         while True:
@@ -830,7 +903,7 @@ if __name__ == "__main__":
     while True:
         # Header
         print("\n" + "=" * 60)
-        print(f"👑 王者荣耀榜单 V24.9 (全能修复终极版) | 📊 当前库存: {len(app.all_skins)}")
+        print(f"👑 王者荣耀榜单 V25.0 (双行UI+安全删除+品质列表) | 📊 当前库存: {len(app.all_skins)}")
         print("-" * 60)
 
         # Row 1

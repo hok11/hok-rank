@@ -17,6 +17,22 @@
       "desc_img": null
     },
     {
+      "quality": 2500,
+      "name": "吕布·千魇归渊",
+      "is_rerun": false,
+      "is_new": true,
+      "on_leaderboard": true,
+      "is_preset": false,
+      "score": 153.2,
+      "real_score": null,
+      "growth": 0.0,
+      "list_price": 600.0,
+      "real_price": 0.0,
+      "local_img": "skin_avatars/吕布·千魇归渊.jpg",
+      "is_discontinued": false,
+      "desc_img": null
+    },
+    {
       "quality": 7500,
       "name": "甄姬-雪境奇遇",
       "is_rerun": true,
@@ -113,11 +129,43 @@
       "desc_img": null
     },
     {
+      "quality": 50.1,
+      "name": "小乔-线条小狗",
+      "is_rerun": false,
+      "is_new": true,
+      "on_leaderboard": true,
+      "is_preset": false,
+      "is_discontinued": false,
+      "score": 23.6,
+      "real_score": null,
+      "growth": 0.0,
+      "list_price": 18.8,
+      "real_price": 0.0,
+      "local_img": null,
+      "desc_img": null
+    },
+    {
+      "quality": 1,
+      "name": "桑启-线条小狗",
+      "is_rerun": false,
+      "is_new": true,
+      "on_leaderboard": true,
+      "is_preset": false,
+      "score": 22.7,
+      "real_score": null,
+      "growth": 0.0,
+      "list_price": 48.8,
+      "real_price": 0.0,
+      "local_img": "skin_avatars/桑启-线条小狗.jpg",
+      "is_discontinued": false,
+      "desc_img": null
+    },
+    {
       "quality": 1,
       "name": "蒙恬-苍云破阵",
       "is_rerun": false,
       "is_new": true,
-      "on_leaderboard": true,
+      "on_leaderboard": false,
       "score": 20.9,
       "real_score": 2.6,
       "growth": 0.0,
@@ -139,7 +187,7 @@
       "real_price": 0.0,
       "list_price": 178.8,
       "real_score": null,
-      "on_leaderboard": true,
+      "on_leaderboard": false,
       "is_preset": false,
       "is_discontinued": false,
       "desc_img": null
@@ -155,7 +203,7 @@
       "real_price": 0.0,
       "list_price": 88.8,
       "real_score": null,
-      "on_leaderboard": true,
+      "on_leaderboard": false,
       "is_preset": false,
       "is_discontinued": false,
       "desc_img": null
@@ -189,38 +237,6 @@
       "list_price": 48.8,
       "real_price": 6.0,
       "local_img": "skin_avatars/妲己·线条小狗.jpg",
-      "is_discontinued": false,
-      "desc_img": null
-    },
-    {
-      "quality": 1,
-      "name": "桑启-线条小狗",
-      "is_rerun": false,
-      "is_new": true,
-      "on_leaderboard": true,
-      "is_preset": true,
-      "score": null,
-      "real_score": null,
-      "growth": 0.0,
-      "list_price": 48.8,
-      "real_price": 0.0,
-      "local_img": "skin_avatars/桑启-线条小狗.jpg",
-      "is_discontinued": false,
-      "desc_img": null
-    },
-    {
-      "quality": 2500,
-      "name": "吕布·千魇归渊",
-      "is_rerun": false,
-      "is_new": true,
-      "on_leaderboard": true,
-      "is_preset": true,
-      "score": null,
-      "real_score": null,
-      "growth": 0.0,
-      "list_price": 600.0,
-      "real_price": 0.0,
-      "local_img": "skin_avatars/吕布·千魇归渊.jpg",
       "is_discontinued": false,
       "desc_img": null
     },
@@ -305,7 +321,7 @@
       "price": 168.8,
       "parent": null,
       "name": "传说",
-      "scale": 1.0,
+      "scale": 1.2,
       "bg_color": "#ffffff"
     },
     "100": {
@@ -329,16 +345,16 @@
       "scale": 1.0,
       "bg_color": "#f3e8ff"
     },
-    "0.1": {
-      "price": 88.8,
-      "parent": "100",
-      "name": "史诗",
-      "scale": 1.0,
-      "bg_color": "#ffffff"
-    },
     "50": {
       "price": 18.8,
       "parent": null,
+      "name": "战令限定",
+      "scale": 1.0,
+      "bg_color": "#ffffff"
+    },
+    "50.1": {
+      "price": 18.8,
+      "parent": "50",
       "name": "战令限定",
       "scale": 1.0,
       "bg_color": "#ffffff"
