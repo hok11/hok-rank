@@ -145,7 +145,7 @@
       "desc_img": null
     },
     {
-      "quality": 1,
+      "quality": 20,
       "name": "桑启-线条小狗",
       "is_rerun": false,
       "is_new": true,
@@ -357,6 +357,13 @@
       "parent": "50",
       "name": "战令限定",
       "scale": 1.0,
+      "bg_color": "#ffffff"
+    },
+    "20": {
+      "price": 48.8,
+      "parent": "1",
+      "name": "勇者",
+      "scale": 0.9,
       "bg_color": "#ffffff"
     }
   }
