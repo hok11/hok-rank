@@ -1,7 +1,7 @@
 {
   "skins": [
     {
-      "quality": 1,
+      "quality": 5000,
       "name": "孙悟空-无相",
       "is_rerun": false,
       "score": 200.0,
@@ -13,10 +13,11 @@
       "real_score": 200.0,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 0.8,
+      "quality": 7500,
       "name": "甄姬-雪境奇遇",
       "is_rerun": true,
       "score": 117.4,
@@ -28,10 +29,11 @@
       "real_score": 117.4,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 1,
+      "quality": 5000,
       "name": "瑶-真我赫兹",
       "is_rerun": true,
       "score": 80.8,
@@ -43,10 +45,11 @@
       "real_score": 80.8,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 4,
+      "quality": 250,
       "name": "曹操-万灵伏威",
       "is_rerun": false,
       "score": 59.0,
@@ -58,10 +61,11 @@
       "real_score": 34.6,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 6,
+      "quality": 1,
       "name": "安琪拉-糖果风暴",
       "is_rerun": false,
       "score": 44.1,
@@ -73,10 +77,11 @@
       "real_score": 5.4,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 6,
+      "quality": 1,
       "name": "孙权-径山谋武",
       "is_rerun": false,
       "score": 33.1,
@@ -88,10 +93,11 @@
       "real_score": 4.1,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 6,
+      "quality": 1,
       "name": "蚩姹-极光幻客",
       "is_rerun": false,
       "score": 24.6,
@@ -103,10 +109,11 @@
       "real_score": 3.0,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 6,
+      "quality": 1,
       "name": "蒙恬-苍云破阵",
       "is_rerun": false,
       "is_new": true,
@@ -118,10 +125,11 @@
       "real_price": 6.0,
       "local_img": "skin_avatars/蒙恬-苍云破阵.jpg",
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 3.5,
+      "quality": 500,
       "name": "小乔-山海·琳琅生",
       "is_rerun": true,
       "score": 17.7,
@@ -133,10 +141,11 @@
       "real_score": null,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 5,
+      "quality": 100,
       "name": "妲己-热情桑巴",
       "is_rerun": true,
       "score": 12.0,
@@ -148,10 +157,11 @@
       "real_score": null,
       "on_leaderboard": true,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 3.5,
+      "quality": 500,
       "name": "曜-山海·苍雷引",
       "is_rerun": true,
       "score": 7.2,
@@ -163,25 +173,11 @@
       "real_score": null,
       "on_leaderboard": false,
       "is_preset": false,
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 2,
-      "name": "吕布·千魇归渊",
-      "is_rerun": false,
-      "is_new": true,
-      "on_leaderboard": true,
-      "is_preset": true,
-      "score": null,
-      "real_score": null,
-      "growth": 0.0,
-      "list_price": 600.0,
-      "real_price": 0.0,
-      "local_img": "skin_avatars/吕布·千魇归渊.jpg",
-      "is_discontinued": false
-    },
-    {
-      "quality": 6,
+      "quality": 1,
       "name": "妲己·线条小狗",
       "is_rerun": false,
       "is_new": true,
@@ -193,10 +189,11 @@
       "list_price": 48.8,
       "real_price": 6.0,
       "local_img": "skin_avatars/妲己·线条小狗.jpg",
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 6,
+      "quality": 1,
       "name": "桑启-线条小狗",
       "is_rerun": false,
       "is_new": true,
@@ -208,25 +205,27 @@
       "list_price": 48.8,
       "real_price": 0.0,
       "local_img": "skin_avatars/桑启-线条小狗.jpg",
-      "is_discontinued": false
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 0,
-      "name": "貂蝉-馥梦繁花",
-      "is_rerun": true,
-      "is_new": false,
+      "quality": 2500,
+      "name": "吕布·千魇归渊",
+      "is_rerun": false,
+      "is_new": true,
       "on_leaderboard": true,
-      "is_preset": false,
-      "is_discontinued": true,
+      "is_preset": true,
       "score": null,
       "real_score": null,
-      "growth": 3.2,
-      "list_price": 800.0,
-      "real_price": 800.0,
-      "local_img": "skin_avatars/貂蝉-馥梦繁花.gif"
+      "growth": 0.0,
+      "list_price": 600.0,
+      "real_price": 0.0,
+      "local_img": "skin_avatars/吕布·千魇归渊.jpg",
+      "is_discontinued": false,
+      "desc_img": null
     },
     {
-      "quality": 5,
+      "quality": 100,
       "name": "大乔-乘龙·忆丹青",
       "is_rerun": false,
       "is_new": false,
@@ -238,7 +237,24 @@
       "real_price": 53.2,
       "local_img": "skin_avatars/大乔-乘龙·忆丹青.jpg",
       "is_preset": false,
-      "is_discontinued": true
+      "is_discontinued": true,
+      "desc_img": null
+    },
+    {
+      "quality": 10000,
+      "name": "貂蝉-馥梦繁花",
+      "is_rerun": true,
+      "is_new": false,
+      "on_leaderboard": true,
+      "is_preset": false,
+      "is_discontinued": true,
+      "score": null,
+      "real_score": null,
+      "growth": 3.2,
+      "list_price": 800.0,
+      "real_price": 800.0,
+      "local_img": "skin_avatars/貂蝉-馥梦繁花.gif",
+      "desc_img": "貂蝉-馥梦繁花.gif"
     }
   ],
   "instructions": [
@@ -248,5 +264,61 @@
     "List p:官方定价.典藏取600，传说178.8...",
     "Real p:实际售价.比如99r传说，6r勇者.",
     "Real pts:真实点数，新品榜销售额的计价方式会导致皮肤真实卖气虚高，故采用Rankpts*Realp/Listp得到更真实反映卖气的点数."
-  ]
+  ],
+  "quality_config": {
+    "10000": {
+      "price": 800.0,
+      "parent": null,
+      "name": "珍品无双",
+      "scale": 1.1
+    },
+    "5000": {
+      "price": 400.0,
+      "parent": null,
+      "name": "无双",
+      "scale": 1.0
+    },
+    "2500": {
+      "price": 600.0,
+      "parent": null,
+      "name": "荣耀典藏",
+      "scale": 1.4
+    },
+    "1000": {
+      "price": 200.0,
+      "parent": null,
+      "name": "珍品传说",
+      "scale": 1.0
+    },
+    "500": {
+      "price": 178.8,
+      "parent": null,
+      "name": "传说限定",
+      "scale": 1.1
+    },
+    "250": {
+      "price": 168.8,
+      "parent": null,
+      "name": "传说",
+      "scale": 1.0
+    },
+    "100": {
+      "price": 88.8,
+      "parent": null,
+      "name": "史诗",
+      "scale": 1.1
+    },
+    "1": {
+      "price": 48.8,
+      "parent": null,
+      "name": "勇者",
+      "scale": 0.9
+    },
+    "7500": {
+      "price": 400.0,
+      "parent": "5000",
+      "name": "无双",
+      "scale": 1.0
+    }
+  }
 }
