@@ -97,6 +97,22 @@
       "desc_img": null
     },
     {
+      "quality": 20,
+      "name": "妲己·线条小狗",
+      "is_rerun": false,
+      "is_new": true,
+      "on_leaderboard": true,
+      "is_preset": false,
+      "score": 38.2,
+      "real_score": 4.7,
+      "growth": 0.0,
+      "list_price": 48.8,
+      "real_price": 6.0,
+      "local_img": "skin_avatars/妲己·线条小狗.jpg",
+      "is_discontinued": false,
+      "desc_img": null
+    },
+    {
       "quality": 1,
       "name": "孙权-径山谋武",
       "is_rerun": false,
@@ -109,22 +125,6 @@
       "real_score": 4.1,
       "on_leaderboard": false,
       "is_preset": false,
-      "is_discontinued": false,
-      "desc_img": null
-    },
-    {
-      "quality": 20,
-      "name": "妲己·线条小狗",
-      "is_rerun": false,
-      "is_new": true,
-      "on_leaderboard": true,
-      "is_preset": false,
-      "score": 32.9,
-      "real_score": 4.0,
-      "growth": 0.0,
-      "list_price": 48.8,
-      "real_price": 6.0,
-      "local_img": "skin_avatars/妲己·线条小狗.jpg",
       "is_discontinued": false,
       "desc_img": null
     },
