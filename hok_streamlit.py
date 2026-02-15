@@ -82,32 +82,73 @@ class SkinSystem:
     def __init__(self):
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
-        self.quality_config = {
+
+        # 🔥 在这里定义的价格是“硬编码默认值”
+        # 如果你在这里改了价格，下面的逻辑会确保它生效
+        self.default_quality_config = {
             "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
             "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
             "2": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
             "3": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
-            "3.5": {"price": 178.8, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
-            "4": {"price": 168.8, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
-            "5": {"price": 88.8, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+            "3.5": {"price": 143.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "4": {"price": 135.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "5": {"price": 71.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
             "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
         }
+
+        # 先赋值给实例变量
+        self.quality_config = self.default_quality_config.copy()
+
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.desc_dir = os.path.join(LOCAL_REPO_PATH, "skin_descs")
         if not os.path.exists(self.desc_dir): os.makedirs(self.desc_dir)
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
+
+        # 加载数据 (会覆盖 self.quality_config)
         self.load_data()
+
+        # 🔥 关键修复：再次合并硬编码配置，确保代码里的新价格覆盖 JSON 里的旧价格
+        # 这样你在 PyCharm 里改了代码，重启网页就能生效
+        for k, v in self.default_quality_config.items():
+            if k in self.quality_config:
+                self.quality_config[k]['price'] = v['price']  # 强制更新价格
+            else:
+                self.quality_config[k] = v  # 补充缺失的配置
+
         self._migrate_data_structure()
 
     def _get_list_price_by_quality(self, q_code):
+        """
+        🔥 强力模糊匹配查找价格
+        """
+        # 1. 尝试直接 Key 匹配
         q_str = str(q_code)
         if q_str in self.quality_config:
             return self.quality_config[q_str]['price']
-        for q, cfg in self.quality_config.items():
-            if q == q_str and cfg.get('parent'):
-                parent = str(cfg['parent'])
-                if parent in self.quality_config:
-                    return self.quality_config[parent]['price']
+
+        # 2. 尝试去掉 .0 后匹配
+        if q_str.endswith(".0"):
+            q_clean = q_str[:-2]
+            if q_clean in self.quality_config:
+                return self.quality_config[q_clean]['price']
+
+        # 3. 终极匹配：数值相等就认
+        try:
+            target_val = float(q_code)
+            for k, v in self.quality_config.items():
+                try:
+                    if math.isclose(float(k), target_val, rel_tol=1e-9):
+                        price = v['price']
+                        if price <= 0 and v.get('parent'):
+                            p_key = str(v['parent'])
+                            if p_key in self.quality_config:
+                                return self.quality_config[p_key]['price']
+                        return price
+                except:
+                    continue
+        except:
+            pass
+
         return 0.0
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
@@ -179,7 +220,6 @@ class SkinSystem:
             st.error(f"存档失败: {e}")
 
     def get_total_skins(self):
-        """获取所有皮肤列表，并按排序规则排序"""
         data = self.all_skins[:]
         data.sort(key=self._get_sort_key)
         return data
@@ -950,9 +990,16 @@ with t6:
         if st.button("🚀 Push 到 GitHub", type="primary"):
             os.chdir(LOCAL_REPO_PATH)
             try:
-                with st.spinner("正在提交并推送..."):
+                # 容错处理：如果 commit 没有东西可提交，会返回 exit status 1，但这不代表 push 失败
+                # 所以我们用 try-except 包裹 commit，允许它“失败”
+                try:
                     subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
                     subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", "update via streamlit"], check=True)
+                except subprocess.CalledProcessError:
+                    pass  # 忽略 commit 错误 (比如没有文件变化)
+
+                # 执行 Push
+                with st.spinner("正在推送到 GitHub..."):
                     result = subprocess.run([GIT_EXECUTABLE_PATH, "push"], capture_output=True, text=True)
 
                     if result.returncode == 0:
