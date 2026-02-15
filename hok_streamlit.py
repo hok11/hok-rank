@@ -82,15 +82,21 @@ class SkinSystem:
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
 
+        # 🔥 修正：使用真实的 ID 体系
         self.default_quality_config = {
-            "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
-            "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
-            "2": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
-            "3": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
-            "3.5": {"price": 143.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
-            "4": {"price": 135.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
-            "5": {"price": 71.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
-            "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
+            "1": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
+            "20": {"price": 48.8, "parent": "1", "name": "勇者", "scale": 1.1, "bg_color": "#ffffff"},
+            "50": {"price": 18.8, "parent": None, "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
+            "50.1": {"price": 18.8, "parent": "50", "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
+            "100": {"price": 71.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+            "250": {"price": 135.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "500": {"price": 143.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "900": {"price": 143.0, "parent": "500", "name": "马年限定", "scale": 1.0, "bg_color": "#ffffff"},
+            "1000": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
+            "2500": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
+            "5000": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+            "7500": {"price": 400.0, "parent": "5000", "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+            "10000": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
         }
 
         self.quality_config = self.default_quality_config.copy()
@@ -105,9 +111,11 @@ class SkinSystem:
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
 
+        # 强制合并配置 (代码优先)
         for k, v in self.default_quality_config.items():
             if k in self.quality_config:
                 self.quality_config[k]['price'] = v['price']
+                self.quality_config[k]['name'] = v['name']
             else:
                 self.quality_config[k] = v
 
@@ -115,6 +123,7 @@ class SkinSystem:
         self._migrate_data_structure()
 
     def scan_local_images(self):
+        """自动扫描本地图片并挂载"""
         updates = 0
         for skin in self.all_skins:
             current_img = skin.get('local_img')
@@ -274,15 +283,12 @@ class SkinSystem:
     def generate_html(self):
         self.scan_local_images()
         self.save_data()
-
         header_gifs = self.get_header_gifs()
         desc_files = {}
         if os.path.exists(self.desc_dir):
             for f in os.listdir(self.desc_dir): desc_files[os.path.splitext(f)[0]] = f
-
         display_skins = self.all_skins[:]
         display_skins.sort(key=self._get_sort_key)
-
         for skin in display_skins:
             skin['desc_img'] = desc_files.get(skin['name'])
             raw_q = skin['quality']
@@ -296,12 +302,11 @@ class SkinSystem:
                     f_val = float(raw_q)
                     for k in self.quality_config:
                         if math.isclose(float(k), f_val, rel_tol=1e-9):
-                            q_key = k
+                            q_key = k;
                             break
                 except:
                     pass
             skin['quality_key'] = q_key
-
         html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -343,7 +348,6 @@ class SkinSystem:
         .col-sort { cursor: pointer; position: relative; } .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
         th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
-
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; }
         .wushuang-big { height: 45px !important; margin: -8px 0; }
@@ -353,12 +357,7 @@ class SkinSystem:
         .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; transform-origin: center; display: inline-block; }
         .badge { display: block; width: 100%; text-align: center; padding: 1px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; }
         .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
-
-        .rank-box { 
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; background: #1d4ed8; color: #fff; 
-            font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1;
-        }
+        .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
     </style>
@@ -476,7 +475,7 @@ class SkinSystem:
     </script>
 </body>
 </html>
-        """
+"""
         t = Template(html_template)
         html_content = t.render(total_skins=display_skins, quality_config=self.quality_config,
                                 header_gifs=header_gifs, instructions=self.instructions,
@@ -493,23 +492,19 @@ class SkinSystem:
 
 st.set_page_config(page_title="王者皮肤榜单管理", page_icon="👑", layout="wide")
 
-# 初始化系统实例
 if 'app' not in st.session_state:
     st.session_state.app = SkinSystem()
 
 app = st.session_state.app
 
 # ----------------- 顶部导航 -----------------
-# 移除主标题 st.title("👑 榜单管理后台") 以节省空间
 tab_list = ["📊 榜单概览", "➕ 添加皮肤", "🕒 预设上线", "✏️ 数据编辑", "💎 品质管理", "🚀 发布与工具"]
 t1, t2, t3, t4, t5, t6 = st.tabs(tab_list)
 
 # ----------------- Tab 1: 榜单概览 -----------------
 with t1:
-    # 顶部控制栏
     col_ctrl1, col_ctrl2 = st.columns([0.2, 0.8])
     with col_ctrl1:
-        # 旋转按钮逻辑：默认为总榜 (False)，开启后看新品榜 (True)
         show_active = st.toggle("只看新品活跃榜", value=False)
 
     with col_ctrl2:
@@ -530,29 +525,25 @@ with t1:
 
     if data_list:
         df = pd.DataFrame(data_list)
-        # 序号从1开始
         df.index = df.index + 1
 
 
-        # 1. 预处理数据：增加“标签”列和“品质”名
         def get_tag(row):
             if row.get('is_discontinued'): return "绝版"
             if row.get('is_preset'): return "预设"
             if row.get('is_rerun'): return "返场"
             if row.get('is_new'): return "新品"
-            return ""  # 移除“普通”，若无标签则留空
+            return ""
 
 
         df['tag'] = df.apply(get_tag, axis=1)
-        # 修复品质名映射：先转int再转str，避免 5000.0 匹配不到 '5000'
         df['quality_key'] = df['quality'].apply(lambda x: str(int(x)) if pd.notnull(x) else "")
         df['quality_name'] = df['quality_key'].map(lambda x: app.quality_config.get(x, {}).get('name', "未知"))
 
-        # 中文列名映射配置
         column_config = {
-            "name": st.column_config.TextColumn("皮肤名称", width="medium"),  # 名字宽度改为medium
+            "name": st.column_config.TextColumn("皮肤名称", width="medium"),
             "quality_name": st.column_config.TextColumn("品质", width="small"),
-            "quality": st.column_config.NumberColumn("品质代码", format="%d", width="small"),  # 强制整数，并在下面修正配置
+            "quality": st.column_config.NumberColumn("品质代码", format="%d", width="small"),
             "tag": st.column_config.TextColumn("标签", width="small"),
             "growth": st.column_config.NumberColumn("涨幅%", format="%.2f", width="small"),
             "score": st.column_config.NumberColumn("排位分", format="%.1f", width="small"),
@@ -562,76 +553,55 @@ with t1:
             "local_img": st.column_config.ImageColumn("预览", width="small")
         }
 
-        # 展示列顺序：皮肤名称 -> 品质 -> 品质代码 -> 标签 -> 涨幅 -> 排位分 -> 实际分 -> 定价 -> 实际价格
         display_cols = ['name', 'quality_name', 'quality', 'tag', 'growth', 'score', 'real_score', 'list_price',
                         'real_price']
-
-        # 尝试使用 Pandas Styler 居中
         styled_df = df[display_cols].style.set_properties(**{'text-align': 'center'})
 
-        # 使用全宽展示，防止横向滚动
         st.dataframe(
-            styled_df,  # 使用 styled_df
+            styled_df,
             column_config=column_config,
-            use_container_width=True,  # 占满全宽
+            use_container_width=True,
             height=600,
-            hide_index=False  # 恢复左侧序号列
+            hide_index=False
         )
 
 # ----------------- Tab 2: 添加皮肤 -----------------
 with t2:
-    # 移除标题 header
-
-    # ------------------ 品质选择区域 ------------------
-    # 模式选择
     q_mode = st.radio("品质来源", ["默认品质", "新建品质"], horizontal=True, label_visibility="collapsed")
 
-    final_q_code = None  # 最终选定/新建的品质代码
-    final_list_price = 0.0  # 最终定价
+    final_q_code = None
+    final_list_price = 0.0
 
-    # 准备数据：分出 父级(Root) 和 子级(Children)
     all_roots = {k: v for k, v in app.quality_config.items() if not v.get('parent')}
     all_children = {k: v for k, v in app.quality_config.items() if v.get('parent')}
 
     if q_mode == "默认品质":
-        # 场景 A: 选择已有
         col_q1, col_q2 = st.columns(2)
-
-        # 1. 选择父品质
         root_opts = {k: f"{v['name']} ({k})" for k, v in all_roots.items()}
         sel_root = col_q1.selectbox("选择父品质", options=list(root_opts.keys()), format_func=lambda x: root_opts[x])
 
-        # 2. 查找是否有子品质
         my_children = {k: v for k, v in all_children.items() if str(v['parent']) == str(sel_root)}
 
         if my_children:
-            # 有子品质，允许进一步选择
             child_opts = {sel_root: f"{all_roots[sel_root]['name']} (父级本身)"}
             for k, v in my_children.items():
                 child_opts[k] = f"{v['name']} ({k})"
-
             sel_child = col_q2.selectbox("选择具体品质", options=list(child_opts.keys()),
                                          format_func=lambda x: child_opts[x])
             final_q_code = sel_child
         else:
-            # 无子品质，直接用父级
             col_q2.info("该品质无子分类")
             final_q_code = sel_root
 
         final_list_price = app._get_list_price_by_quality(final_q_code)
 
     else:
-        # 场景 B: 新建品质
         new_sub_mode = st.radio("新建类型", ["新建子品质 (归属已有系列)", "全新独立品质"], horizontal=True)
-
         if new_sub_mode == "新建子品质 (归属已有系列)":
-            # B1: 新建子品质
             c_new1, c_new2 = st.columns(2)
             root_opts = {k: f"{v['name']} ({k})" for k, v in all_roots.items()}
             sel_root_for_new = c_new1.selectbox("选择归属父品质", options=list(root_opts.keys()),
                                                 format_func=lambda x: root_opts[x])
-
-            # 展示父级和兄弟级信息
             with c_new2:
                 st.caption(f"当前父级: {all_roots[sel_root_for_new]['name']} (代码 {sel_root_for_new})")
                 siblings = [f"{v['name']}({k})" for k, v in all_children.items() if
@@ -640,84 +610,55 @@ with t2:
                     st.caption(f"现有子品质: {', '.join(siblings)}")
                 else:
                     st.caption("暂无子品质")
-
-            # 输入新信息
             c_in1, c_in2, c_in3 = st.columns(3)
             new_q_name = c_in1.text_input("子品质名称")
             new_q_code = c_in2.text_input("子品质代号 (数字)")
-            new_q_price = c_in3.number_input("定价", value=all_roots[sel_root_for_new]['price'])  # 默认继承父级
-
+            new_q_price = c_in3.number_input("定价", value=all_roots[sel_root_for_new]['price'])
             if new_q_name and new_q_code:
-                # 暂存信息，提交时写入
-                final_q_code = new_q_code  # 标记为新代码
-                # 构造临时数据用于展示
+                final_q_code = new_q_code
                 st.info(f"将创建: {new_q_name} (隶属 {all_roots[sel_root_for_new]['name']})")
-                # 实际上要在提交时再保存到 config
-
         else:
-            # B2: 全新独立品质
             st.caption("现有顶级品质一览:")
             st.dataframe(pd.DataFrame([{"代码": k, "名称": v['name']} for k, v in all_roots.items()]).T)
-
             c_in1, c_in2, c_in3 = st.columns(3)
             new_q_name = c_in1.text_input("全新名称")
             new_q_code = c_in2.text_input("全新代号")
             new_q_price = c_in3.number_input("定价", min_value=0.0)
-
             if new_q_name and new_q_code:
                 final_q_code = new_q_code
 
-    st.divider()  # ------------------ 皮肤信息区域 ------------------
-
-    # 皮肤名称放在最显眼位置
+    st.divider()
     name = st.text_input("皮肤名称", placeholder="请输入皮肤名字...")
+    if q_mode == "默认品质": st.caption(f"当前品质标准定价: ¥{final_list_price}")
 
-    # 定价参考
-    if q_mode == "默认品质":
-        st.caption(f"当前品质标准定价: ¥{final_list_price}")
-
-    # 核心数据行：实价 | 涨幅 | 标签 | 上榜
     c4, c5, c6, c7 = st.columns([1, 1, 1.5, 1])
-
     real_price = c4.number_input("实际价格", min_value=0.0, step=1.0)
-
-    # 涨幅输入优化
     growth_input = c5.number_input("涨幅 (%)", value=0.0, step=0.1, help="输入 1 代表 1%")
     growth = growth_input / 100.0
-
     tag_option = c6.radio("标签", ["新品", "返场", "预设", "绝版"], horizontal=True)
-
-    # 动态逻辑
     can_be_on_board = tag_option not in ["预设", "绝版"]
     on_board = c7.checkbox("登上新品榜", value=False, disabled=not can_be_on_board)
-    if not can_be_on_board:
-        c7.caption("🚫 预设/绝版不可上榜")
+    if not can_be_on_board: c7.caption("🚫 预设/绝版不可上榜")
 
-    st.divider()  # ------------------ 底部提交区域 ------------------
-
-    # 左右分栏布局（左侧操作，右侧榜单）
+    st.divider()
     col_main_left, col_main_right = st.columns([1, 1.5])
 
     with col_main_left:
-        # 仅在上榜时显示分数输入
         rank_score = None
         if on_board:
             st.info("排位分设置")
             score_mode = st.radio("分数来源", ["自定义输入", "排位计算"], horizontal=True)
-
             if score_mode == "自定义输入":
                 rank_score = st.number_input("输入排位分 (Rank Pts)", value=0.0, step=0.1)
             else:
                 target_rank = st.number_input("目标排名 (1=第一名)", min_value=1, value=1)
-                # 实时计算预览
                 active_list = app.get_active_leaderboard()
                 preview_score = round(app.calculate_insertion_score(target_rank, active_list, real_price, growth), 1)
                 st.metric("计算结果预览", f"{preview_score} Pts")
                 rank_score = preview_score
         else:
             st.caption("未勾选上榜，无需设置分数")
-
-        st.markdown("###")  # 占位
+        st.markdown("###")
         submitted = st.button("提交保存", type="primary", use_container_width=True)
 
     with col_main_right:
@@ -736,56 +677,38 @@ with t2:
         else:
             st.info("暂无数据")
 
-    # 提交逻辑处理
     if submitted:
         if not name:
             st.error("请输入皮肤名称")
         elif not final_q_code:
             st.error("品质选择无效")
         else:
-            # 1. 如果是新建品质，先保存配置
             if q_mode == "新建品质":
                 if final_q_code in app.quality_config:
                     st.warning("⚠️ 该品质代号已存在，将使用现有配置")
                 else:
-                    # 构造新配置
                     if new_sub_mode == "新建子品质 (归属已有系列)":
-                        new_cfg = {
-                            "price": new_q_price,
-                            "name": new_q_name,
-                            "parent": sel_root_for_new,  # 父级代码
-                            "scale": 1.0,
-                            "bg_color": "#ffffff"  # 默认白
-                        }
+                        new_cfg = {"price": new_q_price, "name": new_q_name, "parent": sel_root_for_new, "scale": 1.0,
+                                   "bg_color": "#ffffff"}
                     else:
-                        new_cfg = {
-                            "price": new_q_price,
-                            "name": new_q_name,
-                            "parent": None,  # 顶级
-                            "scale": 1.0,
-                            "bg_color": "#ffffff"
-                        }
+                        new_cfg = {"price": new_q_price, "name": new_q_name, "parent": None, "scale": 1.0,
+                                   "bg_color": "#ffffff"}
                     app.quality_config[final_q_code] = new_cfg
-                    app.save_data()  # 保存配置
+                    app.save_data()
                     st.success(f"已创建新品质: {new_q_name}")
 
-            # 2. 标签转换逻辑
             is_new = (tag_option == "新品")
             is_rerun = (tag_option == "返场")
             is_preset = (tag_option == "预设")
             is_discontinued = (tag_option == "绝版")
-
             final_on_board = False if not can_be_on_board else on_board
             final_score = rank_score if final_on_board else None
-
-            # 获取最终定价 (如果是新建的，前面没算)
             if q_mode == "新建品质":
                 final_list_price = new_q_price
             else:
                 final_list_price = app._get_list_price_by_quality(
                     float(final_q_code) if '.' in str(final_q_code) else int(final_q_code))
 
-            # 3. 创建皮肤
             new_skin = {
                 "quality": float(final_q_code) if '.' in str(final_q_code) else int(final_q_code),
                 "name": name,
@@ -799,7 +722,6 @@ with t2:
                 "real_price": real_price,
                 "local_img": None
             }
-
             app.all_skins.append(new_skin)
             app.auto_prune_leaderboard()
             app.save_data()
@@ -810,55 +732,42 @@ with t2:
 # ----------------- Tab 3: 预设上线 -----------------
 with t3:
     st.header("🕒 预设皮肤上线管理")
-
     presets = [s for s in app.all_skins if s.get('is_preset')]
-
     if not presets:
         st.info("当前没有预设皮肤。")
     else:
-        # 选择要上线的皮肤
         skin_names = [s['name'] for s in presets]
         selected_name = st.selectbox("选择预设皮肤", skin_names)
-
         target_skin = next((s for s in presets if s['name'] == selected_name), None)
 
         if target_skin:
             st.divider()
-
-            # 布局调整：左操作区 + 右榜单区
             col_preset_left, col_preset_right = st.columns([1, 1.2])
-
             with col_preset_left:
                 c_p1, c_p2 = st.columns(2)
                 new_price = c_p1.number_input("最终实价", value=float(target_skin.get('real_price', 0)))
                 new_growth_input = c_p2.number_input("涨幅 (%)", value=float(target_skin.get('growth', 0)) * 100,
                                                      step=0.1)
                 new_growth = new_growth_input / 100.0
-
                 calc_method = st.radio("分数计算方式", ["根据排名自动计算", "手动输入分数", "不上榜"])
 
                 final_score = None
                 manual_score = 0.0
                 target_rank = 1
-
                 if calc_method == "根据排名自动计算":
                     target_rank = st.number_input("目标排名", min_value=1, value=1)
-                    # 实时预览分数
                     active = app.get_active_leaderboard()
                     preview_pts = round(app.calculate_insertion_score(target_rank, active, new_price, new_growth), 1)
                     st.metric("预计排位分", f"{preview_pts} Pts")
-
                 elif calc_method == "手动输入分数":
                     manual_score = st.number_input("输入 Rank Pts", value=0.0)
 
                 st.markdown("###")
                 if st.button("🚀 确认上线", type="primary", use_container_width=True):
-                    # 更新基础数据
                     target_skin['is_preset'] = False
                     target_skin['is_new'] = True
                     target_skin['real_price'] = new_price
                     target_skin['growth'] = new_growth
-
                     if calc_method == "不上榜":
                         target_skin['on_leaderboard'] = False
                         target_skin['score'] = None
@@ -870,11 +779,8 @@ with t3:
                             active = app.get_active_leaderboard()
                             target_skin['score'] = round(
                                 app.calculate_insertion_score(target_rank, active, new_price, new_growth), 1)
-
-                    # 计算真分
                     target_skin['real_score'] = app._calculate_real_score(target_skin['score'],
                                                                           target_skin['list_price'], new_price)
-
                     app.auto_prune_leaderboard()
                     app.save_data()
                     st.balloons()
@@ -888,12 +794,8 @@ with t3:
                 if active_list_ref:
                     ref_data = []
                     for idx, item in enumerate(active_list_ref):
-                        ref_data.append({
-                            "排名": idx + 1,
-                            "皮肤": item['name'],
-                            "分数": item.get('score', '--'),
-                            "实价": item.get('real_price', '--')
-                        })
+                        ref_data.append({"排名": idx + 1, "皮肤": item['name'], "分数": item.get('score', '--'),
+                                         "实价": item.get('real_price', '--')})
                     st.dataframe(pd.DataFrame(ref_data), height=400, use_container_width=True, hide_index=True)
                 else:
                     st.info("暂无数据")
@@ -902,14 +804,10 @@ with t3:
 with t4:
     st.header("✏️ 全局数据编辑器")
     st.info("💡 提示：在下方表格中直接修改数据，改完后按 Enter 确认，数据会自动保存。")
-
-    # 准备用于编辑的 DataFrame
     df = pd.DataFrame(app.all_skins)
-
-    # 配置列的编辑类型 (全中文)
     column_config = {
         "name": st.column_config.TextColumn("皮肤名称", width="medium"),
-        "quality": st.column_config.NumberColumn("品质代码", format="%d"),  # 修复为NumberColumn
+        "quality": st.column_config.NumberColumn("品质代码", format="%d"),
         "score": st.column_config.NumberColumn("排位分", format="%.1f"),
         "real_price": st.column_config.NumberColumn("实价", format="¥%.1f"),
         "growth": st.column_config.NumberColumn("涨幅%", format="%.2f"),
@@ -922,45 +820,25 @@ with t4:
         "on_leaderboard": st.column_config.CheckboxColumn("在榜?"),
         "local_img": st.column_config.TextColumn("本地图片路径")
     }
-
-    # 显示可编辑表格
-    edited_df = st.data_editor(
-        df,
-        column_config=column_config,
-        use_container_width=True,
-        num_rows="dynamic",
-        key="data_editor",
-        height=800
-    )
-
-    # 保存逻辑
+    edited_df = st.data_editor(df, column_config=column_config, use_container_width=True, num_rows="dynamic",
+                               key="data_editor", height=800)
     if st.button("💾 保存所有修改"):
-        # 将 DataFrame 转回 List[Dict]
         updated_data = edited_df.to_dict(orient='records')
-
-        # 重新计算关联数据 (如 list_price, real_score)
         app.all_skins = updated_data
-        app._migrate_data_structure()  # 这个方法包含重新计算和保存
+        app._migrate_data_structure()
         st.success("✅ 数据已保存并重新计算！")
 
 # ----------------- Tab 5: 品质管理 -----------------
 with t5:
     st.header("💎 品质配置管理")
-
     q_df = pd.DataFrame.from_dict(app.quality_config, orient='index')
     q_df.index.name = 'code'
     q_df = q_df.reset_index()
-
-    # 中文列名
     q_column_config = {
-        "code": "品质代码",
-        "name": "品质名称",
+        "code": "品质代码", "name": "品质名称",
         "price": st.column_config.NumberColumn("定价", format="¥%.1f"),
-        "parent": "父级代码",
-        "scale": "缩放比例",
-        "bg_color": st.column_config.TextColumn("背景色")
+        "parent": "父级代码", "scale": "缩放比例", "bg_color": st.column_config.TextColumn("背景色")
     }
-
     st.dataframe(q_df, column_config=q_column_config, use_container_width=True)
 
     with st.expander("➕ 新增/修改 品质"):
@@ -969,29 +847,33 @@ with t5:
             q_code = c1.text_input("代号 (如 0.81)")
             q_name = c2.text_input("名称")
             q_price = c3.number_input("定价", min_value=0.0)
-
             c4, c5 = st.columns(2)
             q_color = c4.color_picker("背景颜色", "#ffffff")
             q_parent = c5.text_input("父级代号 (可选)")
-
             if st.form_submit_button("保存配置"):
-                app.quality_config[q_code] = {
-                    "price": q_price,
-                    "name": q_name,
-                    "parent": q_parent if q_parent else None,
-                    "scale": 1.0,
-                    "bg_color": q_color
-                }
+                app.quality_config[q_code] = {"price": q_price, "name": q_name,
+                                              "parent": q_parent if q_parent else None, "scale": 1.0,
+                                              "bg_color": q_color}
                 app.save_data()
                 st.success("✅ 品质配置已更新")
                 st.rerun()
 
+    with st.expander("🗑️ 删除品质配置 (慎用)"):
+        all_codes = list(app.quality_config.keys())
+        del_targets = st.multiselect("选择要删除的品质代号", all_codes)
+        if st.button("确认删除选中项", type="primary"):
+            for code in del_targets:
+                if code in app.quality_config:
+                    del app.quality_config[code]
+            app.save_data()
+            st.success(f"已删除: {', '.join(del_targets)}")
+            time.sleep(1)
+            st.rerun()
+
 # ----------------- Tab 6: 发布与工具 -----------------
 with t6:
     st.header("🚀 部署与工具箱")
-
     col1, col2, col3 = st.columns(3)
-
     with col1:
         st.subheader("📄 页面生成")
         if st.button("生成 index.html"):
@@ -1008,36 +890,28 @@ with t6:
         if st.button("开始爬取缺失头像"):
             progress_bar = st.progress(0)
             status_text = st.empty()
-
             missing_skins = [s for s in app.all_skins if not s.get('local_img')]
             total = len(missing_skins)
-
             if total == 0:
                 st.info("所有皮肤都有头像了！")
             else:
                 for i, skin in enumerate(missing_skins):
                     status_text.text(f"正在处理: {skin['name']}...")
                     success, log = app.crawler.fetch_single_image(skin)
-                    if success:
-                        print(log)  # 控制台留底
+                    if success: print(log)
                     progress_bar.progress((i + 1) / total)
-
                 app.save_data()
                 st.success("✅ 抓取完成！")
 
     with col3:
         st.subheader("🌐 GitHub 发布")
-
-        # 代理设置小工具
         st.markdown("**Git 代理设置 (解决连接失败)**")
         proxy_port = st.text_input("代理端口 (如 7890)", "7890")
-
         c_p1, c_p2 = st.columns(2)
         if c_p1.button("开启 Git 代理"):
             os.system(f"git config --global http.proxy http://127.0.0.1:{proxy_port}")
             os.system(f"git config --global https.proxy http://127.0.0.1:{proxy_port}")
             st.toast(f"已设置代理端口 {proxy_port}")
-
         if c_p2.button("关闭 Git 代理"):
             os.system("git config --global --unset http.proxy")
             os.system("git config --global --unset https.proxy")
@@ -1046,28 +920,19 @@ with t6:
         st.divider()
         if st.button("🚀 Push 到 GitHub", type="primary"):
             os.chdir(LOCAL_REPO_PATH)
-
-            # 🔥 核心修复：推送前强制自动刷新 HTML
-            # 这步操作会将你内存里修复好的价格 (178.8等) 真正写入到 index.html 文件中
             with st.spinner("正在生成最新页面数据..."):
                 gen_success, gen_msg = app.generate_html()
                 if not gen_success:
                     st.error(f"页面生成失败，终止发布: {gen_msg}")
                     st.stop()
-
             try:
-                # 容错处理：如果 commit 没有东西可提交，会返回 exit status 1，但这不代表 push 失败
-                # 所以我们用 try-except 包裹 commit，允许它“失败”
                 try:
                     subprocess.run([GIT_EXECUTABLE_PATH, "add", "."], check=True)
                     subprocess.run([GIT_EXECUTABLE_PATH, "commit", "-m", "update via streamlit"], check=True)
                 except subprocess.CalledProcessError:
-                    pass  # 忽略 commit 错误 (比如没有文件变化)
-
-                # 执行 Push
+                    pass
                 with st.spinner("正在推送到 GitHub..."):
                     result = subprocess.run([GIT_EXECUTABLE_PATH, "push"], capture_output=True, text=True)
-
                     if result.returncode == 0:
                         st.success(f"✅ 发布成功！")
                         st.markdown(f"[点击访问页面](https://{GITHUB_USERNAME}.github.io/hok-rank/)")
