@@ -97,6 +97,21 @@
       "desc_img": null
     },
     {
+      "quality": 100,
+      "name": "盘古-撼世英歌",
+      "is_new": true,
+      "is_rerun": false,
+      "is_preset": false,
+      "is_discontinued": false,
+      "on_leaderboard": true,
+      "score": 42.5,
+      "real_score": 29.3,
+      "growth": 0.0,
+      "list_price": 71.0,
+      "real_price": 49.0,
+      "local_img": null
+    },
+    {
       "quality": 100.0,
       "name": "蔡文姬-奇遇梦乡",
       "is_rerun": false,
