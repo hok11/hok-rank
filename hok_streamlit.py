@@ -271,7 +271,35 @@ class SkinSystem:
 
         display_skins = self.all_skins[:]
         display_skins.sort(key=self._get_sort_key)
-        for skin in display_skins: skin['desc_img'] = desc_files.get(skin['name'])
+
+        # 🔥 关键修复：HTML 渲染前的数据清洗
+        # 遍历所有皮肤，找到其正确的配置 Key (字符串格式)，以便模板能匹配到配置
+        for skin in display_skins:
+            skin['desc_img'] = desc_files.get(skin['name'])
+
+            # 原始品质值 (可能是 float 5000.0)
+            raw_q = skin['quality']
+            q_key = str(raw_q)
+
+            # 1. 尝试直接匹配配置
+            if q_key in self.quality_config:
+                pass
+            # 2. 尝试去掉 .0 (5000.0 -> 5000)
+            elif q_key.endswith('.0') and q_key[:-2] in self.quality_config:
+                q_key = q_key[:-2]
+            # 3. 终极匹配：数值相等
+            else:
+                try:
+                    f_val = float(raw_q)
+                    for k in self.quality_config:
+                        if math.isclose(float(k), f_val, rel_tol=1e-9):
+                            q_key = k
+                            break
+                except:
+                    pass
+
+            # 将匹配到的正确 Key 存入 skin 对象，供模板使用
+            skin['quality_key'] = q_key
 
         html_template = """
 <!DOCTYPE html>
@@ -366,7 +394,7 @@ class SkinSystem:
                 </thead>
                 <tbody>
                     {% for skin in total_skins %}
-                    {% set q_str = skin.quality|string %}
+                    {% set q_str = skin.quality_key %}
                     {% set q_cfg = quality_config.get(q_str, {}) %}
                     {% set parent_id = q_cfg.parent|string if q_cfg.parent else none %}
                     {% set display_img_id = parent_id if parent_id else q_str %}
@@ -973,7 +1001,7 @@ with t6:
 
         # 代理设置小工具
         st.markdown("**Git 代理设置 (解决连接失败)**")
-        proxy_port = st.text_input("代理端口 (如 7890)", "7890")
+        proxy_port = st.text_input("代理端口 (如 7897)", "7897")
 
         c_p1, c_p2 = st.columns(2)
         if c_p1.button("开启 Git 代理"):
