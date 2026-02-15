@@ -468,10 +468,10 @@
       "bg_color": "#ffffff"
     },
     "1": {
-      "price": 400.0,
-      "parent": null,
+      "price": 48.8,
       "name": "勇者",
-      "scale": 0.9,
+      "parent": null,
+      "scale": 1.0,
       "bg_color": "#ffffff"
     },
     "7500": {
