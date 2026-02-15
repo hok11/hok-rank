@@ -989,6 +989,15 @@ with t6:
         st.divider()
         if st.button("🚀 Push 到 GitHub", type="primary"):
             os.chdir(LOCAL_REPO_PATH)
+
+            # 🔥 核心修复：推送前强制自动刷新 HTML
+            # 这步操作会将你内存里修复好的价格 (178.8等) 真正写入到 index.html 文件中
+            with st.spinner("正在生成最新页面数据..."):
+                gen_success, gen_msg = app.generate_html()
+                if not gen_success:
+                    st.error(f"页面生成失败，终止发布: {gen_msg}")
+                    st.stop()
+
             try:
                 # 容错处理：如果 commit 没有东西可提交，会返回 exit status 1，但这不代表 push 失败
                 # 所以我们用 try-except 包裹 commit，允许它“失败”
