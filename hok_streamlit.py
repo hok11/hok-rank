@@ -152,7 +152,10 @@ class SkinSystem:
         return 0.0
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
+        # 🔥 修复：如果 Rank Score 是 NaN (来自 Pandas 编辑的空值)，视为 None
         if rank_score is None: return None
+        if isinstance(rank_score, float) and math.isnan(rank_score): return None
+
         if real_price <= 0 or list_price <= 0: return None
         return round(rank_score * (real_price / list_price), 1)
 
@@ -208,6 +211,12 @@ class SkinSystem:
 
     def save_data(self):
         try:
+            # 🔥 修复：清洗内存中的 NaN (由 Pandas 编辑引入)，防止 HTML 显示 nan
+            for skin in self.all_skins:
+                for k, v in skin.items():
+                    if isinstance(v, float) and math.isnan(v):
+                        skin[k] = None
+
             with open(self.data_file, 'w', encoding='utf-8') as f:
                 self.all_skins.sort(key=self._get_sort_key)
                 data_to_save = {
@@ -1001,7 +1010,7 @@ with t6:
 
         # 代理设置小工具
         st.markdown("**Git 代理设置 (解决连接失败)**")
-        proxy_port = st.text_input("代理端口 (如 7897)", "7897")
+        proxy_port = st.text_input("代理端口 (如 7890)", "7890")
 
         c_p1, c_p2 = st.columns(2)
         if c_p1.button("开启 Git 代理"):
