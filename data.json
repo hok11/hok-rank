@@ -171,6 +171,21 @@
       "quality_key": "1"
     },
     {
+      "quality": 1,
+      "name": "吕布-舞狮寰",
+      "is_new": true,
+      "is_rerun": false,
+      "is_preset": false,
+      "is_discontinued": false,
+      "on_leaderboard": true,
+      "score": 30.7,
+      "real_score": 3.8,
+      "growth": 0.0,
+      "list_price": 48.8,
+      "real_price": 6.0,
+      "local_img": "skin_avatars/吕布-舞狮寰.jpg"
+    },
+    {
       "quality": 1.0,
       "name": "蚩姹-极光幻客",
       "is_rerun": false,
@@ -186,6 +201,21 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "1"
+    },
+    {
+      "quality": 1,
+      "name": "敖隐-赤刃凌霄",
+      "is_new": true,
+      "is_rerun": false,
+      "is_preset": false,
+      "is_discontinued": false,
+      "on_leaderboard": true,
+      "score": 24.1,
+      "real_score": 3.0,
+      "growth": 0.0,
+      "list_price": 48.8,
+      "real_price": 6.0,
+      "local_img": "skin_avatars/敖隐-赤刃凌霄.jpg"
     },
     {
       "quality": 50.1,
