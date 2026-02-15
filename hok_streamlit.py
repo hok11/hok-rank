@@ -11,7 +11,6 @@ from datetime import datetime
 from jinja2 import Template
 
 # ================= ⚠️ 配置区域 =================
-# 请确保这里的路径是你本地真实的路径
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
 GIT_EXECUTABLE_PATH = r"D:\Git\bin\git.exe"
 GITHUB_USERNAME = "hok11"
@@ -83,8 +82,6 @@ class SkinSystem:
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
 
-        # 🔥 在这里定义的价格是“硬编码默认值”
-        # 如果你在这里改了价格，下面的逻辑会确保它生效
         self.default_quality_config = {
             "0": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
             "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
@@ -96,43 +93,55 @@ class SkinSystem:
             "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
         }
 
-        # 先赋值给实例变量
         self.quality_config = self.default_quality_config.copy()
 
         self.data_file = os.path.join(LOCAL_REPO_PATH, "data.json")
         self.desc_dir = os.path.join(LOCAL_REPO_PATH, "skin_descs")
-        if not os.path.exists(self.desc_dir): os.makedirs(self.desc_dir)
-        self.crawler = SkinCrawler(LOCAL_REPO_PATH)
+        self.avatar_dir = os.path.join(LOCAL_REPO_PATH, "skin_avatars")
 
-        # 加载数据 (会覆盖 self.quality_config)
+        if not os.path.exists(self.desc_dir): os.makedirs(self.desc_dir)
+        if not os.path.exists(self.avatar_dir): os.makedirs(self.avatar_dir)
+
+        self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
 
-        # 🔥 关键修复：再次合并硬编码配置，确保代码里的新价格覆盖 JSON 里的旧价格
-        # 这样你在 PyCharm 里改了代码，重启网页就能生效
         for k, v in self.default_quality_config.items():
             if k in self.quality_config:
-                self.quality_config[k]['price'] = v['price']  # 强制更新价格
+                self.quality_config[k]['price'] = v['price']
             else:
-                self.quality_config[k] = v  # 补充缺失的配置
+                self.quality_config[k] = v
 
+        self.scan_local_images()
         self._migrate_data_structure()
 
+    def scan_local_images(self):
+        updates = 0
+        for skin in self.all_skins:
+            current_img = skin.get('local_img')
+            safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
+            found_path = None
+            for ext in ['.gif', '.jpg', '.png', '.jpeg']:
+                file_name = f"{safe_name}{ext}"
+                full_path = os.path.join(self.avatar_dir, file_name)
+                if os.path.exists(full_path):
+                    found_path = f"skin_avatars/{file_name}"
+                    break
+
+            if found_path and current_img != found_path:
+                skin['local_img'] = found_path
+                updates += 1
+
+        if updates > 0:
+            print(f"🔄 自动挂载了 {updates} 张本地图片")
+
     def _get_list_price_by_quality(self, q_code):
-        """
-        🔥 强力模糊匹配查找价格
-        """
-        # 1. 尝试直接 Key 匹配
         q_str = str(q_code)
         if q_str in self.quality_config:
             return self.quality_config[q_str]['price']
-
-        # 2. 尝试去掉 .0 后匹配
         if q_str.endswith(".0"):
             q_clean = q_str[:-2]
             if q_clean in self.quality_config:
                 return self.quality_config[q_clean]['price']
-
-        # 3. 终极匹配：数值相等就认
         try:
             target_val = float(q_code)
             for k, v in self.quality_config.items():
@@ -148,14 +157,11 @@ class SkinSystem:
                     continue
         except:
             pass
-
         return 0.0
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
-        # 🔥 修复：如果 Rank Score 是 NaN (来自 Pandas 编辑的空值)，视为 None
         if rank_score is None: return None
         if isinstance(rank_score, float) and math.isnan(rank_score): return None
-
         if real_price <= 0 or list_price <= 0: return None
         return round(rank_score * (real_price / list_price), 1)
 
@@ -166,10 +172,8 @@ class SkinSystem:
             if 'is_preset' not in skin: skin['is_preset'] = False
             if 'is_discontinued' not in skin: skin['is_discontinued'] = False
             if 'price' in skin: del skin['price']
-
             cur_score = skin.get('score')
             skin['real_score'] = self._calculate_real_score(cur_score, skin['list_price'], skin['real_price'])
-
             if 'on_leaderboard' not in skin:
                 skin['on_leaderboard'] = True if (
                             skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
@@ -192,7 +196,6 @@ class SkinSystem:
                     self.all_skins = loaded.get('skins', loaded.get('total', []))
                     if 'instructions' in loaded: self.instructions = loaded['instructions']
                     if 'quality_config' in loaded: self.quality_config = loaded['quality_config']
-
                 seen = set()
                 unique = []
                 for s in self.all_skins:
@@ -211,12 +214,10 @@ class SkinSystem:
 
     def save_data(self):
         try:
-            # 🔥 修复：清洗内存中的 NaN (由 Pandas 编辑引入)，防止 HTML 显示 nan
             for skin in self.all_skins:
                 for k, v in skin.items():
                     if isinstance(v, float) and math.isnan(v):
                         skin[k] = None
-
             with open(self.data_file, 'w', encoding='utf-8') as f:
                 self.all_skins.sort(key=self._get_sort_key)
                 data_to_save = {
@@ -244,10 +245,8 @@ class SkinSystem:
         if rank_input == 1:
             old_top1_score = valid_list[0]['score'] if valid_list else 0
             return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
-
         p_idx = rank_input - 2
         p_score = 200 if p_idx < 0 else (valid_list[p_idx]['score'] if p_idx < len(valid_list) else 0)
-
         if rank_input - 1 < len(valid_list):
             next_score = valid_list[rank_input - 1]['score']
             return math.sqrt(p_score * next_score)
@@ -273,6 +272,9 @@ class SkinSystem:
         return gifs
 
     def generate_html(self):
+        self.scan_local_images()
+        self.save_data()
+
         header_gifs = self.get_header_gifs()
         desc_files = {}
         if os.path.exists(self.desc_dir):
@@ -281,22 +283,14 @@ class SkinSystem:
         display_skins = self.all_skins[:]
         display_skins.sort(key=self._get_sort_key)
 
-        # 🔥 关键修复：HTML 渲染前的数据清洗
-        # 遍历所有皮肤，找到其正确的配置 Key (字符串格式)，以便模板能匹配到配置
         for skin in display_skins:
             skin['desc_img'] = desc_files.get(skin['name'])
-
-            # 原始品质值 (可能是 float 5000.0)
             raw_q = skin['quality']
             q_key = str(raw_q)
-
-            # 1. 尝试直接匹配配置
             if q_key in self.quality_config:
                 pass
-            # 2. 尝试去掉 .0 (5000.0 -> 5000)
             elif q_key.endswith('.0') and q_key[:-2] in self.quality_config:
                 q_key = q_key[:-2]
-            # 3. 终极匹配：数值相等
             else:
                 try:
                     f_val = float(raw_q)
@@ -306,8 +300,6 @@ class SkinSystem:
                             break
                 except:
                     pass
-
-            # 将匹配到的正确 Key 存入 skin 对象，供模板使用
             skin['quality_key'] = q_key
 
         html_template = """
@@ -832,51 +824,79 @@ with t3:
 
         if target_skin:
             st.divider()
-            col1, col2 = st.columns(2)
-            with col1:
-                new_price = st.number_input("最终实价", value=float(target_skin.get('real_price', 0)))
-                new_growth_input = st.number_input("涨幅 (%)", value=float(target_skin.get('growth', 0)) * 100,
-                                                   step=0.1)
+
+            # 布局调整：左操作区 + 右榜单区
+            col_preset_left, col_preset_right = st.columns([1, 1.2])
+
+            with col_preset_left:
+                c_p1, c_p2 = st.columns(2)
+                new_price = c_p1.number_input("最终实价", value=float(target_skin.get('real_price', 0)))
+                new_growth_input = c_p2.number_input("涨幅 (%)", value=float(target_skin.get('growth', 0)) * 100,
+                                                     step=0.1)
                 new_growth = new_growth_input / 100.0
 
-            with col2:
                 calc_method = st.radio("分数计算方式", ["根据排名自动计算", "手动输入分数", "不上榜"])
 
                 final_score = None
+                manual_score = 0.0
+                target_rank = 1
+
                 if calc_method == "根据排名自动计算":
                     target_rank = st.number_input("目标排名", min_value=1, value=1)
+                    # 实时预览分数
+                    active = app.get_active_leaderboard()
+                    preview_pts = round(app.calculate_insertion_score(target_rank, active, new_price, new_growth), 1)
+                    st.metric("预计排位分", f"{preview_pts} Pts")
+
                 elif calc_method == "手动输入分数":
                     manual_score = st.number_input("输入 Rank Pts", value=0.0)
 
-            if st.button("🚀 确认上线"):
-                # 更新基础数据
-                target_skin['is_preset'] = False
-                target_skin['is_new'] = True
-                target_skin['real_price'] = new_price
-                target_skin['growth'] = new_growth
+                st.markdown("###")
+                if st.button("🚀 确认上线", type="primary", use_container_width=True):
+                    # 更新基础数据
+                    target_skin['is_preset'] = False
+                    target_skin['is_new'] = True
+                    target_skin['real_price'] = new_price
+                    target_skin['growth'] = new_growth
 
-                if calc_method == "不上榜":
-                    target_skin['on_leaderboard'] = False
-                    target_skin['score'] = None
-                else:
-                    target_skin['on_leaderboard'] = True
-                    if calc_method == "手动输入分数":
-                        target_skin['score'] = manual_score
+                    if calc_method == "不上榜":
+                        target_skin['on_leaderboard'] = False
+                        target_skin['score'] = None
                     else:
-                        active = app.get_active_leaderboard()
-                        target_skin['score'] = round(
-                            app.calculate_insertion_score(target_rank, active, new_price, new_growth), 1)
+                        target_skin['on_leaderboard'] = True
+                        if calc_method == "手动输入分数":
+                            target_skin['score'] = manual_score
+                        else:
+                            active = app.get_active_leaderboard()
+                            target_skin['score'] = round(
+                                app.calculate_insertion_score(target_rank, active, new_price, new_growth), 1)
 
-                # 计算真分
-                target_skin['real_score'] = app._calculate_real_score(target_skin['score'], target_skin['list_price'],
-                                                                      new_price)
+                    # 计算真分
+                    target_skin['real_score'] = app._calculate_real_score(target_skin['score'],
+                                                                          target_skin['list_price'], new_price)
 
-                app.auto_prune_leaderboard()
-                app.save_data()
-                st.balloons()
-                st.success(f"✅ [{selected_name}] 已成功上线！")
-                time.sleep(1)
-                st.rerun()
+                    app.auto_prune_leaderboard()
+                    app.save_data()
+                    st.balloons()
+                    st.success(f"✅ [{selected_name}] 已成功上线！")
+                    time.sleep(1)
+                    st.rerun()
+
+            with col_preset_right:
+                st.subheader("📊 当前新品榜参考")
+                active_list_ref = app.get_active_leaderboard()
+                if active_list_ref:
+                    ref_data = []
+                    for idx, item in enumerate(active_list_ref):
+                        ref_data.append({
+                            "排名": idx + 1,
+                            "皮肤": item['name'],
+                            "分数": item.get('score', '--'),
+                            "实价": item.get('real_price', '--')
+                        })
+                    st.dataframe(pd.DataFrame(ref_data), height=400, use_container_width=True, hide_index=True)
+                else:
+                    st.info("暂无数据")
 
 # ----------------- Tab 4: 数据编辑 -----------------
 with t4:

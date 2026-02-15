@@ -302,7 +302,7 @@
       "growth": 0.0,
       "list_price": 143.0,
       "real_price": 89.0,
-      "local_img": null
+      "local_img": "skin_avatars/貂蝉-神骥·聚万邦.jpg"
     },
     {
       "quality": 900,
@@ -317,7 +317,7 @@
       "growth": 0.0,
       "list_price": 143.0,
       "real_price": 89.0,
-      "local_img": null
+      "local_img": "skin_avatars/马超-神骥·逐星野.jpg"
     },
     {
       "quality": 900,
@@ -332,7 +332,7 @@
       "growth": 0.0,
       "list_price": 143.0,
       "real_price": 89.0,
-      "local_img": null
+      "local_img": "skin_avatars/关羽-神骥·镇沧海.jpg"
     },
     {
       "quality": 900,
@@ -347,22 +347,7 @@
       "growth": 0.0,
       "list_price": 143.0,
       "real_price": 89.0,
-      "local_img": null
-    },
-    {
-      "quality": 900,
-      "name": "云缨-神骥·越千峰",
-      "is_new": false,
-      "is_rerun": false,
-      "is_preset": true,
-      "is_discontinued": false,
-      "on_leaderboard": false,
-      "score": null,
-      "real_score": null,
-      "growth": 0.0,
-      "list_price": 143.0,
-      "real_price": 89.0,
-      "local_img": null
+      "local_img": "skin_avatars/云缨-神骥·越千峰.jpg"
     },
     {
       "quality": 900,
@@ -377,7 +362,7 @@
       "growth": 0.0,
       "list_price": 143.0,
       "real_price": 89.0,
-      "local_img": null
+      "local_img": "skin_avatars/狄仁杰-神骥·赴朔漠.jpg"
     },
     {
       "quality": 100.0,
