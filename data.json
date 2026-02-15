@@ -487,14 +487,14 @@
       "price": 600.0,
       "parent": null,
       "name": "荣耀典藏",
-      "scale": 1.45,
+      "scale": 1.55,
       "bg_color": "#fff7cd"
     },
     "1000": {
       "price": 200.0,
       "parent": null,
       "name": "珍品传说",
-      "scale": 1.15,
+      "scale": 1.25,
       "bg_color": "#bfdbfe"
     },
     "500": {
