@@ -440,13 +440,24 @@ with t6:
 
     with col3:
         st.subheader("🌐 GitHub 发布")
-        st.markdown("**Git 代理设置 (解决连接失败)**")
-        proxy_port = st.text_input("代理端口 (如 7890)", "7890")
+
+        # 🔥 修改点 1: 默认改为 7897，并增加自动开启逻辑
+        st.markdown("**Git 代理设置 (默认自动开启)**")
+        proxy_port = st.text_input("代理端口", "7897")  # 默认值改为 7897
+
+        # ⚡ 自动开启逻辑：每次启动/刷新页面时，如果没设置过，就自动设置一次
+        if 'auto_proxy_set' not in st.session_state:
+            os.system(f"git config --global http.proxy http://127.0.0.1:{proxy_port}")
+            os.system(f"git config --global https.proxy http://127.0.0.1:{proxy_port}")
+            st.session_state.auto_proxy_set = True
+            st.toast(f"⚡ 已自动挂载代理: {proxy_port}")
+
         c_p1, c_p2 = st.columns(2)
-        if c_p1.button("开启 Git 代理"):
+        if c_p1.button("手动刷新代理"):
             os.system(f"git config --global http.proxy http://127.0.0.1:{proxy_port}")
             os.system(f"git config --global https.proxy http://127.0.0.1:{proxy_port}")
             st.toast(f"已设置代理端口 {proxy_port}")
+
         if c_p2.button("关闭 Git 代理"):
             os.system("git config --global --unset http.proxy")
             os.system("git config --global --unset https.proxy")
