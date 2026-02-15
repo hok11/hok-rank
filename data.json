@@ -494,7 +494,7 @@
       "price": 200.0,
       "parent": null,
       "name": "珍品传说",
-      "scale": 1.2,
+      "scale": 1.0,
       "bg_color": "#bfdbfe"
     },
     "500": {
