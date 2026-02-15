@@ -387,7 +387,9 @@
       "growth": 0.0,
       "list_price": 200.0,
       "real_price": 200.0,
-      "local_img": "skin_avatars/伽罗-沧流箭.jpg"
+      "local_img": "skin_avatars/伽罗-沧流箭.jpg",
+      "desc_img": null,
+      "quality_key": "1000"
     },
     {
       "quality": 2500,
@@ -402,7 +404,9 @@
       "growth": 0.0,
       "list_price": 600.0,
       "real_price": 0.0,
-      "local_img": "skin_avatars/安琪拉-颠倒童话·魔镜.jpg"
+      "local_img": "skin_avatars/安琪拉-颠倒童话·魔镜.jpg",
+      "desc_img": null,
+      "quality_key": "2500"
     },
     {
       "quality": 5000,
@@ -417,7 +421,9 @@
       "growth": 0.0,
       "list_price": 400.0,
       "real_price": 400.0,
-      "local_img": "skin_avatars/李信-问心剑.jpg"
+      "local_img": "skin_avatars/李信-问心剑.jpg",
+      "desc_img": null,
+      "quality_key": "5000"
     },
     {
       "quality": 100.0,
