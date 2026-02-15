@@ -104,9 +104,9 @@ class SkinSystem:
             "1": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
             "2": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
             "3": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
-            "3.5": {"price": 178.8, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
-            "4": {"price": 168.8, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
-            "5": {"price": 88.8, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+            "3.5": {"price": 143.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "4": {"price": 135.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "5": {"price": 71.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
             "6": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
         }
 
