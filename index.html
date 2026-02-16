@@ -65,7 +65,7 @@
             <div class="header-gifs-container"><img src="./show/DiaoChan.gif" class="header-gif"><img src="./show/xishi.gif" class="header-gif"></div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container"><p>Update: 2026-02-16 02:07</p><button class="info-btn" onclick="openModal()">说明</button></div>
+                <div class="info-container"><p>Update: 2026-02-16 20:44</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
             <div class="header-gifs-container"><img src="./show/yuhuan.gif" class="header-gif"><img src="./show/zhaojun.gif" class="header-gif"></div>
         </div>
@@ -103,8 +103,8 @@
                         <th class="col-sort" onclick="sortTable(4, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">Real Pts</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
-                        <th class="col-sort" onclick="sortTable(7, 'float')">List P</th>
-                        <th class="col-sort" onclick="sortTable(8, 'float')">Real P</th>
+                        <th class="col-sort" onclick="sortTable(7, 'float')">万象积分</th>
+                        <th class="col-sort" onclick="sortTable(8, 'float')">售价</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,7 +132,9 @@
                         <td data-val="200.0" style="background-color: #f3e8ff;"><div class="box-style">200.0</div></td>
                         <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">200.0</td>
                         <td style="background-color: #f3e8ff;"><div class="box-style ">3.3%</div></td>
-                        <td style="background-color: #f3e8ff;">¥400.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
                     </tr>
                     
@@ -159,7 +161,9 @@
                         <td data-val="153.2" style="background-color: #fff7cd;"><div class="box-style">153.2</div></td>
                         <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #fff7cd;"><div class="box-style ">3.6%</div></td>
-                        <td style="background-color: #fff7cd;">¥600.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #fff7cd;">1800</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -186,7 +190,9 @@
                         <td data-val="117.4" style="background-color: #f3e8ff;"><div class="box-style">117.4</div></td>
                         <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">117.4</td>
                         <td style="background-color: #f3e8ff;"><div class="box-style ">0.1%</div></td>
-                        <td style="background-color: #f3e8ff;">¥400.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
                     </tr>
                     
@@ -213,7 +219,9 @@
                         <td data-val="80.8" style="background-color: #f3e8ff;"><div class="box-style">80.8</div></td>
                         <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">80.8</td>
                         <td style="background-color: #f3e8ff;"><div class="box-style ">3.0%</div></td>
-                        <td style="background-color: #f3e8ff;">¥400.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
                     </tr>
                     
@@ -238,9 +246,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="59.0" style="background-color: #ffffff;"><div class="box-style">59.0</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">43.3</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">43.8</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥135.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥99.0</div></td>
                     </tr>
                     
@@ -265,9 +275,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="44.1" style="background-color: #ffffff;"><div class="box-style">44.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.4</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">7.9</td>
                         <td style="background-color: #ffffff;"><div class="box-style ">4.2%</div></td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -292,9 +304,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="42.5" style="background-color: #ffffff;"><div class="box-style">42.5</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">29.3</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">31.2</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥71.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥49.0</div></td>
                     </tr>
                     
@@ -319,9 +333,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="41.0" style="background-color: #ffffff;"><div class="box-style">41.0</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">28.3</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">30.1</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥71.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥49.0</div></td>
                     </tr>
                     
@@ -346,9 +362,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="38.2" style="background-color: #ffffff;"><div class="box-style">38.2</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.7</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.9</td>
                         <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">6.7%</div></td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -373,9 +391,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="33.1" style="background-color: #ffffff;"><div class="box-style">33.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.1</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.0</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -400,9 +420,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="30.7" style="background-color: #ffffff;"><div class="box-style">30.7</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">3.8</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.5</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -427,9 +449,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="24.6" style="background-color: #ffffff;"><div class="box-style">24.6</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">3.0</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.4</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -454,9 +478,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="24.1" style="background-color: #ffffff;"><div class="box-style">24.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">3.0</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.3</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -483,7 +509,9 @@
                         <td data-val="23.6" style="background-color: #ffffff;"><div class="box-style">23.6</div></td>
                         <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #ffffff;"><div class="box-style ">2.9%</div></td>
-                        <td style="background-color: #ffffff;">¥18.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -510,7 +538,9 @@
                         <td data-val="22.7" style="background-color: #ffffff;"><div class="box-style">22.7</div></td>
                         <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -535,9 +565,11 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td data-val="20.9" style="background-color: #ffffff;"><div class="box-style">20.9</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">2.6</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">3.8</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥48.8</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
                     </tr>
                     
@@ -564,7 +596,9 @@
                         <td data-val="17.7" style="background-color: #e0f2fe;"><div class="box-style">17.7</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -591,7 +625,9 @@
                         <td data-val="12.0" style="background-color: #ffffff;"><div class="box-style">12.0</div></td>
                         <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">¥71.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -618,7 +654,9 @@
                         <td data-val="7.2" style="background-color: #e0f2fe;"><div class="box-style">7.2</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -645,7 +683,9 @@
                         <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
                     </tr>
                     
@@ -672,7 +712,9 @@
                         <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
                     </tr>
                     
@@ -699,7 +741,9 @@
                         <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
                     </tr>
                     
@@ -726,7 +770,9 @@
                         <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
                     </tr>
                     
@@ -753,7 +799,9 @@
                         <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
                         <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #e0f2fe;">--</td>
-                        <td style="background-color: #e0f2fe;">¥143.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
                     </tr>
                     
@@ -780,7 +828,9 @@
                         <td data-val="-999" style="background-color: #bfdbfe;"><div class="box-style">--</div></td>
                         <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #bfdbfe;">--</td>
-                        <td style="background-color: #bfdbfe;">¥200.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #bfdbfe;">600</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">¥200.0</div></td>
                     </tr>
                     
@@ -807,7 +857,9 @@
                         <td data-val="-999" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
                         <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #fff7cd;">--</td>
-                        <td style="background-color: #fff7cd;">¥600.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #fff7cd;">1800</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
                     </tr>
                     
@@ -834,7 +886,9 @@
                         <td data-val="-999" style="background-color: #f3e8ff;"><div class="box-style">--</div></td>
                         <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #f3e8ff;">--</td>
-                        <td style="background-color: #f3e8ff;">¥400.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
                     </tr>
                     
@@ -861,7 +915,9 @@
                         <td data-val="-999" style="background-color: #ffffff;"><div class="box-style">--</div></td>
                         <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #ffffff;"><div class="box-style growth-special">1.9%!</div></td>
-                        <td style="background-color: #ffffff;">¥71.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥53.2</div></td>
                     </tr>
                     
@@ -888,7 +944,9 @@
                         <td data-val="-999" style="background-color: #ffdcdc;"><div class="box-style">--</div></td>
                         <td style="background-color: #ffdcdc; color:#6366f1; font-weight:bold;">--</td>
                         <td style="background-color: #ffdcdc;"><div class="box-style ">3.2%</div></td>
-                        <td style="background-color: #ffdcdc;">¥800.0</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: #ffdcdc;">2400</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: #ffdcdc;"><div class="box-style">¥800.0</div></td>
                     </tr>
                     

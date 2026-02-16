@@ -7,7 +7,7 @@ import time
 import random
 from datetime import datetime
 from jinja2 import Template
-import hok_templates  # 引用模板
+import hok_templates  # 引用模板文件
 
 # ================= 配置区域 =================
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
@@ -27,7 +27,6 @@ class SkinCrawler:
         }
 
     def fetch_single_image(self, skin):
-        # 保持原有爬虫逻辑
         safe_name = skin['name'].replace("/", "_").replace("\\", "_").replace(" ", "")
         gif_filename = f"{safe_name}.gif"
         gif_path = os.path.join(self.save_dir, gif_filename)
@@ -80,20 +79,43 @@ class SkinSystem:
         self.all_skins = []
         self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
 
+        # 🔥 V25.5 更新：万象积分体系
         self.default_quality_config = {
-            "1": {"price": 48.8, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
-            "20": {"price": 48.8, "parent": "1", "name": "勇者", "scale": 1.1, "bg_color": "#ffffff"},
-            "50": {"price": 18.8, "parent": None, "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
-            "50.1": {"price": 18.8, "parent": "50", "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
-            "100": {"price": 71.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
-            "250": {"price": 135.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
-            "500": {"price": 143.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
-            "900": {"price": 143.0, "parent": "500", "name": "马年限定", "scale": 1.0, "bg_color": "#ffffff"},
-            "1000": {"price": 200.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
-            "2500": {"price": 600.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
-            "5000": {"price": 400.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
-            "7500": {"price": 400.0, "parent": "5000", "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
-            "10000": {"price": 800.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
+            # 勇者 / 战令 -> 100积分
+            "1": {"price": 100.0, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
+            "20": {"price": 100.0, "parent": "1", "name": "勇者", "scale": 1.1, "bg_color": "#ffffff"},
+            "6": {"price": 100.0, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
+            "50": {"price": 100.0, "parent": None, "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
+            "50.1": {"price": 100.0, "parent": "50", "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
+
+            # 史诗 -> 200积分
+            "5": {"price": 200.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+            "100": {"price": 200.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
+
+            # 传说 / 传说限定 -> 400积分
+            "4": {"price": 400.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "3.5": {"price": 400.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "250": {"price": 400.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
+            "500": {"price": 400.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
+            "900": {"price": 400.0, "parent": "500", "name": "马年限定", "scale": 1.0, "bg_color": "#ffffff"},
+
+            # 珍品传说 -> 600积分
+            "3": {"price": 600.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
+            "1000": {"price": 600.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
+
+            # 无双 -> 1200积分
+            "1_wushuang": {"price": 1200.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+            # 避免 key 重复
+            "5000": {"price": 1200.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+            "7500": {"price": 1200.0, "parent": "5000", "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
+
+            # 荣耀典藏 -> 1800积分
+            "2": {"price": 1800.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
+            "2500": {"price": 1800.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
+
+            # 珍品无双 -> 2400积分
+            "0": {"price": 2400.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
+            "10000": {"price": 2400.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
         }
 
         self.quality_config = self.default_quality_config.copy()
@@ -108,11 +130,10 @@ class SkinSystem:
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
 
-        # 强制合并配置 (代码优先)
+        # 强制同步配置
         for k, v in self.default_quality_config.items():
             if k in self.quality_config:
                 self.quality_config[k]['price'] = v['price']
-                self.quality_config[k]['name'] = v['name']
             else:
                 self.quality_config[k] = v
 
@@ -163,10 +184,15 @@ class SkinSystem:
         return 0.0
 
     def _calculate_real_score(self, rank_score, list_price, real_price):
+        # 🔥 V25.5 新公式：排位点数 * 3 / 万象积分 * 售价
         if rank_score is None: return None
         if isinstance(rank_score, float) and math.isnan(rank_score): return None
-        if real_price <= 0 or list_price <= 0: return None
-        return round(rank_score * (real_price / list_price), 1)
+
+        # list_price 现在代表 "万象积分"
+        if list_price <= 0: return None
+
+        # 公式实现
+        return round((rank_score * 3 / list_price) * real_price, 1)
 
     def _migrate_data_structure(self):
         for skin in self.all_skins:
@@ -199,8 +225,6 @@ class SkinSystem:
                     self.all_skins = loaded.get('skins', loaded.get('total', []))
                     if 'instructions' in loaded: self.instructions = loaded['instructions']
                     if 'quality_config' in loaded: self.quality_config = loaded['quality_config']
-
-                # 去重
                 seen = set()
                 unique = []
                 for s in self.all_skins:

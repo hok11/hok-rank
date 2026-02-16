@@ -86,8 +86,8 @@ HTML_TEMPLATE = """
                         <th class="col-sort" onclick="sortTable(4, 'float')">Rank Pts</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">Real Pts</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
-                        <th class="col-sort" onclick="sortTable(7, 'float')">List P</th>
-                        <th class="col-sort" onclick="sortTable(8, 'float')">Real P</th>
+                        <th class="col-sort" onclick="sortTable(7, 'float')">万象积分</th>
+                        <th class="col-sort" onclick="sortTable(8, 'float')">售价</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -115,7 +115,9 @@ HTML_TEMPLATE = """
                         <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.is_discontinued %}{{ '--' }}{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
                         <td style="background-color: {{ bg_c }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
                         <td style="background-color: {{ bg_c }};">{% if skin.growth %}{% set g_cls = 'growth-special' if skin.growth == 1.9 else ('growth-down' if skin.growth < 0 else ('growth-up-high' if skin.growth >= 10 else ('growth-up-mid' if skin.growth >= 5 else ''))) %}<div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>{% else %}--{% endif %}</td>
-                        <td style="background-color: {{ bg_c }};">¥{{ skin.list_price }}</td>
+                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+                        <td style="background-color: {{ bg_c }};">{{ skin.list_price|int }}</td>
+                        <!-- 售价列：保留了 ￥ 符号 -->
                         <td class="rounded-right" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
                     </tr>
                     {% endfor %}

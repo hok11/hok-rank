@@ -61,6 +61,7 @@ with t1:
         df['quality_key'] = df['quality'].apply(lambda x: str(int(x)) if pd.notnull(x) else "")
         df['quality_name'] = df['quality_key'].map(lambda x: app.quality_config.get(x, {}).get('name', "未知"))
 
+        # 🔥 UI配置更新：ListP->万象积分(无符号), RealP->售价
         column_config = {
             "name": st.column_config.TextColumn("皮肤名称", width="medium"),
             "quality_name": st.column_config.TextColumn("品质", width="small"),
@@ -69,8 +70,8 @@ with t1:
             "growth": st.column_config.NumberColumn("涨幅%", format="%.2f", width="small"),
             "score": st.column_config.NumberColumn("排位分", format="%.1f", width="small"),
             "real_score": st.column_config.NumberColumn("实际分", format="%.1f", width="small"),
-            "list_price": st.column_config.NumberColumn("定价", format="¥%.1f", width="small"),
-            "real_price": st.column_config.NumberColumn("实际价格", format="¥%.1f", width="small"),
+            "list_price": st.column_config.NumberColumn("万象积分", format="%d", width="small"),  # 去掉 ¥
+            "real_price": st.column_config.NumberColumn("售价", format="¥%.1f", width="small"),
             "local_img": st.column_config.ImageColumn("预览", width="small")
         }
 
@@ -138,7 +139,7 @@ with t2:
             c_in1, c_in2, c_in3 = st.columns(3)
             new_q_name = c_in1.text_input("子品质名称")
             new_q_code = c_in2.text_input("子品质代号 (数字)")
-            new_q_price = c_in3.number_input("定价", value=all_roots[sel_root_for_new]['price'])
+            new_q_price = c_in3.number_input("所需积分", value=all_roots[sel_root_for_new]['price'])
             if new_q_name and new_q_code:
                 final_q_code = new_q_code
                 st.info(f"将创建: {new_q_name} (隶属 {all_roots[sel_root_for_new]['name']})")
@@ -148,25 +149,48 @@ with t2:
             c_in1, c_in2, c_in3 = st.columns(3)
             new_q_name = c_in1.text_input("全新名称")
             new_q_code = c_in2.text_input("全新代号")
-            new_q_price = c_in3.number_input("定价", min_value=0.0)
+            new_q_price = c_in3.number_input("所需积分", min_value=0.0)
             if new_q_name and new_q_code:
                 final_q_code = new_q_code
 
     st.divider()
 
     # --- 核心表单区域 ---
-    name = st.text_input("皮肤名称", placeholder="请输入皮肤名字...")
-    if q_mode == "默认品质": st.caption(f"当前品质标准定价: ¥{final_list_price}")
+    # 第一行：品质相关信息 + 皮肤名 + 积分参考
+    # 使用 1.5, 2, 1, 1 的比例，右边留空 spacer
+    c_form1, c_form2, c_form3, _ = st.columns([1.5, 2, 1, 1])
 
-    c4, c5, c6, c7 = st.columns([1, 1, 1.5, 1])
-    real_price = c4.number_input("实际价格", min_value=0.0, step=1.0)
+    with c_form1:
+        # 如果是默认模式，这里已经选完了；如果是新建模式，这里显示确认信息
+        if q_mode == "默认品质":
+            st.caption("已选品质代码: " + str(final_q_code))
+        else:
+            st.caption("待创建品质代码: " + str(final_q_code))
+
+    with c_form2:
+        name = st.text_input("皮肤名称", placeholder="请输入皮肤名字...")
+
+    with c_form3:
+        if q_mode == "默认品质":
+            st.metric("万象积分", int(final_list_price))
+        else:
+            st.metric("万象积分", int(new_q_price) if 'new_q_price' in locals() else 0)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 第二行：实价 | 涨幅 | 标签 | 上榜
+    c4, c5, c6, c7 = st.columns([1, 1, 2, 1])
+
+    real_price = c4.number_input("售价 (¥)", min_value=0.0, step=1.0)
+
     growth_input = c5.number_input("涨幅 (%)", value=0.0, step=0.1, help="输入 1 代表 1%")
     growth = growth_input / 100.0
+
     tag_option = c6.radio("标签", ["新品", "返场", "预设", "绝版"], horizontal=True)
 
     can_be_on_board = tag_option not in ["预设", "绝版"]
     on_board = c7.checkbox("登上新品榜", value=False, disabled=not can_be_on_board)
-    if not can_be_on_board: c7.caption("🚫 预设/绝版不可上榜")
+    if not can_be_on_board: c7.caption("🚫 默认不上榜")
 
     st.divider()
 
@@ -176,7 +200,7 @@ with t2:
     with col_main_left:
         rank_score = None
         if on_board:
-            st.info("排位分设置")
+            st.info("📊 排位分设置")
             score_mode = st.radio("分数来源", ["自定义输入", "排位计算"], horizontal=True)
             if score_mode == "自定义输入":
                 rank_score = st.number_input("输入排位分 (Rank Pts)", value=0.0, step=0.1)
@@ -202,7 +226,7 @@ with t2:
                     "排名": idx + 1,
                     "皮肤": item['name'],
                     "分数": item.get('score', '--'),
-                    "实价": item.get('real_price', '--')
+                    "售价": item.get('real_price', '--')
                 })
             st.dataframe(pd.DataFrame(ref_data), height=350, use_container_width=True, hide_index=True)
         else:
@@ -235,6 +259,7 @@ with t2:
             final_on_board = False if not can_be_on_board else on_board
             final_score = rank_score if final_on_board else None
 
+            # 获取最终定价
             if q_mode == "新建品质":
                 final_list_price = new_q_price
             else:
@@ -277,7 +302,7 @@ with t3:
             col_preset_left, col_preset_right = st.columns([1, 1.2])
             with col_preset_left:
                 c_p1, c_p2 = st.columns(2)
-                new_price = c_p1.number_input("最终实价", value=float(target_skin.get('real_price', 0)))
+                new_price = c_p1.number_input("最终售价 (¥)", value=float(target_skin.get('real_price', 0)))
                 new_growth_input = c_p2.number_input("涨幅 (%)", value=float(target_skin.get('growth', 0)) * 100,
                                                      step=0.1)
                 new_growth = new_growth_input / 100.0
@@ -318,7 +343,7 @@ with t3:
                     app.save_data()
                     st.balloons()
                     st.success(f"✅ [{selected_name}] 已成功上线！")
-                    time.sleep(1)
+                    time.sleep(1);
                     st.rerun()
 
             with col_preset_right:
@@ -328,7 +353,7 @@ with t3:
                     ref_data = []
                     for idx, item in enumerate(active_list_ref):
                         ref_data.append({"排名": idx + 1, "皮肤": item['name'], "分数": item.get('score', '--'),
-                                         "实价": item.get('real_price', '--')})
+                                         "售价": item.get('real_price', '--')})
                     st.dataframe(pd.DataFrame(ref_data), height=400, use_container_width=True, hide_index=True)
                 else:
                     st.info("暂无数据")
@@ -342,9 +367,9 @@ with t4:
         "name": st.column_config.TextColumn("皮肤名称", width="medium"),
         "quality": st.column_config.NumberColumn("品质代码", format="%d"),
         "score": st.column_config.NumberColumn("排位分", format="%.1f"),
-        "real_price": st.column_config.NumberColumn("实价", format="¥%.1f"),
+        "real_price": st.column_config.NumberColumn("售价", format="¥%.1f"),
         "growth": st.column_config.NumberColumn("涨幅%", format="%.2f"),
-        "list_price": st.column_config.NumberColumn("原价", format="¥%.1f"),
+        "list_price": st.column_config.NumberColumn("万象积分", format="%d"),
         "real_score": st.column_config.NumberColumn("真分", format="%.1f"),
         "is_new": st.column_config.CheckboxColumn("新品?"),
         "is_rerun": st.column_config.CheckboxColumn("返场?"),
@@ -369,7 +394,7 @@ with t5:
     q_df = q_df.reset_index()
     q_column_config = {
         "code": "品质代码", "name": "品质名称",
-        "price": st.column_config.NumberColumn("定价", format="¥%.1f"),
+        "price": st.column_config.NumberColumn("积分/定价", format="%d"),
         "parent": "父级代码", "scale": "缩放比例", "bg_color": st.column_config.TextColumn("背景色")
     }
     st.dataframe(q_df, column_config=q_column_config, use_container_width=True)
@@ -379,7 +404,7 @@ with t5:
             c1, c2, c3 = st.columns(3)
             q_code = c1.text_input("代号 (如 0.81)")
             q_name = c2.text_input("名称")
-            q_price = c3.number_input("定价", min_value=0.0)
+            q_price = c3.number_input("万象积分", min_value=0.0)
             c4, c5 = st.columns(2)
             q_color = c4.color_picker("背景颜色", "#ffffff")
             q_parent = c5.text_input("父级代号 (可选)")
@@ -388,7 +413,6 @@ with t5:
                                               "parent": q_parent if q_parent else None, "scale": 1.0,
                                               "bg_color": q_color}
                 app.save_data()
-                # 刷新关联数据
                 app._migrate_data_structure()
                 st.success("✅ 品质配置已更新")
                 st.rerun()
@@ -440,12 +464,8 @@ with t6:
 
     with col3:
         st.subheader("🌐 GitHub 发布")
-
-        # 🔥 修改点 1: 默认改为 7897，并增加自动开启逻辑
         st.markdown("**Git 代理设置 (默认自动开启)**")
-        proxy_port = st.text_input("代理端口", "7897")  # 默认值改为 7897
-
-        # ⚡ 自动开启逻辑：每次启动/刷新页面时，如果没设置过，就自动设置一次
+        proxy_port = st.text_input("代理端口", "7897")
         if 'auto_proxy_set' not in st.session_state:
             os.system(f"git config --global http.proxy http://127.0.0.1:{proxy_port}")
             os.system(f"git config --global https.proxy http://127.0.0.1:{proxy_port}")
@@ -457,7 +477,6 @@ with t6:
             os.system(f"git config --global http.proxy http://127.0.0.1:{proxy_port}")
             os.system(f"git config --global https.proxy http://127.0.0.1:{proxy_port}")
             st.toast(f"已设置代理端口 {proxy_port}")
-
         if c_p2.button("关闭 Git 代理"):
             os.system("git config --global --unset http.proxy")
             os.system("git config --global --unset https.proxy")
