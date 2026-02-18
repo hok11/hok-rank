@@ -18,7 +18,7 @@
         .info-btn:hover { opacity: 0.8; }
         .table-container { width: 100%; overflow-x: auto; }
 
-        /* 表格样式还原 */
+        /* 表格样式 */
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 900px; }
         th { text-align: center; padding: 12px 4px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; cursor: pointer; }
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
@@ -41,11 +41,45 @@
         .wushuang-big { height: 45px !important; margin: -8px 0; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
-        .name-container { display: flex; flex-direction: column; gap: 2px; width: 100%; align-items: flex-start; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; }
-        .badge { display: inline-block; text-align: center; padding: 2px 4px; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; margin-top: 2px; }
-        .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
+
+        /* 🔥 修复重点 1: 固定名字容器宽度，内容居中 */
+        .name-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px; 
+            width: 115px; /* 固定宽度：约等于 "貂蝉-馥梦繁花" 的长度 */
+            align-items: center; /* 居中对齐 */
+        }
+
+        .song-title { 
+            font-weight: 700; 
+            font-size: 14px; 
+            color: #000; 
+            white-space: nowrap; 
+            display: inline-block; /* 允许 transform 生效 */
+            transform-origin: center; /* 从中心缩放 */
+        }
+
+        /* 🔥 修复重点 2: 角标撑满容器，强制等宽 */
+        .badge { 
+            display: block; 
+            width: 100%; /* 撑满 115px */
+            text-align: center; 
+            padding: 2px 0; 
+            font-size: 9px; 
+            font-weight: 900; 
+            border-radius: 3px; 
+            text-transform: uppercase; 
+            margin-top: 2px;
+            box-sizing: border-box;
+        }
+
+        .badge-new { background: #ffd700; color: #000; } 
+        .badge-return { background: #1d4ed8; color: #fff; } 
+        .badge-preset { background: #06b6d4; color: #fff; } 
+        .badge-out { background: #4b5563; color: #fff; }
         .badge-pool { background: #9333ea; color: #fff; }
+
         .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 85px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
@@ -59,7 +93,7 @@
             <div class="header-gifs-container"><img src="./show/DiaoChan.gif" class="header-gif"><img src="./show/xishi.gif" class="header-gif"></div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container"><p>Update: 2026-02-19 03:32</p><button class="info-btn" onclick="openModal()">说明</button></div>
+                <div class="info-container"><p>Update: 2026-02-19 03:43</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
             <div class="header-gifs-container"><img src="./show/yuhuan.gif" class="header-gif"><img src="./show/zhaojun.gif" class="header-gif"></div>
         </div>
@@ -129,7 +163,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
                         <td style="background-color: #f3e8ff;"><div class="box-style">475k</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">47.50M</td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">4750.00万</td>
                         <td style="background-color: #f3e8ff;"><div class="box-style growth-up-mid">6.0%</div></td>
                         <td style="background-color: #f3e8ff;">1200</td>
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
@@ -159,7 +193,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
                         <td style="background-color: #f3e8ff;"><div class="box-style">305k</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">30.50M</td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">3050.00万</td>
                         <td style="background-color: #f3e8ff;"><div class="box-style ">3.3%</div></td>
                         <td style="background-color: #f3e8ff;">1200</td>
                         <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
@@ -189,7 +223,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style">184k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">17.70M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1770.08万</td>
                         <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">9.6%</div></td>
                         <td style="background-color: #ffffff;">400</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">96.2</div></td>
@@ -205,8 +239,38 @@
                     
                     
                     
-                    <tr data-quality="无双">
+                    <tr data-quality="马年限定">
                         <td><span class="rank-box">4</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/朵莉亚-神骥·鸣幻洲.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">朵莉亚-神骥·鸣幻洲</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+                        <td style="background-color: #e0f2fe;"><div class="box-style">187k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">1664.30万</td>
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">9.7%</div></td>
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="无双">
+                        <td><span class="rank-box">5</span></td>
                         <td class="quality-col" data-val="5000.0">
                             <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
@@ -235,36 +299,6 @@
                     
                     
                     
-                    <tr data-quality="马年限定">
-                        <td><span class="rank-box">5</span></td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/朵莉亚-神骥·鸣幻洲.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">朵莉亚-神骥·鸣幻洲</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td style="background-color: #e0f2fe;"><div class="box-style">187k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">16.64M</td>
-                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">9.7%</div></td>
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
                     <tr data-quality="战令限定">
                         <td><span class="rank-box">6</span></td>
                         <td class="quality-col" data-val="50.1">
@@ -279,7 +313,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style">708k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">13.31M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1331.04万</td>
                         <td style="background-color: #ffffff;"><div class="box-style ">2.9%</div></td>
                         <td style="background-color: #ffffff;">100</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">18.8</div></td>
@@ -303,8 +337,7 @@
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/公孙离-离恨烟.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">公孙离-离恨烟</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
@@ -339,7 +372,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #bfdbfe;"></td>
                         <td style="background-color: #bfdbfe;"><div class="box-style">200k</div></td>
-                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">12.00M</td>
+                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">1200.00万</td>
                         <td style="background-color: #bfdbfe;"><div class="box-style ">3.5%</div></td>
                         <td style="background-color: #bfdbfe;">600</td>
                         <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">60</div></td>
@@ -369,7 +402,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">126k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">11.21M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">1121.40万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">8.8%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
@@ -399,7 +432,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">126k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">11.21M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">1121.40万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style growth-up-high">10.2%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
@@ -429,7 +462,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">110k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">9.79M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">979.00万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">8.4%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
@@ -489,7 +522,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">106k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">9.43M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">943.40万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style growth-up-high">10.0%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
@@ -519,7 +552,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">88k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">7.83M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">783.20万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">5.1%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
@@ -543,8 +576,7 @@
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/曜-器灵·螭龙剑.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">曜-器灵·螭龙剑</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
@@ -565,24 +597,24 @@
                     
                     
                     
-                    <tr data-quality="勇者">
+                    <tr data-quality="荣耀典藏">
                         <td><span class="rank-box">16</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        <td class="quality-col" data-val="2500.0">
+                            <img src="./images/2500.gif" data-q="2500" data-p="None" class="quality-icon " style="transform: scale(1.55);" onerror="loadFallbackImg(this)">
                         </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">安琪拉-糖果风暴</span>
+                        <td class="rounded-left" style="background-color: #fff7cd;"><div class="song-col">
+                            <img src="./skin_avatars/吕布-千魇归渊.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">吕布-千魇归渊</span>
                                 <span class="badge badge-new">New Arrival</span>
                                 
                             </div>
                         </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td style="background-color: #ffffff;"><div class="box-style"></div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>6.76M</td>
-                        <td style="background-color: #ffffff;"><div class="box-style ">4.2%</div></td>
-                        <td style="background-color: #ffffff;">100</td>
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                        <td class="desc-col" style="background-color: #fff7cd;"></td>
+                        <td style="background-color: #fff7cd;"><div class="box-style"></div></td>
+                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">>6.78M</td>
+                        <td style="background-color: #fff7cd;"><div class="box-style ">3.6%</div></td>
+                        <td style="background-color: #fff7cd;">1800</td>
+                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">0.0</div></td>
                     </tr>
                     
                     
@@ -609,7 +641,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style"></div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>6.76M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>6.77M</td>
                         <td style="background-color: #ffffff;">--</td>
                         <td style="background-color: #ffffff;">400</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">99.0</div></td>
@@ -625,38 +657,8 @@
                     
                     
                     
-                    <tr data-quality="荣耀典藏">
-                        <td><span class="rank-box">18</span></td>
-                        <td class="quality-col" data-val="2500.0">
-                            <img src="./images/2500.gif" data-q="2500" data-p="None" class="quality-icon " style="transform: scale(1.55);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #fff7cd;"><div class="song-col">
-                            <img src="./skin_avatars/吕布·千魇归渊.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">吕布·千魇归渊</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #fff7cd;"></td>
-                        <td style="background-color: #fff7cd;"><div class="box-style"></div></td>
-                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">>6.76M</td>
-                        <td style="background-color: #fff7cd;"><div class="box-style ">3.6%</div></td>
-                        <td style="background-color: #fff7cd;">1800</td>
-                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">0.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
                     <tr data-quality="史诗">
-                        <td><span class="rank-box">19</span></td>
+                        <td><span class="rank-box">18</span></td>
                         <td class="quality-col" data-val="100.0">
                             <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
                         </td>
@@ -669,10 +671,40 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style">138k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.76M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">676.20万</td>
                         <td style="background-color: #ffffff;">--</td>
                         <td style="background-color: #ffffff;">200</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">49.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">19</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">安琪拉-糖果风暴</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+                        <td style="background-color: #ffffff;"><div class="box-style"></div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>6.76M</td>
+                        <td style="background-color: #ffffff;"><div class="box-style ">4.2%</div></td>
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
                     </tr>
                     
                     
@@ -729,7 +761,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style">937k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.62M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">562.20万</td>
                         <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">6.7%</div></td>
                         <td style="background-color: #ffffff;">100</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
@@ -759,7 +791,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #fff7cd;"></td>
                         <td style="background-color: #fff7cd;"><div class="box-style">863k</div></td>
-                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">5.18M</td>
+                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">517.80万</td>
                         <td style="background-color: #fff7cd;"><div class="box-style ">2.7%</div></td>
                         <td style="background-color: #fff7cd;">1800</td>
                         <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">6</div></td>
@@ -789,7 +821,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #e0f2fe;"></td>
                         <td style="background-color: #e0f2fe;"><div class="box-style">51k</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">4.54M</td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">453.90万</td>
                         <td style="background-color: #e0f2fe;"><div class="box-style ">2.6%</div></td>
                         <td style="background-color: #e0f2fe;">400</td>
                         <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89</div></td>
@@ -813,8 +845,7 @@
                         <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
                             <img src="./skin_avatars/嫦娥-器灵·落星盏.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">嫦娥-器灵·落星盏</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
+                                <span class="badge badge-return">Limit Return</span>
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #bfdbfe;"></td>
@@ -909,7 +940,7 @@
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
                         <td style="background-color: #ffffff;"><div class="box-style">261k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1.57M</td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">156.60万</td>
                         <td style="background-color: #ffffff;">--</td>
                         <td style="background-color: #ffffff;">100</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
@@ -957,6 +988,36 @@
                     
                     <tr data-quality="勇者">
                         <td><span class="rank-box">29</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">蒙恬-苍云破阵</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+                        <td style="background-color: #ffffff;"><div class="box-style">219k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">131.40万</td>
+                        <td style="background-color: #ffffff;">--</td>
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">30</span></td>
                         <td class="quality-col" data-val="20.0">
                             <img src="./images/20.gif" data-q="20" data-p="1" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
                         </td>
@@ -973,36 +1034,6 @@
                         <td style="background-color: #ffffff;">--</td>
                         <td style="background-color: #ffffff;">100</td>
                         <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">30</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">蒙恬-苍云破阵</span>
-                                <span class="badge badge-new">New Arrival</span>
-                                
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td style="background-color: #ffffff;"><div class="box-style">219k</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1.31M</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <td style="background-color: #ffffff;">100</td>
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
                     </tr>
                     
                     
@@ -1083,13 +1114,25 @@
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
     window.onload = () => { sortTable(5, 'float'); adjustNameFontSize(); };
+
+    // 🔥 名字自适应缩放逻辑
     function adjustNameFontSize() {
-        const containers = document.querySelectorAll('.name-container'); const maxWidth = 86; 
+        const containers = document.querySelectorAll('.name-container'); 
+        const maxWidth = 115; // 对应 CSS 里的 .name-container width
         containers.forEach(container => {
             const title = container.querySelector('.song-title');
-            if (title && title.scrollWidth > maxWidth) title.style.transform = `scale(${maxWidth / title.scrollWidth})`;
+            if (title) {
+                // 先复原
+                title.style.transform = 'none';
+                // 检查实际宽度
+                if (title.scrollWidth > maxWidth) {
+                    const scale = maxWidth / title.scrollWidth;
+                    title.style.transform = `scale(${scale})`;
+                }
+            }
         });
     }
+
     function loadFallbackImg(img) {
         const q = img.getAttribute('data-q');
         const p = img.getAttribute('data-p');
@@ -1109,44 +1152,24 @@
         });
     }
 
-    // 增强版数字解析：支持 亿/万/B/M/K
     function parseMixedNum(str) {
         if (!str) return -999999;
-
         function parseOne(s) {
             s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
             s = s.replace('>', '').replace('<', ''); 
-
             let multi = 1;
-            if (s.includes('亿') || s.includes('B')) { 
-                multi = 100000000; 
-                s = s.replace('亿', '').replace('B', ''); 
-            } 
-            else if (s.includes('万')) { 
-                multi = 10000; 
-                s = s.replace('万', ''); 
-            }
-            else if (s.includes('W')) { 
-                multi = 10000; 
-                s = s.replace('W', ''); 
-            }
-            else if (s.includes('M')) { 
-                multi = 1000000; 
-                s = s.replace('M', ''); 
-            }
-            else if (s.includes('K')) { 
-                multi = 1000; 
-                s = s.replace('K', ''); 
-            }
+            if (s.includes('亿') || s.includes('B')) { multi = 100000000; s = s.replace('亿', '').replace('B', ''); } 
+            else if (s.includes('万')) { multi = 10000; s = s.replace('万', ''); }
+            else if (s.includes('W')) { multi = 10000; s = s.replace('W', ''); }
+            else if (s.includes('M')) { multi = 1000000; s = s.replace('M', ''); }
+            else if (s.includes('K')) { multi = 1000; s = s.replace('K', ''); }
             let val = parseFloat(s);
             return isNaN(val) ? 0 : val * multi;
         }
-
         if (str.toString().includes('~')) {
             let parts = str.toString().split('~');
             return (parseOne(parts[0]) + parseOne(parts[1])) / 2;
         }
-
         let val = parseOne(str);
         if (str.toString().includes('>')) return val + 0.1;
         if (str.toString().includes('<')) return val - 0.1;
@@ -1163,7 +1186,6 @@
             var valB = b.cells[n].innerText;
             var x = parseMixedNum(valA);
             var y = parseMixedNum(valB);
-
             if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });
