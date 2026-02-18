@@ -5,15 +5,16 @@ import subprocess
 import requests
 import time
 import random
+import re
 from datetime import datetime
 from jinja2 import Template
-import hok_templates  # 引用模板文件
+import hok_templates
 
 # ================= 配置区域 =================
 LOCAL_REPO_PATH = r"D:\python-learn\hok-rank"
 GIT_EXECUTABLE_PATH = r"D:\Git\bin\git.exe"
 GITHUB_USERNAME = "hok11"
-LEADERBOARD_CAPACITY = 10
+LEADERBOARD_CAPACITY = 20
 
 
 class SkinCrawler:
@@ -77,44 +78,21 @@ class SkinCrawler:
 class SkinSystem:
     def __init__(self):
         self.all_skins = []
-        self.instructions = ["本榜单数据仅供参考", "数据更新时间以页面显示为准"]
+        self.instructions = ["数据仅供参考", "金额单位为人民币/积分"]
 
-        # 🔥 V25.5 更新：万象积分体系
         self.default_quality_config = {
-            # 勇者 / 战令 -> 100积分
             "1": {"price": 100.0, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
             "20": {"price": 100.0, "parent": "1", "name": "勇者", "scale": 1.1, "bg_color": "#ffffff"},
-            "6": {"price": 100.0, "parent": None, "name": "勇者", "scale": 0.9, "bg_color": "#ffffff"},
             "50": {"price": 100.0, "parent": None, "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
             "50.1": {"price": 100.0, "parent": "50", "name": "战令限定", "scale": 1.0, "bg_color": "#ffffff"},
-
-            # 史诗 -> 200积分
-            "5": {"price": 200.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
             "100": {"price": 200.0, "parent": None, "name": "史诗", "scale": 1.1, "bg_color": "#ffffff"},
-
-            # 传说 / 传说限定 -> 400积分
-            "4": {"price": 400.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
-            "3.5": {"price": 400.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
             "250": {"price": 400.0, "parent": None, "name": "传说", "scale": 1.2, "bg_color": "#ffffff"},
             "500": {"price": 400.0, "parent": None, "name": "传说限定", "scale": 1.1, "bg_color": "#e0f2fe"},
             "900": {"price": 400.0, "parent": "500", "name": "马年限定", "scale": 1.0, "bg_color": "#ffffff"},
-
-            # 珍品传说 -> 600积分
-            "3": {"price": 600.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
             "1000": {"price": 600.0, "parent": None, "name": "珍品传说", "scale": 1.0, "bg_color": "#bfdbfe"},
-
-            # 无双 -> 1200积分
-            "1_wushuang": {"price": 1200.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
-            # 避免 key 重复
+            "2500": {"price": 1800.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
             "5000": {"price": 1200.0, "parent": None, "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
             "7500": {"price": 1200.0, "parent": "5000", "name": "无双", "scale": 1.0, "bg_color": "#f3e8ff"},
-
-            # 荣耀典藏 -> 1800积分
-            "2": {"price": 1800.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
-            "2500": {"price": 1800.0, "parent": None, "name": "荣耀典藏", "scale": 1.4, "bg_color": "#fff7cd"},
-
-            # 珍品无双 -> 2400积分
-            "0": {"price": 2400.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
             "10000": {"price": 2400.0, "parent": None, "name": "珍品无双", "scale": 1.1, "bg_color": "#ffdcdc"},
         }
 
@@ -130,7 +108,6 @@ class SkinSystem:
         self.crawler = SkinCrawler(LOCAL_REPO_PATH)
         self.load_data()
 
-        # 强制同步配置
         for k, v in self.default_quality_config.items():
             if k in self.quality_config:
                 self.quality_config[k]['price'] = v['price']
@@ -183,36 +160,86 @@ class SkinSystem:
             pass
         return 0.0
 
-    def _calculate_real_score(self, rank_score, list_price, real_price):
-        # 🔥 V25.5 新公式：排位点数 * 3 / 万象积分 * 售价
-        if rank_score is None: return None
-        if isinstance(rank_score, float) and math.isnan(rank_score): return None
+    def parse_revenue_str(self, val):
+        """解析单个数值字符串为浮点数 (支持中文/英文)"""
+        if val is None: return 0.0
+        s = str(val).upper().replace('¥', '').replace(',', '').strip()
+        if not s: return 0.0
 
-        # list_price 现在代表 "万象积分"
-        if list_price <= 0: return None
+        multiplier = 1.0
+        # 移除比较符号进行纯数值解析
+        s = s.replace('>', '').replace('<', '').replace('~', '')
 
-        # 公式实现
-        return round((rank_score * 3 / list_price) * real_price, 1)
+        if '亿' in s or 'B' in s:
+            multiplier = 100000000.0
+            s = s.replace('亿', '').replace('B', '')
+        elif '万' in s or 'W' in s:
+            multiplier = 10000.0
+            s = s.replace('万', '').replace('W', '')
+        elif 'M' in s:
+            multiplier = 1000000.0
+            s = s.replace('M', '')
+        elif 'K' in s:
+            multiplier = 1000.0
+            s = s.replace('K', '')
+
+        try:
+            return float(s) * multiplier
+        except:
+            return 0.0
+
+    def parse_revenue_for_sort(self, val_str):
+        """
+        🔥 智能排序算法：计算用于排序的权重值
+        支持: "100~200" (取平均), ">100" (取100.0001), "<100" (取99.9999)
+        """
+        if not val_str: return -1.0
+        s = str(val_str).strip()
+
+        # 1. 范围型: A~B
+        if '~' in s:
+            parts = s.split('~')
+            if len(parts) == 2:
+                v1 = self.parse_revenue_str(parts[0])
+                v2 = self.parse_revenue_str(parts[1])
+                return (v1 + v2) / 2.0
+
+        # 2. 大于型: >A
+        if s.startswith('>') or s.startswith('》'):
+            base = self.parse_revenue_str(s)
+            return base + 0.0001  # 确保排在同数值前面
+
+        # 3. 小于型: <A
+        if s.startswith('<') or s.startswith('《'):
+            base = self.parse_revenue_str(s)
+            return base - 0.0001  # 确保排在同数值后面
+
+        # 4. 普通数值
+        return self.parse_revenue_str(s)
 
     def _migrate_data_structure(self):
         for skin in self.all_skins:
             skin['list_price'] = self._get_list_price_by_quality(skin['quality'])
-            if 'real_price' not in skin: skin['real_price'] = skin.get('price', 0.0)
-            if 'is_preset' not in skin: skin['is_preset'] = False
-            if 'is_discontinued' not in skin: skin['is_discontinued'] = False
-            if 'price' in skin: del skin['price']
-            cur_score = skin.get('score')
-            skin['real_score'] = self._calculate_real_score(cur_score, skin['list_price'], skin['real_price'])
-            if 'on_leaderboard' not in skin:
-                skin['on_leaderboard'] = True if (
-                            skin.get('is_new') or skin.get('is_rerun') or skin.get('is_preset') or skin.get(
-                        'is_discontinued')) else False
-        self.save_data()
 
-    def _get_base_score(self, x):
-        if x <= 0: return 200
-        val = (282 / math.sqrt(x)) - 82
-        return max(val, 0)
+            if 'sales_volume' not in skin: skin['sales_volume'] = "0"
+            if 'revenue' not in skin: skin['revenue'] = "0"
+            if 'real_price' not in skin: skin['real_price'] = str(skin.get('price', 0))
+            if 'is_hidden' not in skin: skin['is_hidden'] = False
+            if 'is_pool' not in skin: skin['is_pool'] = False  # 新增祈愿池标记
+
+            skin['sales_volume'] = str(skin['sales_volume'])
+            skin['revenue'] = str(skin['revenue'])
+            skin['real_price'] = str(skin['real_price'])
+
+            if isinstance(skin.get('real_price'), (int, float)):
+                skin['real_price'] = str(skin['real_price'])
+
+            if 'score' in skin: del skin['score']
+            if 'real_score' in skin: del skin['real_score']
+
+            if 'on_leaderboard' not in skin:
+                skin['on_leaderboard'] = True
+        self.save_data()
 
     def load_data(self):
         if os.path.exists(self.data_file):
@@ -225,7 +252,7 @@ class SkinSystem:
                     self.all_skins = loaded.get('skins', loaded.get('total', []))
                     if 'instructions' in loaded: self.instructions = loaded['instructions']
                     if 'quality_config' in loaded: self.quality_config = loaded['quality_config']
-                seen = set()
+                seen = set();
                 unique = []
                 for s in self.all_skins:
                     if s['name'] not in seen: unique.append(s); seen.add(s['name'])
@@ -236,18 +263,16 @@ class SkinSystem:
             self.save_data()
 
     def _get_sort_key(self, skin):
-        group_weight = 10 if skin.get('is_discontinued') else (1 if skin.get('is_preset') else 0)
-        if group_weight == 0:
-            return (group_weight, skin.get('score') is None, -(skin.get('score') or 0))
-        return (group_weight, skin.get('quality', 99))
+        # 1. 隐藏的放最后
+        # 2. 销售额 (revenue) 智能排序
+        is_hidden = 1 if skin.get('is_hidden', False) else 0
+        rev_val = self.parse_revenue_for_sort(skin.get('revenue', "0"))
+        return (is_hidden, -rev_val)
 
     def save_data(self):
         try:
-            for skin in self.all_skins:
-                for k, v in skin.items():
-                    if isinstance(v, float) and math.isnan(v):
-                        skin[k] = None
             with open(self.data_file, 'w', encoding='utf-8') as f:
+                # 排序保存
                 self.all_skins.sort(key=self._get_sort_key)
                 data_to_save = {
                     "skins": self.all_skins,
@@ -264,34 +289,12 @@ class SkinSystem:
         return data
 
     def get_active_leaderboard(self):
-        active = [s for s in self.all_skins if s.get('on_leaderboard', False)]
+        active = [s for s in self.all_skins if not s.get('is_hidden', False) and s.get('on_leaderboard', True)]
         active.sort(key=self._get_sort_key)
         return active
 
-    def calculate_insertion_score(self, rank_input, active_list, real_price, growth):
-        valid_list = [s for s in active_list if
-                      not s.get('is_preset') and not s.get('is_discontinued') and s.get('score') is not None]
-        if rank_input == 1:
-            old_top1_score = valid_list[0]['score'] if valid_list else 0
-            return max(old_top1_score / 0.6, (282 / math.sqrt(1.25)) - 82, real_price * growth * 15)
-        p_idx = rank_input - 2
-        p_score = 200 if p_idx < 0 else (valid_list[p_idx]['score'] if p_idx < len(valid_list) else 0)
-        if rank_input - 1 < len(valid_list):
-            next_score = valid_list[rank_input - 1]['score']
-            return math.sqrt(p_score * next_score)
-        else:
-            t = int(rank_input)
-            while True:
-                val = self._get_base_score(t)
-                if val < p_score: return val
-                t += 1
-
     def auto_prune_leaderboard(self):
-        active = [s for s in self.all_skins if
-                  s.get('on_leaderboard', False) and not s.get('is_preset') and not s.get('is_discontinued')]
-        active.sort(key=lambda x: (x.get('score') is None, -(x.get('score') or 0)))
-        if len(active) > LEADERBOARD_CAPACITY:
-            for skin in active[LEADERBOARD_CAPACITY:]: skin['on_leaderboard'] = False
+        self.all_skins.sort(key=self._get_sort_key)
 
     def get_header_gifs(self):
         show_dir = os.path.join(LOCAL_REPO_PATH, "show")
@@ -303,14 +306,12 @@ class SkinSystem:
     def generate_html(self):
         self.scan_local_images()
         self.save_data()
-
         header_gifs = self.get_header_gifs()
         desc_files = {}
         if os.path.exists(self.desc_dir):
             for f in os.listdir(self.desc_dir): desc_files[os.path.splitext(f)[0]] = f
 
-        display_skins = self.all_skins[:]
-        display_skins.sort(key=self._get_sort_key)
+        display_skins = self.get_total_skins()
 
         for skin in display_skins:
             skin['desc_img'] = desc_files.get(skin['name'])
@@ -325,7 +326,7 @@ class SkinSystem:
                     f_val = float(raw_q)
                     for k in self.quality_config:
                         if math.isclose(float(k), f_val, rel_tol=1e-9):
-                            q_key = k
+                            q_key = k;
                             break
                 except:
                     pass

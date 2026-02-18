@@ -16,14 +16,6 @@
         .info-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 5px; }
         .info-btn { background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .info-btn:hover { opacity: 0.8; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 12px; width: 80%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-        .close-btn { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; line-height: 20px; }
-        .close-btn:hover { color: black; }
-        .modal-list { text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #333; }
-        .header-gifs-container { display: flex; gap: 10px; }
-        .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 800px; }
         th { text-align: center; padding: 8px 2px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; }
@@ -39,7 +31,6 @@
         .col-sort { cursor: pointer; position: relative; } .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
         th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
-
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; }
         .wushuang-big { height: 45px !important; margin: -8px 0; }
@@ -49,14 +40,11 @@
         .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; transform-origin: center; display: inline-block; }
         .badge { display: block; width: 100%; text-align: center; padding: 1px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; }
         .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
-
-        .rank-box { 
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; background: #1d4ed8; color: #fff; 
-            font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1;
-        }
+        .badge-pool { background: #9333ea; color: #fff; }
+        .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
+        .header-gifs-container { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
@@ -65,7 +53,7 @@
             <div class="header-gifs-container"><img src="./show/DiaoChan.gif" class="header-gif"><img src="./show/xishi.gif" class="header-gif"></div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container"><p>Update: 2026-02-16 21:00</p><button class="info-btn" onclick="openModal()">说明</button></div>
+                <div class="info-container"><p>Update: 2026-02-19 03:03</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
             <div class="header-gifs-container"><img src="./show/yuhuan.gif" class="header-gif"><img src="./show/zhaojun.gif" class="header-gif"></div>
         </div>
@@ -98,10 +86,13 @@
                                 
                                 <label class="dropdown-item"><input type="checkbox" class="q-check" value="马年限定" onchange="handleSingleSelect(this)"> 马年限定</label>
                                 
+                                <label class="dropdown-item"><input type="checkbox" class="q-check" value="情人节限定" onchange="handleSingleSelect(this)"> 情人节限定</label>
+                                
                             </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
                         <th style="text-align:left; padding-left:20px;">Skin Name</th><th></th>
-                        <th class="col-sort" onclick="sortTable(4, 'float')">Rank Pts</th>
-                        <th class="col-sort" onclick="sortTable(5, 'float')">Real Pts</th>
+                        <!-- 🔥 改动：新表头 -->
+                        <th class="col-sort" onclick="sortTable(4, 'float')">销量</th>
+                        <th class="col-sort" onclick="sortTable(5, 'float')">销售额</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
                         <th class="col-sort" onclick="sortTable(7, 'float')">万象积分</th>
                         <th class="col-sort" onclick="sortTable(8, 'float')">售价</th>
@@ -117,55 +108,33 @@
                     
                     
                     
+                    
                     <tr data-quality="无双">
                         <td><span class="rank-box">1</span></td>
                         <td class="quality-col" data-val="5000.0">
                             <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
-                            <img src="./skin_avatars/孙悟空-无相.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">孙悟空-无相</span>
+                            <img src="./skin_avatars/问心剑祈愿池.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">问心剑祈愿池</span>
                                 <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
-                        <td data-val="225.0" style="background-color: #f3e8ff;"><div class="box-style">225.0</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">225.0</td>
-                        <td style="background-color: #f3e8ff;"><div class="box-style ">3.3%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #f3e8ff;"><div class="box-style">475k</div></td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">47.50M</td>
+
+                        <td style="background-color: #f3e8ff;"><div class="box-style growth-up-mid">6.0%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #f3e8ff;">1200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
+                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
                     </tr>
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="荣耀典藏">
-                        <td><span class="rank-box">2</span></td>
-                        <td class="quality-col" data-val="2500.0">
-                            <img src="./images/2500.gif" data-q="2500" data-p="None" class="quality-icon " style="transform: scale(1.55);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #fff7cd;"><div class="song-col">
-                            <img src="./skin_avatars/吕布·千魇归渊.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">吕布·千魇归渊</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #fff7cd;"></td>
-                        <td data-val="153.2" style="background-color: #fff7cd;"><div class="box-style">153.2</div></td>
-                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #fff7cd;"><div class="box-style ">3.6%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #fff7cd;">1800</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
-                    </tr>
                     
                     
                     
@@ -176,25 +145,66 @@
                     
                     
                     <tr data-quality="无双">
-                        <td><span class="rank-box">3</span></td>
-                        <td class="quality-col" data-val="7500.0">
-                            <img src="./images/7500.gif" data-q="7500" data-p="5000" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        <td><span class="rank-box">2</span></td>
+                        <td class="quality-col" data-val="5000.0">
+                            <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
-                            <img src="./skin_avatars/甄姬-雪境奇遇.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">甄姬-雪境奇遇</span>
-                                <span class="badge badge-return">Limit Return</span>
+                            <img src="./skin_avatars/无相祈愿池.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">无相祈愿池</span>
+                                <span class="badge badge-pool">祈愿</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
-                        <td data-val="117.4" style="background-color: #f3e8ff;"><div class="box-style">117.4</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">117.4</td>
-                        <td style="background-color: #f3e8ff;"><div class="box-style ">0.1%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #f3e8ff;"><div class="box-style">305k</div></td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">30.50M</td>
+
+                        <td style="background-color: #f3e8ff;"><div class="box-style ">3.3%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #f3e8ff;">1200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
+                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
                     </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="传说">
+                        <td><span class="rank-box">3</span></td>
+                        <td class="quality-col" data-val="250.0">
+                            <img src="./images/250.gif" data-q="250" data-p="None" class="quality-icon " style="transform: scale(1.2);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/王昭君-长夜焕生.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">王昭君-长夜焕生</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">184k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">17.70M</td>
+
+                        <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">9.6%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">400</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">96.2</div></td>
+                    </tr>
+                    
+                    
                     
                     
                     
@@ -210,19 +220,23 @@
                             <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
-                            <img src="./skin_avatars/瑶-真我赫兹.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">瑶-真我赫兹</span>
-                                <span class="badge badge-return">Limit Return</span>
+                            <img src="./skin_avatars/李信-问心剑.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">李信-问心剑</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #f3e8ff;"></td>
-                        <td data-val="80.8" style="background-color: #f3e8ff;"><div class="box-style">80.8</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">80.8</td>
-                        <td style="background-color: #f3e8ff;"><div class="box-style ">3.0%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #f3e8ff;"><div class="box-style"></div></td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">>16.64M</td>
+
+                        <td style="background-color: #f3e8ff;"><div class="box-style growth-up-mid">6.0%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #f3e8ff;">1200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
+                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
                     </tr>
                     
                     
@@ -233,258 +247,34 @@
                     
                     
                     
-                    <tr data-quality="传说">
+                    
+                    
+                    <tr data-quality="马年限定">
                         <td><span class="rank-box">5</span></td>
-                        <td class="quality-col" data-val="250.0">
-                            <img src="./images/250.gif" data-q="250" data-p="None" class="quality-icon " style="transform: scale(1.2);" onerror="loadFallbackImg(this)">
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
                         </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">曹操-万灵伏威</span>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/朵莉亚-神骥·鸣幻洲.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">朵莉亚-神骥·鸣幻洲</span>
                                 <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="59.0" style="background-color: #ffffff;"><div class="box-style">59.0</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">43.8</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥99.0</div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">187k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">16.64M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">9.7%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89</div></td>
                     </tr>
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">6</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">安琪拉-糖果风暴</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="44.1" style="background-color: #ffffff;"><div class="box-style">44.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">7.9</td>
-                        <td style="background-color: #ffffff;"><div class="box-style ">4.2%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="史诗">
-                        <td><span class="rank-box">7</span></td>
-                        <td class="quality-col" data-val="100.0">
-                            <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/盘古-撼世英歌.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">盘古-撼世英歌</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="42.5" style="background-color: #ffffff;"><div class="box-style">42.5</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">31.2</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥49.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="史诗">
-                        <td><span class="rank-box">8</span></td>
-                        <td class="quality-col" data-val="100.0">
-                            <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/蔡文姬-奇遇梦乡.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">蔡文姬-奇遇梦乡</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="41.0" style="background-color: #ffffff;"><div class="box-style">41.0</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">30.1</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥49.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">9</span></td>
-                        <td class="quality-col" data-val="20.0">
-                            <img src="./images/20.gif" data-q="20" data-p="1" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/妲己·线条小狗.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">妲己·线条小狗</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="38.2" style="background-color: #ffffff;"><div class="box-style">38.2</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.9</td>
-                        <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">6.7%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">10</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">孙权-径山谋武</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="33.1" style="background-color: #ffffff;"><div class="box-style">33.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.0</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">11</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/吕布-舞狮寰.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">吕布-舞狮寰</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="30.7" style="background-color: #ffffff;"><div class="box-style">30.7</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.5</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">12</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">蚩姹-极光幻客</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="24.6" style="background-color: #ffffff;"><div class="box-style">24.6</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.4</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">13</span></td>
-                        <td class="quality-col" data-val="1.0">
-                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/敖隐-赤刃凌霄.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">敖隐-赤刃凌霄</span>
-                                <span class="badge badge-new">New Arrival</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="24.1" style="background-color: #ffffff;"><div class="box-style">24.1</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">4.3</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
-                    </tr>
                     
                     
                     
@@ -495,7 +285,7 @@
                     
                     
                     <tr data-quality="战令限定">
-                        <td><span class="rank-box">14</span></td>
+                        <td><span class="rank-box">6</span></td>
                         <td class="quality-col" data-val="50.1">
                             <img src="./images/50.1.gif" data-q="50.1" data-p="50" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
@@ -503,16 +293,20 @@
                             <img src="./skin_avatars/小乔-线条小狗.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">小乔-线条小狗</span>
                                 <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="23.6" style="background-color: #ffffff;"><div class="box-style">23.6</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">708k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">13.31M</td>
+
                         <td style="background-color: #ffffff;"><div class="box-style ">2.9%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">18.8</div></td>
                     </tr>
                     
                     
@@ -523,26 +317,314 @@
                     
                     
                     
-                    <tr data-quality="勇者">
-                        <td><span class="rank-box">15</span></td>
-                        <td class="quality-col" data-val="20.0">
-                            <img src="./images/20.gif" data-q="20" data-p="1" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                    
+                    
+                    <tr data-quality="无双">
+                        <td><span class="rank-box">7</span></td>
+                        <td class="quality-col" data-val="5000.0">
+                            <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
-                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/桑启-线条小狗.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">桑启-线条小狗</span>
+                        <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
+                            <img src="./skin_avatars/公孙离-离恨烟.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">公孙离-离恨烟</span>
                                 <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
-                        <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="22.7" style="background-color: #ffffff;"><div class="box-style">22.7</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
+                        <td class="desc-col" style="background-color: #f3e8ff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #f3e8ff;"><div class="box-style"></div></td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">7.83M~16.64M</td>
+
+                        <td style="background-color: #f3e8ff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
                     </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="珍品传说">
+                        <td><span class="rank-box">8</span></td>
+                        <td class="quality-col" data-val="1000.0">
+                            <img src="./images/1000.gif" data-q="1000" data-p="None" class="quality-icon " style="transform: scale(1.25);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
+                            <img src="./skin_avatars/沧流箭祈愿池.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">沧流箭祈愿池</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #bfdbfe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #bfdbfe;"><div class="box-style">200k</div></td>
+                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">12.00M</td>
+
+                        <td style="background-color: #bfdbfe;"><div class="box-style ">3.5%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #bfdbfe;">600</td>
+                        <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">60</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="马年限定">
+                        <td><span class="rank-box">9</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/云缨-神骥·越千峰.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">云缨-神骥·越千峰</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">126k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">11.21M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">8.8%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="马年限定">
+                        <td><span class="rank-box">10</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/狄仁杰-神骥·赴朔漠.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">狄仁杰-神骥·赴朔漠</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">126k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">11.21M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-high">10.2%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="马年限定">
+                        <td><span class="rank-box">11</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/貂蝉-神骥·聚万邦.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">貂蝉-神骥·聚万邦</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">110k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">9.79M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">8.4%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="珍品传说">
+                        <td><span class="rank-box">12</span></td>
+                        <td class="quality-col" data-val="1000.0">
+                            <img src="./images/1000.gif" data-q="1000" data-p="None" class="quality-icon " style="transform: scale(1.25);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
+                            <img src="./skin_avatars/伽罗-沧流箭.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">伽罗-沧流箭</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #bfdbfe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #bfdbfe;"><div class="box-style"></div></td>
+                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">9.43M~9.79M</td>
+
+                        <td style="background-color: #bfdbfe;"><div class="box-style ">3.5%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #bfdbfe;">600</td>
+                        <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">60</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="马年限定">
+                        <td><span class="rank-box">13</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/马超-神骥·逐星野.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">马超-神骥·逐星野</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">106k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">9.43M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-high">10.0%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="马年限定">
+                        <td><span class="rank-box">14</span></td>
+                        <td class="quality-col" data-val="900.0">
+                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/关羽-神骥·镇沧海.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">关羽-神骥·镇沧海</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">88k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">7.83M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style growth-up-mid">5.1%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="无双">
+                        <td><span class="rank-box">15</span></td>
+                        <td class="quality-col" data-val="5000.0">
+                            <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
+                            <img src="./skin_avatars/曜-器灵·螭龙剑.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">曜-器灵·螭龙剑</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #f3e8ff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #f3e8ff;"><div class="box-style"></div></td>
+                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;"><7.83M</td>
+
+                        <td style="background-color: #f3e8ff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #f3e8ff;">1200</td>
+                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">100</div></td>
+                    </tr>
+                    
+                    
                     
                     
                     
@@ -558,19 +640,23 @@
                             <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">蒙恬-苍云破阵</span>
+                            <img src="./skin_avatars/安琪拉-糖果风暴.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">安琪拉-糖果风暴</span>
                                 <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="20.9" style="background-color: #ffffff;"><div class="box-style">20.9</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">3.8</td>
-                        <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>6.76M</td>
+
+                        <td style="background-color: #ffffff;"><div class="box-style ">4.2%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #ffffff;">100</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥6.0</div></td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
                     </tr>
                     
                     
@@ -581,258 +667,34 @@
                     
                     
                     
-                    <tr data-quality="传说限定">
+                    
+                    
+                    <tr data-quality="传说">
                         <td><span class="rank-box">17</span></td>
-                        <td class="quality-col" data-val="500.0">
-                            <img src="./images/500.gif" data-q="500" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/小乔-山海·琳琅生.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">小乔-山海·琳琅生</span>
-                                <span class="badge badge-return">Limit Return</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="17.7" style="background-color: #e0f2fe;"><div class="box-style">17.7</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="史诗">
-                        <td><span class="rank-box">18</span></td>
-                        <td class="quality-col" data-val="100.0">
-                            <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                        <td class="quality-col" data-val="250.0">
+                            <img src="./images/250.gif" data-q="250" data-p="None" class="quality-icon " style="transform: scale(1.2);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
-                            <img src="./skin_avatars/妲己-热情桑巴.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">妲己-热情桑巴</span>
-                                <span class="badge badge-return">Limit Return</span>
+                            <img src="./skin_avatars/曹操-万灵伏威.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">曹操-万灵伏威</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="12.0" style="background-color: #ffffff;"><div class="box-style">12.0</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>>6.76M</td>
+
                         <td style="background-color: #ffffff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #ffffff;">200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">--</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">400</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">99.0</div></td>
                     </tr>
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="传说限定">
-                        <td><span class="rank-box">19</span></td>
-                        <td class="quality-col" data-val="500.0">
-                            <img src="./images/500.gif" data-q="500" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/曜-山海·苍雷引.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">曜-山海·苍雷引</span>
-                                <span class="badge badge-return">Limit Return</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="7.2" style="background-color: #e0f2fe;"><div class="box-style">7.2</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="马年限定">
-                        <td>-</td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/貂蝉-神骥·聚万邦.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">貂蝉-神骥·聚万邦</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="马年限定">
-                        <td>-</td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/马超-神骥·逐星野.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">马超-神骥·逐星野</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="马年限定">
-                        <td>-</td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/关羽-神骥·镇沧海.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">关羽-神骥·镇沧海</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="马年限定">
-                        <td>-</td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/云缨-神骥·越千峰.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">云缨-神骥·越千峰</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="马年限定">
-                        <td>-</td>
-                        <td class="quality-col" data-val="900.0">
-                            <img src="./images/900.gif" data-q="900" data-p="500" class="quality-icon " style="transform: scale(0.95);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
-                            <img src="./skin_avatars/狄仁杰-神骥·赴朔漠.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">狄仁杰-神骥·赴朔漠</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
-                        <td data-val="-999" style="background-color: #e0f2fe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #e0f2fe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #e0f2fe;">400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">¥89.0</div></td>
-                    </tr>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <tr data-quality="珍品传说">
-                        <td>-</td>
-                        <td class="quality-col" data-val="1000.0">
-                            <img src="./images/1000.gif" data-q="1000" data-p="None" class="quality-icon " style="transform: scale(1.25);" onerror="loadFallbackImg(this)">
-                        </td>
-                        <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
-                            <img src="./skin_avatars/伽罗-沧流箭.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">伽罗-沧流箭</span>
-                                <span class="badge badge-preset">Coming Soon</span>
-                            </div>
-                        </div></td>
-                        <td class="desc-col" style="background-color: #bfdbfe;"></td>
-                        <td data-val="-999" style="background-color: #bfdbfe;"><div class="box-style">--</div></td>
-                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #bfdbfe;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #bfdbfe;">600</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">¥200.0</div></td>
-                    </tr>
                     
                     
                     
@@ -843,24 +705,168 @@
                     
                     
                     <tr data-quality="荣耀典藏">
-                        <td>-</td>
+                        <td><span class="rank-box">18</span></td>
+                        <td class="quality-col" data-val="2500.0">
+                            <img src="./images/2500.gif" data-q="2500" data-p="None" class="quality-icon " style="transform: scale(1.55);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #fff7cd;"><div class="song-col">
+                            <img src="./skin_avatars/吕布·千魇归渊.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">吕布·千魇归渊</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #fff7cd;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #fff7cd;"><div class="box-style">0</div></td>
+                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">>>>6.76M</td>
+
+                        <td style="background-color: #fff7cd;"><div class="box-style ">3.6%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #fff7cd;">1800</td>
+                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">0.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="史诗">
+                        <td><span class="rank-box">19</span></td>
+                        <td class="quality-col" data-val="100.0">
+                            <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/盘古-撼世英歌.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">盘古-撼世英歌</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">138k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">6.76M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">49.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="史诗">
+                        <td><span class="rank-box">20</span></td>
+                        <td class="quality-col" data-val="100.0">
+                            <img src="./images/100.gif" data-q="100" data-p="None" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/蔡文姬-奇遇梦乡.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">蔡文姬-奇遇梦乡</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.62M~6.76M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">200</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">49.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">21</span></td>
+                        <td class="quality-col" data-val="20.0">
+                            <img src="./images/20.gif" data-q="20" data-p="1" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/妲己·线条小狗.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">妲己·线条小狗</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">937k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">5.62M</td>
+
+                        <td style="background-color: #ffffff;"><div class="box-style growth-up-mid">6.7%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="荣耀典藏">
+                        <td><span class="rank-box">22</span></td>
                         <td class="quality-col" data-val="2500.0">
                             <img src="./images/2500.gif" data-q="2500" data-p="None" class="quality-icon " style="transform: scale(1.55);" onerror="loadFallbackImg(this)">
                         </td>
                         <td class="rounded-left" style="background-color: #fff7cd;"><div class="song-col">
                             <img src="./skin_avatars/安琪拉-颠倒童话·魔镜.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">安琪拉-颠倒童话·魔镜</span>
-                                <span class="badge badge-preset">Coming Soon</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #fff7cd;"></td>
-                        <td data-val="-999" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
-                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #fff7cd;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #fff7cd;"><div class="box-style">863k</div></td>
+                        <td style="background-color: #fff7cd; color:#6366f1; font-weight:bold;">5.18M</td>
+
+                        <td style="background-color: #fff7cd;"><div class="box-style ">2.7%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #fff7cd;">1800</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">--</div></td>
+                        <td class="rounded-right" style="background-color: #fff7cd;"><div class="box-style">6</div></td>
                     </tr>
                     
                     
@@ -871,26 +877,279 @@
                     
                     
                     
-                    <tr data-quality="无双">
-                        <td>-</td>
-                        <td class="quality-col" data-val="5000.0">
-                            <img src="./images/5000.gif" data-q="5000" data-p="None" class="quality-icon wushuang-big" style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                    
+                    
+                    <tr data-quality="情人节限定">
+                        <td><span class="rank-box">23</span></td>
+                        <td class="quality-col" data-val="600.0">
+                            <img src="./images/600.gif" data-q="600" data-p="500" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
                         </td>
-                        <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
-                            <img src="./skin_avatars/李信-问心剑.jpg" class="album-art">
-                            <div class="name-container"><span class="song-title">李信-问心剑</span>
-                                <span class="badge badge-preset">Coming Soon</span>
+                        <td class="rounded-left" style="background-color: #e0f2fe;"><div class="song-col">
+                            <img src="./skin_avatars/花木兰-异界灵契.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">花木兰-异界灵契</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
                             </div>
                         </div></td>
-                        <td class="desc-col" style="background-color: #f3e8ff;"></td>
-                        <td data-val="-999" style="background-color: #f3e8ff;"><div class="box-style">--</div></td>
-                        <td style="background-color: #f3e8ff; color:#6366f1; font-weight:bold;">--</td>
-                        <td style="background-color: #f3e8ff;">--</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
-                        <td style="background-color: #f3e8ff;">1200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #f3e8ff;"><div class="box-style">¥400.0</div></td>
+                        <td class="desc-col" style="background-color: #e0f2fe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #e0f2fe;"><div class="box-style">51k</div></td>
+                        <td style="background-color: #e0f2fe; color:#6366f1; font-weight:bold;">4.54M</td>
+
+                        <td style="background-color: #e0f2fe;"><div class="box-style ">2.6%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #e0f2fe;">400</td>
+                        <td class="rounded-right" style="background-color: #e0f2fe;"><div class="box-style">89</div></td>
                     </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="珍品传说">
+                        <td><span class="rank-box">24</span></td>
+                        <td class="quality-col" data-val="1000.0">
+                            <img src="./images/1000.gif" data-q="1000" data-p="None" class="quality-icon " style="transform: scale(1.25);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
+                            <img src="./skin_avatars/嫦娥-器灵·落星盏.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">嫦娥-器灵·落星盏</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #bfdbfe;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #bfdbfe;"><div class="box-style"></div></td>
+                        <td style="background-color: #bfdbfe; color:#6366f1; font-weight:bold;"><2M</td>
+
+                        <td style="background-color: #bfdbfe;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #bfdbfe;">600</td>
+                        <td class="rounded-right" style="background-color: #bfdbfe;"><div class="box-style">60</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">25</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/孙权-径山谋武.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">孙权-径山谋武</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>1.57M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">26</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/吕布-舞狮寰.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">吕布-舞狮寰</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>1.57M</td>
+
+                        <td style="background-color: #ffffff;"><div class="box-style ">2.1%</div></td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">27</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/蚩姹-极光幻客.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">蚩姹-极光幻客</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">261k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1.57M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">28</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/敖隐-赤刃凌霄.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">敖隐-赤刃凌霄</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>1.31M~1.57M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">29</span></td>
+                        <td class="quality-col" data-val="20.0">
+                            <img src="./images/20.gif" data-q="20" data-p="1" class="quality-icon " style="transform: scale(1.1);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/桑启-线条小狗.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">桑启-线条小狗</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">>1.31M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6</div></td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <tr data-quality="勇者">
+                        <td><span class="rank-box">30</span></td>
+                        <td class="quality-col" data-val="1.0">
+                            <img src="./images/1.gif" data-q="1" data-p="None" class="quality-icon " style="transform: scale(1.0);" onerror="loadFallbackImg(this)">
+                        </td>
+                        <td class="rounded-left" style="background-color: #ffffff;"><div class="song-col">
+                            <img src="./skin_avatars/蒙恬-苍云破阵.jpg" class="album-art">
+                            <div class="name-container"><span class="song-title">蒙恬-苍云破阵</span>
+                                <span class="badge badge-new">New Arrival</span>
+                                
+                            </div>
+                        </div></td>
+                        <td class="desc-col" style="background-color: #ffffff;"></td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">219k</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">1.31M</td>
+
+                        <td style="background-color: #ffffff;">--</td>
+
+                        <!-- 万象积分 & 售价 -->
+                        <td style="background-color: #ffffff;">100</td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">6.0</div></td>
+                    </tr>
+                    
+                    
                     
                     
                     
@@ -909,17 +1168,23 @@
                             <img src="./skin_avatars/大乔-乘龙·忆丹青.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">大乔-乘龙·忆丹青</span>
                                 <span class="badge badge-out">Out of Print</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #ffffff;"></td>
-                        <td data-val="-999" style="background-color: #ffffff;"><div class="box-style">--</div></td>
-                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">--</td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffffff;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffffff; color:#6366f1; font-weight:bold;">0</td>
+
                         <td style="background-color: #ffffff;"><div class="box-style growth-special">1.9%!</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #ffffff;">200</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">¥53.2</div></td>
+                        <td class="rounded-right" style="background-color: #ffffff;"><div class="box-style">53.2</div></td>
                     </tr>
+                    
+                    
                     
                     
                     
@@ -938,17 +1203,26 @@
                             <img src="./skin_avatars/貂蝉-馥梦繁花.gif" class="album-art">
                             <div class="name-container"><span class="song-title">貂蝉-馥梦繁花</span>
                                 <span class="badge badge-out">Out of Print</span>
+                                
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: #ffdcdc;"><img src="./skin_descs/貂蝉-馥梦繁花.gif" class="desc-img"></td>
-                        <td data-val="-999" style="background-color: #ffdcdc;"><div class="box-style">--</div></td>
-                        <td style="background-color: #ffdcdc; color:#6366f1; font-weight:bold;">--</td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: #ffdcdc;"><div class="box-style">0</div></td>
+                        <td style="background-color: #ffdcdc; color:#6366f1; font-weight:bold;">0</td>
+
                         <td style="background-color: #ffdcdc;"><div class="box-style ">3.2%</div></td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: #ffdcdc;">2400</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: #ffdcdc;"><div class="box-style">¥800.0</div></td>
+                        <td class="rounded-right" style="background-color: #ffdcdc;"><div class="box-style">800.0</div></td>
                     </tr>
+                    
+                    
+                    
+                    
+                    
                     
                 </tbody>
             </table>
@@ -962,7 +1236,7 @@
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-    window.onload = () => { sortTable(4, 'float'); adjustNameFontSize(); };
+    window.onload = () => { sortTable(5, 'float'); adjustNameFontSize(); };
     function adjustNameFontSize() {
         const containers = document.querySelectorAll('.name-container'); const maxWidth = 86; 
         containers.forEach(container => {
@@ -988,14 +1262,70 @@
             r.style.display = (main.checked || checked.length===0 || checked.includes(r.getAttribute('data-quality'))) ? "" : "none";
         });
     }
+
+    // 🔥 增强版数字解析：支持 亿/万/B/M/K
+    function parseMixedNum(str) {
+        if (!str) return -999999;
+
+        // 核心解析器
+        function parseOne(s) {
+            s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
+            s = s.replace('>', '').replace('<', ''); // 去掉操作符
+
+            let multi = 1;
+            if (s.includes('亿') || s.includes('B')) { 
+                multi = 100000000; 
+                s = s.replace('亿', '').replace('B', ''); 
+            } 
+            else if (s.includes('万')) { 
+                multi = 10000; 
+                s = s.replace('万', ''); 
+            }
+            else if (s.includes('W')) { 
+                multi = 10000; 
+                s = s.replace('W', ''); 
+            }
+            else if (s.includes('M')) { 
+                multi = 1000000; 
+                s = s.replace('M', ''); 
+            }
+            else if (s.includes('K')) { 
+                multi = 1000; 
+                s = s.replace('K', ''); 
+            }
+            let val = parseFloat(s);
+            return isNaN(val) ? 0 : val * multi;
+        }
+
+        // 处理范围 ~ (例如 1亿~2亿)
+        if (str.toString().includes('~')) {
+            let parts = str.toString().split('~');
+            let v1 = parseOne(parts[0]);
+            let v2 = parseOne(parts[1]);
+            return (v1 + v2) / 2;
+        }
+
+        // 处理单值
+        let val = parseOne(str);
+
+        // 微调排序权重 (大于号稍大，小于号稍小)
+        if (str.toString().includes('>')) return val + 0.1;
+        if (str.toString().includes('<')) return val - 0.1;
+
+        return val;
+    }
+
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
         Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
         rows.sort((a, b) => {
-            var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%!]/g, ''));
-            var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%!]/g, ''));
+            var valA = a.cells[n].innerText;
+            var valB = b.cells[n].innerText;
+            var x = parseMixedNum(valA);
+            var y = parseMixedNum(valB);
+
             if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });

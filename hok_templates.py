@@ -1,4 +1,6 @@
-# 存放 HTML 模板，为逻辑层减负
+# ================= HTML 模板层 =================
+# 负责定义生成的网页结构、样式和交互逻辑
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -17,14 +19,6 @@ HTML_TEMPLATE = """
         .info-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 5px; }
         .info-btn { background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .info-btn:hover { opacity: 0.8; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 12px; width: 80%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-        .close-btn { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer; line-height: 20px; }
-        .close-btn:hover { color: black; }
-        .modal-list { text-align: left; margin-top: 15px; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #333; }
-        .header-gifs-container { display: flex; gap: 10px; }
-        .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
         .table-container { width: 100%; overflow-x: auto; }
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 800px; }
         th { text-align: center; padding: 8px 2px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; }
@@ -40,7 +34,6 @@ HTML_TEMPLATE = """
         .col-sort { cursor: pointer; position: relative; } .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
         th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
-
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; }
         .wushuang-big { height: 45px !important; margin: -8px 0; }
@@ -50,14 +43,11 @@ HTML_TEMPLATE = """
         .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; transform-origin: center; display: inline-block; }
         .badge { display: block; width: 100%; text-align: center; padding: 1px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; }
         .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
-
-        .rank-box { 
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; background: #1d4ed8; color: #fff; 
-            font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1;
-        }
+        .badge-pool { background: #9333ea; color: #fff; }
+        .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
+        .header-gifs-container { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
@@ -83,8 +73,9 @@ HTML_TEMPLATE = """
                                 {% endfor %}
                             </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
                         <th style="text-align:left; padding-left:20px;">Skin Name</th><th></th>
-                        <th class="col-sort" onclick="sortTable(4, 'float')">Rank Pts</th>
-                        <th class="col-sort" onclick="sortTable(5, 'float')">Real Pts</th>
+                        <!-- 🔥 改动：新表头 -->
+                        <th class="col-sort" onclick="sortTable(4, 'float')">销量</th>
+                        <th class="col-sort" onclick="sortTable(5, 'float')">销售额</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
                         <th class="col-sort" onclick="sortTable(7, 'float')">万象积分</th>
                         <th class="col-sort" onclick="sortTable(8, 'float')">售价</th>
@@ -92,6 +83,7 @@ HTML_TEMPLATE = """
                 </thead>
                 <tbody>
                     {% for skin in total_skins %}
+                    {% if not skin.is_hidden %}
                     {% set q_str = skin.quality_key %}
                     {% set q_cfg = quality_config.get(q_str, {}) %}
                     {% set parent_id = q_cfg.parent|string if q_cfg.parent else none %}
@@ -108,18 +100,26 @@ HTML_TEMPLATE = """
                         <td class="rounded-left" style="background-color: {{ bg_c }};"><div class="song-col">
                             <img src="./{{ skin.local_img or 'placeholder.jpg' }}" class="album-art">
                             <div class="name-container"><span class="song-title">{{ skin.name }}</span>
-                                {% if skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>{% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>{% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>{% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
+                                {% if skin.is_pool %}<span class="badge badge-pool">祈愿</span>
+                                {% elif skin.is_discontinued %}<span class="badge badge-out">Out of Print</span>
+                                {% elif skin.is_preset %}<span class="badge badge-preset">Coming Soon</span>
+                                {% elif skin.is_new %}<span class="badge badge-new">New Arrival</span>
+                                {% elif skin.is_rerun %}<span class="badge badge-return">Limit Return</span>{% endif %}
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: {{ bg_c }};">{% if skin.desc_img %}<img src="./skin_descs/{{ skin.desc_img }}" class="desc-img">{% endif %}</td>
-                        <td data-val="{{ skin.score if skin.score is not none else -999 }}" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.is_discontinued %}{{ '--' }}{% else %}{{ skin.score or '--' }}{% endif %}</div></td>
-                        <td style="background-color: {{ bg_c }}; color:#6366f1; font-weight:bold;">{{ skin.real_score or '--' }}</td>
+
+                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
+                        <td style="background-color: {{ bg_c }};"><div class="box-style">{{ skin.sales_volume }}</div></td>
+                        <td style="background-color: {{ bg_c }}; color:#6366f1; font-weight:bold;">{{ skin.revenue }}</td>
+
                         <td style="background-color: {{ bg_c }};">{% if skin.growth %}{% set g_cls = 'growth-special' if skin.growth == 1.9 else ('growth-down' if skin.growth < 0 else ('growth-up-high' if skin.growth >= 10 else ('growth-up-mid' if skin.growth >= 5 else ''))) %}<div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>{% else %}--{% endif %}</td>
-                        <!-- 万象积分列：去掉了 ￥ 符号 -->
+
+                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: {{ bg_c }};">{{ skin.list_price|int }}</td>
-                        <!-- 售价列：保留了 ￥ 符号 -->
-                        <td class="rounded-right" style="background-color: {{ bg_c }};"><div class="box-style">{% if skin.real_price > 0 %}¥{{ skin.real_price }}{% else %}--{% endif %}</div></td>
+                        <td class="rounded-right" style="background-color: {{ bg_c }};"><div class="box-style">{{ skin.real_price }}</div></td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
@@ -133,7 +133,7 @@ HTML_TEMPLATE = """
     function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('show'); }
     document.addEventListener('click', () => document.getElementById('dropdownMenu').classList.remove('show'));
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
-    window.onload = () => { sortTable(4, 'float'); adjustNameFontSize(); };
+    window.onload = () => { sortTable(5, 'float'); adjustNameFontSize(); };
     function adjustNameFontSize() {
         const containers = document.querySelectorAll('.name-container'); const maxWidth = 86; 
         containers.forEach(container => {
@@ -159,14 +159,70 @@ HTML_TEMPLATE = """
             r.style.display = (main.checked || checked.length===0 || checked.includes(r.getAttribute('data-quality'))) ? "" : "none";
         });
     }
+
+    // 🔥 增强版数字解析：支持 亿/万/B/M/K
+    function parseMixedNum(str) {
+        if (!str) return -999999;
+
+        // 核心解析器
+        function parseOne(s) {
+            s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
+            s = s.replace('>', '').replace('<', ''); // 去掉操作符
+
+            let multi = 1;
+            if (s.includes('亿') || s.includes('B')) { 
+                multi = 100000000; 
+                s = s.replace('亿', '').replace('B', ''); 
+            } 
+            else if (s.includes('万')) { 
+                multi = 10000; 
+                s = s.replace('万', ''); 
+            }
+            else if (s.includes('W')) { 
+                multi = 10000; 
+                s = s.replace('W', ''); 
+            }
+            else if (s.includes('M')) { 
+                multi = 1000000; 
+                s = s.replace('M', ''); 
+            }
+            else if (s.includes('K')) { 
+                multi = 1000; 
+                s = s.replace('K', ''); 
+            }
+            let val = parseFloat(s);
+            return isNaN(val) ? 0 : val * multi;
+        }
+
+        // 处理范围 ~ (例如 1亿~2亿)
+        if (str.toString().includes('~')) {
+            let parts = str.toString().split('~');
+            let v1 = parseOne(parts[0]);
+            let v2 = parseOne(parts[1]);
+            return (v1 + v2) / 2;
+        }
+
+        // 处理单值
+        let val = parseOne(str);
+
+        // 微调排序权重 (大于号稍大，小于号稍小)
+        if (str.toString().includes('>')) return val + 0.1;
+        if (str.toString().includes('<')) return val - 0.1;
+
+        return val;
+    }
+
     function sortTable(n, type) {
         var table = document.getElementById("skinTable"), rows = Array.from(table.rows).slice(1), headers = table.getElementsByTagName("TH"), dir = "desc";
         if (headers[n].classList.contains("sort-desc")) dir = "asc";
         Array.from(headers).forEach(h => h.classList.remove("sort-asc", "sort-desc"));
         headers[n].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
         rows.sort((a, b) => {
-            var x = parseFloat(a.cells[n].getAttribute("data-val") || a.cells[n].innerText.replace(/[¥%!]/g, ''));
-            var y = parseFloat(b.cells[n].getAttribute("data-val") || b.cells[n].innerText.replace(/[¥%!]/g, ''));
+            var valA = a.cells[n].innerText;
+            var valB = b.cells[n].innerText;
+            var x = parseMixedNum(valA);
+            var y = parseMixedNum(valB);
+
             if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });
