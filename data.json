@@ -14,7 +14,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "5000",
-      "sales_volume": "475.00K",
+      "sales_volume": "475K",
       "revenue": "47.50M",
       "is_hidden": false,
       "is_pool": true
@@ -33,7 +33,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "5000",
-      "sales_volume": "305.00K",
+      "sales_volume": "305K",
       "revenue": "30.50M",
       "is_hidden": false,
       "is_pool": true
@@ -52,7 +52,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "250",
-      "sales_volume": "184.00K",
+      "sales_volume": "184K",
       "revenue": "17.70M",
       "is_hidden": false,
       "is_pool": false
@@ -90,7 +90,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "187.00K",
+      "sales_volume": "187K",
       "revenue": "16.64M",
       "is_hidden": false,
       "is_pool": false
@@ -109,7 +109,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "50.1",
-      "sales_volume": "708.00K",
+      "sales_volume": "708K",
       "revenue": "13.31M",
       "is_hidden": false,
       "is_pool": false
@@ -147,7 +147,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "1000",
-      "sales_volume": "200.00K",
+      "sales_volume": "200K",
       "revenue": "12.00M",
       "is_hidden": false,
       "is_pool": true
@@ -166,7 +166,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "126.00K",
+      "sales_volume": "126K",
       "revenue": "11.21M",
       "is_hidden": false,
       "is_pool": false
@@ -185,7 +185,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "126.00K",
+      "sales_volume": "126K",
       "revenue": "11.21M",
       "is_hidden": false,
       "is_pool": false
@@ -204,7 +204,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "110.00K",
+      "sales_volume": "110K",
       "revenue": "9.79M",
       "is_hidden": false,
       "is_pool": false
@@ -242,7 +242,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "106.00K",
+      "sales_volume": "106K",
       "revenue": "9.43M",
       "is_hidden": false,
       "is_pool": false
@@ -261,7 +261,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "900",
-      "sales_volume": "88.00K",
+      "sales_volume": "88K",
       "revenue": "7.83M",
       "is_hidden": false,
       "is_pool": false
@@ -356,7 +356,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "100",
-      "sales_volume": "138.00K",
+      "sales_volume": "138K",
       "revenue": "6.76M",
       "is_hidden": false,
       "is_pool": false
@@ -394,7 +394,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "20",
-      "sales_volume": "937.00K",
+      "sales_volume": "937K",
       "revenue": "5.62M",
       "is_hidden": false,
       "is_pool": false
@@ -413,7 +413,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "2500",
-      "sales_volume": "863.00K",
+      "sales_volume": "863K",
       "revenue": "5.18M",
       "is_hidden": false,
       "is_pool": false
@@ -432,7 +432,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "600",
-      "sales_volume": "51.00K",
+      "sales_volume": "51K",
       "revenue": "4.54M",
       "is_hidden": false,
       "is_pool": false
@@ -508,7 +508,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "1",
-      "sales_volume": "261.00K",
+      "sales_volume": "261K",
       "revenue": "1.57M",
       "is_hidden": false,
       "is_pool": false
@@ -565,7 +565,7 @@
       "is_discontinued": false,
       "desc_img": null,
       "quality_key": "1",
-      "sales_volume": "219.00K",
+      "sales_volume": "219K",
       "revenue": "1.31M",
       "is_hidden": false,
       "is_pool": false
