@@ -17,7 +17,7 @@
       "sales_volume": "475k",
       "revenue": "47.50M",
       "is_hidden": false,
-      "is_pool": false
+      "is_pool": true
     },
     {
       "quality": 5000.0,
@@ -150,7 +150,7 @@
       "sales_volume": "200k",
       "revenue": "12.00M",
       "is_hidden": false,
-      "is_pool": false
+      "is_pool": true
     },
     {
       "quality": 900.0,
@@ -649,11 +649,7 @@
   ],
   "instructions": [
     "本榜单数据仅供参考",
-    "Rank pts:排位点数.直接由新品榜排位决定，新品榜代表首日销售额，销售额=获得该皮肤玩家数*定价.",
-    "涨幅.代表该英雄出新皮肤当日全分段出场率提升，受其他限免/同分路新皮肤影响大.",
-    "List p:官方定价.典藏取600，传说178.8...",
-    "Real p:实际售价.比如99r传说，6r勇者.",
-    "Real pts:真实点数，新品榜销售额的计价方式会导致皮肤真实卖气虚高，故采用Rankpts*Realp/Listp得到更真实反映卖气的点数."
+    "涨幅.代表该英雄出新皮肤当日全分段出场率提升，受其他限免/同分路新皮肤影响大."
   ],
   "quality_config": {
     "10000": {

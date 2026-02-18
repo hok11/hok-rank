@@ -49,8 +49,6 @@
         .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 85px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
-
-        /* 🔥 修复：补回了 header-gif 样式，限制图片大小 */
         .header-gifs-container { display: flex; gap: 10px; }
         .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
     </style>
@@ -61,11 +59,10 @@
             <div class="header-gifs-container"><img src="./show/DiaoChan.gif" class="header-gif"><img src="./show/xishi.gif" class="header-gif"></div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container"><p>Update: 2026-02-19 03:16</p><button class="info-btn" onclick="openModal()">说明</button></div>
+                <div class="info-container"><p>Update: 2026-02-19 03:26</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
             <div class="header-gifs-container"><img src="./show/yuhuan.gif" class="header-gif"><img src="./show/zhaojun.gif" class="header-gif"></div>
         </div>
-
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -100,7 +97,6 @@
                             </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
                         <th style="text-align:left; padding-left:20px;">Skin Name</th>
                         <th></th>
-                        <!-- 表头 -->
                         <th class="col-sort" onclick="sortTable(4, 'float')">销量</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">销售额</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
@@ -127,7 +123,7 @@
                         <td class="rounded-left" style="background-color: #f3e8ff;"><div class="song-col">
                             <img src="./skin_avatars/问心剑祈愿池.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">问心剑祈愿池</span>
-                                <span class="badge badge-new">New Arrival</span>
+                                <span class="badge badge-pool">祈愿</span>
                                 
                             </div>
                         </div></td>
@@ -337,7 +333,7 @@
                         <td class="rounded-left" style="background-color: #bfdbfe;"><div class="song-col">
                             <img src="./skin_avatars/沧流箭祈愿池.jpg" class="album-art">
                             <div class="name-container"><span class="song-title">沧流箭祈愿池</span>
-                                <span class="badge badge-new">New Arrival</span>
+                                <span class="badge badge-pool">祈愿</span>
                                 
                             </div>
                         </div></td>
@@ -1078,7 +1074,7 @@
             </table>
         </div>
     </div>
-    <div id="infoModal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><h2 style="text-align:center;">说明</h2><hr><ul class="modal-list"><li>本榜单数据仅供参考</li><li>Rank pts:排位点数.直接由新品榜排位决定，新品榜代表首日销售额，销售额=获得该皮肤玩家数*定价.</li><li>涨幅.代表该英雄出新皮肤当日全分段出场率提升，受其他限免/同分路新皮肤影响大.</li><li>List p:官方定价.典藏取600，传说178.8...</li><li>Real p:实际售价.比如99r传说，6r勇者.</li><li>Real pts:真实点数，新品榜销售额的计价方式会导致皮肤真实卖气虚高，故采用Rankpts*Realp/Listp得到更真实反映卖气的点数.</li></ul></div></div>
+    <div id="infoModal" class="modal"><div class="modal-content"><span class="close-btn" onclick="closeModal()">&times;</span><h2 style="text-align:center;">说明</h2><hr><ul class="modal-list"><li>本榜单数据仅供参考</li><li>涨幅.代表该英雄出新皮肤当日全分段出场率提升，受其他限免/同分路新皮肤影响大.</li></ul></div></div>
     <script>
     function openModal() { document.getElementById('infoModal').style.display = 'block'; }
     function closeModal() { document.getElementById('infoModal').style.display = 'none'; }

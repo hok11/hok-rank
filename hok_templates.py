@@ -52,8 +52,6 @@ HTML_TEMPLATE = """
         .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
         .box-style { display: inline-block; width: 85px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
-
-        /* 🔥 修复：补回了 header-gif 样式，限制图片大小 */
         .header-gifs-container { display: flex; gap: 10px; }
         .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
     </style>
@@ -68,7 +66,6 @@ HTML_TEMPLATE = """
             </div>
             <div class="header-gifs-container">{% for g in header_gifs[2:4] %}<img src="./show/{{ g }}" class="header-gif">{% endfor %}</div>
         </div>
-
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -83,7 +80,6 @@ HTML_TEMPLATE = """
                             </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
                         <th style="text-align:left; padding-left:20px;">Skin Name</th>
                         <th></th>
-                        <!-- 表头 -->
                         <th class="col-sort" onclick="sortTable(4, 'float')">销量</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">销售额</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
