@@ -21,14 +21,18 @@ HTML_TEMPLATE = """
         .info-btn:hover { opacity: 0.8; }
         .table-container { width: 100%; overflow-x: auto; }
 
-        /* 表格样式 */
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 900px; }
+        /* 🔥 修改：表格最小宽度加大，防止加宽描述列后被挤压 */
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 1100px; }
+
         th { text-align: center; padding: 12px 4px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; cursor: pointer; }
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
 
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .desc-col { width: 80px; padding: 2px !important; }
+
+        /* 🔥 修改：描述列宽度翻倍 (80px -> 160px) */
+        .desc-col { width: 160px; padding: 2px !important; }
+
         .desc-img { max-width: 100%; height: auto; max-height: 40px; object-fit: contain; display: block; margin: 0 auto; border-radius: 4px; mix-blend-mode: screen; filter: contrast(1.5) saturate(4.0); }
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; cursor: pointer; background: white; min-width: 85px; }
@@ -45,13 +49,13 @@ HTML_TEMPLATE = """
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
 
-        /* 🔥 修复重点 1: 宽度调整为95px */
+        /* 🔥 修改：名字容器宽度改为 90px */
         .name-container { 
             display: flex; 
             flex-direction: column; 
             gap: 2px; 
-            width: 95px; /* 固定宽度：调小至适配 "貂蝉-馥梦繁花" */
-            align-items: center; /* 居中对齐 */
+            width: 90px; 
+            align-items: center; 
         }
 
         .song-title { 
@@ -59,14 +63,13 @@ HTML_TEMPLATE = """
             font-size: 14px; 
             color: #000; 
             white-space: nowrap; 
-            display: inline-block; /* 允许 transform 生效 */
-            transform-origin: center; /* 从中心缩放 */
+            display: inline-block; 
+            transform-origin: center; 
         }
 
-        /* 🔥 修复重点 2: 角标撑满容器 */
         .badge { 
             display: block; 
-            width: 100%; /* 撑满 95px */
+            width: 100%; /* 自动撑满 90px */
             text-align: center; 
             padding: 2px 0; 
             font-size: 9px; 
@@ -170,10 +173,10 @@ HTML_TEMPLATE = """
     document.getElementById('dropdownMenu').addEventListener('click', (e) => e.stopPropagation());
     window.onload = () => { sortTable(5, 'float'); adjustNameFontSize(); };
 
-    // 🔥 名字自适应缩放逻辑
+    // 🔥 名字自适应缩放逻辑 (宽度改为 90)
     function adjustNameFontSize() {
         const containers = document.querySelectorAll('.name-container'); 
-        const maxWidth = 95; // 🔥 同步 CSS 里的宽度
+        const maxWidth = 90; 
         containers.forEach(container => {
             const title = container.querySelector('.song-title');
             if (title) {
@@ -207,24 +210,44 @@ HTML_TEMPLATE = """
         });
     }
 
+    // 增强版数字解析：支持 亿/万/B/M/K
     function parseMixedNum(str) {
         if (!str) return -999999;
+
         function parseOne(s) {
             s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
             s = s.replace('>', '').replace('<', ''); 
+
             let multi = 1;
-            if (s.includes('亿') || s.includes('B')) { multi = 100000000; s = s.replace('亿', '').replace('B', ''); } 
-            else if (s.includes('万')) { multi = 10000; s = s.replace('万', ''); }
-            else if (s.includes('W')) { multi = 10000; s = s.replace('W', ''); }
-            else if (s.includes('M')) { multi = 1000000; s = s.replace('M', ''); }
-            else if (s.includes('K')) { multi = 1000; s = s.replace('K', ''); }
+            if (s.includes('亿') || s.includes('B')) { 
+                multi = 100000000; 
+                s = s.replace('亿', '').replace('B', ''); 
+            } 
+            else if (s.includes('万')) { 
+                multi = 10000; 
+                s = s.replace('万', ''); 
+            }
+            else if (s.includes('W')) { 
+                multi = 10000; 
+                s = s.replace('W', ''); 
+            }
+            else if (s.includes('M')) { 
+                multi = 1000000; 
+                s = s.replace('M', ''); 
+            }
+            else if (s.includes('K')) { 
+                multi = 1000; 
+                s = s.replace('K', ''); 
+            }
             let val = parseFloat(s);
             return isNaN(val) ? 0 : val * multi;
         }
+
         if (str.toString().includes('~')) {
             let parts = str.toString().split('~');
             return (parseOne(parts[0]) + parseOne(parts[1])) / 2;
         }
+
         let val = parseOne(str);
         if (str.toString().includes('>')) return val + 0.1;
         if (str.toString().includes('<')) return val - 0.1;
@@ -241,6 +264,7 @@ HTML_TEMPLATE = """
             var valB = b.cells[n].innerText;
             var x = parseMixedNum(valA);
             var y = parseMixedNum(valB);
+
             if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });
