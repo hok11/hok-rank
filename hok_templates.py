@@ -45,12 +45,12 @@ HTML_TEMPLATE = """
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
 
-        /* 🔥 修复重点 1: 固定名字容器宽度，内容居中 */
+        /* 🔥 修复重点 1: 宽度调整为95px */
         .name-container { 
             display: flex; 
             flex-direction: column; 
             gap: 2px; 
-            width: 115px; /* 固定宽度：约等于 "貂蝉-馥梦繁花" 的长度 */
+            width: 95px; /* 固定宽度：调小至适配 "貂蝉-馥梦繁花" */
             align-items: center; /* 居中对齐 */
         }
 
@@ -63,10 +63,10 @@ HTML_TEMPLATE = """
             transform-origin: center; /* 从中心缩放 */
         }
 
-        /* 🔥 修复重点 2: 角标撑满容器，强制等宽 */
+        /* 🔥 修复重点 2: 角标撑满容器 */
         .badge { 
             display: block; 
-            width: 100%; /* 撑满 115px */
+            width: 100%; /* 撑满 95px */
             text-align: center; 
             padding: 2px 0; 
             font-size: 9px; 
@@ -173,7 +173,7 @@ HTML_TEMPLATE = """
     // 🔥 名字自适应缩放逻辑
     function adjustNameFontSize() {
         const containers = document.querySelectorAll('.name-container'); 
-        const maxWidth = 115; // 对应 CSS 里的 .name-container width
+        const maxWidth = 95; // 🔥 同步 CSS 里的宽度
         containers.forEach(container => {
             const title = container.querySelector('.song-title');
             if (title) {
