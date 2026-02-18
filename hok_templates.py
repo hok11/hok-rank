@@ -20,34 +20,42 @@ HTML_TEMPLATE = """
         .info-btn { background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .info-btn:hover { opacity: 0.8; }
         .table-container { width: 100%; overflow-x: auto; }
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 800px; }
-        th { text-align: center; padding: 8px 2px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; }
+
+        /* 表格样式还原 */
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 900px; }
+        th { text-align: center; padding: 12px 4px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; cursor: pointer; }
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
+
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-        .desc-col { width: 100px; padding: 2px !important; }
-        .desc-img { max-width: 100%; height: auto; max-height: 50px; object-fit: contain; display: block; margin: 0 auto; border-radius: 4px; mix-blend-mode: screen; filter: contrast(1.5) saturate(4.0); }
+        .desc-col { width: 80px; padding: 2px !important; }
+        .desc-img { max-width: 100%; height: auto; max-height: 40px; object-fit: contain; display: block; margin: 0 auto; border-radius: 4px; mix-blend-mode: screen; filter: contrast(1.5) saturate(4.0); }
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; cursor: pointer; background: white; min-width: 85px; }
         .dropdown-menu { display: none; position: absolute; top: 110%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border-radius: 6px; padding: 8px; min-width: 130px; text-align: left; }
         .dropdown-menu.show { display: block; }
-        .col-sort { cursor: pointer; position: relative; } .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
+
+        .col-sort::after { content: ' ⇅'; color: #ccc; margin-left: 5px; font-size: 10px; }
         th.sort-asc .col-sort::after, th.sort-asc.col-sort::after { content: ' ▲'; color: #6366f1; }
         th.sort-desc .col-sort::after, th.sort-desc.col-sort::after { content: ' ▼'; color: #6366f1; }
+
         .quality-icon { height: 28px; width: auto; display: inline-block; vertical-align: middle; transition: transform 0.2s; object-fit: contain; }
         .rare-wushuang-big { height: 60px !important; width: auto !important; margin: -15px 0; }
         .wushuang-big { height: 45px !important; margin: -8px 0; }
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 180px; }
-        .name-container { display: flex; flex-direction: column; gap: 2px; width: 86px; align-items: center; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; transform-origin: center; display: inline-block; }
-        .badge { display: block; width: 100%; text-align: center; padding: 1px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; }
+        .name-container { display: flex; flex-direction: column; gap: 2px; width: 100%; align-items: flex-start; }
+        .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; }
+        .badge { display: inline-block; text-align: center; padding: 2px 4px; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; margin-top: 2px; }
         .badge-new { background: #ffd700; color: #000; } .badge-return { background: #1d4ed8; color: #fff; } .badge-preset { background: #06b6d4; color: #fff; } .badge-out { background: #4b5563; color: #fff; }
         .badge-pool { background: #9333ea; color: #fff; }
         .rank-box { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 900; border-radius: 6px; line-height: 1; }
-        .box-style { display: inline-block; width: 75px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .box-style { display: inline-block; width: 85px; padding: 4px 0; font-weight: 700; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .growth-down { color: #991b1b !important; } .growth-up-mid { color: #16a34a !important; } .growth-up-high { color: #ea580c !important; } .growth-special { color: #a855f7 !important; font-weight: 900 !important; }
+
+        /* 🔥 修复：补回了 header-gif 样式，限制图片大小 */
         .header-gifs-container { display: flex; gap: 10px; }
+        .header-gif { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
     </style>
 </head>
 <body>
@@ -60,6 +68,7 @@ HTML_TEMPLATE = """
             </div>
             <div class="header-gifs-container">{% for g in header_gifs[2:4] %}<img src="./show/{{ g }}" class="header-gif">{% endfor %}</div>
         </div>
+
         <div class="table-container">
             <table id="skinTable">
                 <thead>
@@ -72,8 +81,9 @@ HTML_TEMPLATE = """
                                 <label class="dropdown-item"><input type="checkbox" class="q-check" value="{{ q }}" onchange="handleSingleSelect(this)"> {{ q }}</label>
                                 {% endfor %}
                             </div><span class="col-sort" onclick="sortTable(1, 'float')"></span></div></th>
-                        <th style="text-align:left; padding-left:20px;">Skin Name</th><th></th>
-                        <!-- 🔥 改动：新表头 -->
+                        <th style="text-align:left; padding-left:20px;">Skin Name</th>
+                        <th></th>
+                        <!-- 表头 -->
                         <th class="col-sort" onclick="sortTable(4, 'float')">销量</th>
                         <th class="col-sort" onclick="sortTable(5, 'float')">销售额</th>
                         <th class="col-sort" onclick="sortTable(6, 'float')">Growth</th>
@@ -108,14 +118,9 @@ HTML_TEMPLATE = """
                             </div>
                         </div></td>
                         <td class="desc-col" style="background-color: {{ bg_c }};">{% if skin.desc_img %}<img src="./skin_descs/{{ skin.desc_img }}" class="desc-img">{% endif %}</td>
-
-                        <!-- 🔥 改动：数据单元格 (销量/销售额) -->
                         <td style="background-color: {{ bg_c }};"><div class="box-style">{{ skin.sales_volume }}</div></td>
                         <td style="background-color: {{ bg_c }}; color:#6366f1; font-weight:bold;">{{ skin.revenue }}</td>
-
                         <td style="background-color: {{ bg_c }};">{% if skin.growth %}{% set g_cls = 'growth-special' if skin.growth == 1.9 else ('growth-down' if skin.growth < 0 else ('growth-up-high' if skin.growth >= 10 else ('growth-up-mid' if skin.growth >= 5 else ''))) %}<div class="box-style {{ g_cls }}">{{ skin.growth }}%{% if skin.growth == 1.9 %}!{% endif %}</div>{% else %}--{% endif %}</td>
-
-                        <!-- 万象积分 & 售价 -->
                         <td style="background-color: {{ bg_c }};">{{ skin.list_price|int }}</td>
                         <td class="rounded-right" style="background-color: {{ bg_c }};"><div class="box-style">{{ skin.real_price }}</div></td>
                     </tr>
@@ -160,14 +165,13 @@ HTML_TEMPLATE = """
         });
     }
 
-    // 🔥 增强版数字解析：支持 亿/万/B/M/K
+    // 增强版数字解析：支持 亿/万/B/M/K
     function parseMixedNum(str) {
         if (!str) return -999999;
 
-        // 核心解析器
         function parseOne(s) {
             s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
-            s = s.replace('>', '').replace('<', ''); // 去掉操作符
+            s = s.replace('>', '').replace('<', ''); 
 
             let multi = 1;
             if (s.includes('亿') || s.includes('B')) { 
@@ -194,21 +198,14 @@ HTML_TEMPLATE = """
             return isNaN(val) ? 0 : val * multi;
         }
 
-        // 处理范围 ~ (例如 1亿~2亿)
         if (str.toString().includes('~')) {
             let parts = str.toString().split('~');
-            let v1 = parseOne(parts[0]);
-            let v2 = parseOne(parts[1]);
-            return (v1 + v2) / 2;
+            return (parseOne(parts[0]) + parseOne(parts[1])) / 2;
         }
 
-        // 处理单值
         let val = parseOne(str);
-
-        // 微调排序权重 (大于号稍大，小于号稍小)
         if (str.toString().includes('>')) return val + 0.1;
         if (str.toString().includes('<')) return val - 0.1;
-
         return val;
     }
 
