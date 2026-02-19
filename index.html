@@ -3,36 +3,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Forecast</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
+        body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px 10px; gap: 30px; }
 
-        /* 🔥 修正：恢复紧凑布局，最大宽度设为 1000px */
         .chart-card { background: white; width: 98%; max-width: 1000px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding-bottom: 20px; }
 
         .chart-header { background: var(--header-bg); padding: 15px 20px; color: white; display: flex; align-items: center; justify-content: center; gap: 20px; }
         .header-content { text-align: center; flex: 1; }
-        .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; }
+        .header-content h1 { font-size: 20px; font-weight: 800; margin: 0; }
         .info-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 5px; }
         .info-btn { background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .info-btn:hover { opacity: 0.8; }
-        .table-container { width: 100%; overflow: hidden; }
 
-        /* 表格宽度自适应容器 */
-        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; }
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
 
+        table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 900px; }
         th { text-align: center; padding: 12px 4px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; cursor: pointer; }
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
 
         .rounded-left { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .rounded-right { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* 🔥 修正：描述列设定为 120px */
         .desc-col { width: 120px; padding: 2px !important; }
-
         .desc-img { max-width: 100%; height: auto; max-height: 40px; object-fit: contain; display: block; margin: 0 auto; border-radius: 4px; mix-blend-mode: screen; filter: contrast(1.5) saturate(4.0); }
         .qual-header { display: inline-flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
         .multi-select-box { font-size: 11px; border-radius: 4px; border: 1px solid #ddd; padding: 4px 8px; cursor: pointer; background: white; min-width: 85px; }
@@ -49,36 +45,10 @@
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 160px; }
 
-        .name-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 2px; 
-            width: 90px; 
-            align-items: center; 
-        }
+        .name-container { display: flex; flex-direction: column; gap: 2px; width: 90px; align-items: center; }
+        .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; display: inline-block; transform-origin: center; }
 
-        .song-title { 
-            font-weight: 700; 
-            font-size: 14px; 
-            color: #000; 
-            white-space: nowrap; 
-            display: inline-block; 
-            transform-origin: center; 
-        }
-
-        .badge { 
-            display: block; 
-            width: 100%; 
-            text-align: center; 
-            padding: 2px 0; 
-            font-size: 9px; 
-            font-weight: 900; 
-            border-radius: 3px; 
-            text-transform: uppercase; 
-            margin-top: 2px;
-            box-sizing: border-box;
-        }
-
+        .badge { display: block; width: 100%; text-align: center; padding: 2px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; margin-top: 2px; box-sizing: border-box; }
         .badge-new { background: #ffd700; color: #000; } 
         .badge-return { background: #1d4ed8; color: #fff; } 
         .badge-preset { background: #06b6d4; color: #fff; } 
@@ -98,7 +68,7 @@
             <div class="header-gifs-container"><img src="./show/DiaoChan.gif" class="header-gif"><img src="./show/xishi.gif" class="header-gif"></div>
             <div class="header-content">
                 <h1>Honor of Kings Skin Revenue Forecast</h1>
-                <div class="info-container"><p>Update: 2026-02-19 04:54</p><button class="info-btn" onclick="openModal()">说明</button></div>
+                <div class="info-container"><p>Update: 2026-02-19 20:06</p><button class="info-btn" onclick="openModal()">说明</button></div>
             </div>
             <div class="header-gifs-container"><img src="./show/yuhuan.gif" class="header-gif"><img src="./show/zhaojun.gif" class="header-gif"></div>
         </div>
@@ -1151,17 +1121,27 @@
         });
     }
 
+    // 🔥 仅支持纯英文单位 (B/M/K) 的解析逻辑
     function parseMixedNum(str) {
         if (!str) return -999999;
+
         function parseOne(s) {
             s = s.toString().replace(/[¥,%,]/g, '').trim().toUpperCase();
             s = s.replace('>', '').replace('<', ''); 
 
             let multi = 1;
-            if (s.includes('B')) { multi = 1000000000; s = s.replace('B', ''); } 
-            else if (s.includes('M')) { multi = 1000000; s = s.replace('M', ''); }
-            else if (s.includes('K')) { multi = 1000; s = s.replace('K', ''); }
-
+            if (s.includes('B')) { 
+                multi = 1000000000; 
+                s = s.replace('B', ''); 
+            } 
+            else if (s.includes('M')) { 
+                multi = 1000000; 
+                s = s.replace('M', ''); 
+            }
+            else if (s.includes('K')) { 
+                multi = 1000; 
+                s = s.replace('K', ''); 
+            }
             let val = parseFloat(s);
             return isNaN(val) ? 0 : val * multi;
         }
@@ -1187,6 +1167,7 @@
             var valB = b.cells[n].innerText;
             var x = parseMixedNum(valA);
             var y = parseMixedNum(valB);
+
             if (isNaN(x)) x = -9999999; if (isNaN(y)) y = -9999999;
             return dir === "asc" ? x - y : y - x;
         });
