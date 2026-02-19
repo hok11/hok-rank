@@ -6,7 +6,8 @@ HTML_TEMPLATE = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <!-- 🔥 修复：将初始缩放比例改回 0.6，让手机端默认显示更多列 -->
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=5.0, user-scalable=yes">
     <title>Honor of Kings Skin Revenue Forecast</title>
     <style>
         :root { --header-bg: linear-gradient(90deg, #6366f1 0%, #a855f7 100%); }
@@ -17,13 +18,15 @@ HTML_TEMPLATE = """
 
         .chart-header { background: var(--header-bg); padding: 15px 20px; color: white; display: flex; align-items: center; justify-content: center; gap: 20px; }
         .header-content { text-align: center; flex: 1; }
-        .header-content h1 { font-size: 20px; font-weight: 800; margin: 0; }
+        .header-content h1 { font-size: 24px; font-weight: 800; margin: 0; }
         .info-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 5px; }
         .info-btn { background: white; color: black; border: none; border-radius: 4px; padding: 2px 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .info-btn:hover { opacity: 0.8; }
 
+        /* 允许惯性滑动 */
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
 
+        /* 表格样式 */
         table { width: 98%; margin: 0 auto; border-collapse: separate; border-spacing: 0 8px; font-size: 14px; min-width: 900px; }
         th { text-align: center; padding: 12px 4px; font-weight: 800; border-bottom: 3px solid #6366f1; white-space: nowrap; cursor: pointer; }
         td { padding: 12px 2px; vertical-align: middle; text-align: center; background: transparent; border: none; }
@@ -48,10 +51,36 @@ HTML_TEMPLATE = """
         .album-art { width: 48px; height: 48px; border-radius: 6px; margin-right: 12px; object-fit: cover; }
         .song-col { display: flex; align-items: center; text-align: left; padding-left: 5px; min-width: 160px; }
 
-        .name-container { display: flex; flex-direction: column; gap: 2px; width: 90px; align-items: center; }
-        .song-title { font-weight: 700; font-size: 14px; color: #000; white-space: nowrap; display: inline-block; transform-origin: center; }
+        .name-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 2px; 
+            width: 90px; 
+            align-items: center; 
+        }
 
-        .badge { display: block; width: 100%; text-align: center; padding: 2px 0; font-size: 9px; font-weight: 900; border-radius: 3px; text-transform: uppercase; margin-top: 2px; box-sizing: border-box; }
+        .song-title { 
+            font-weight: 700; 
+            font-size: 14px; 
+            color: #000; 
+            white-space: nowrap; 
+            display: inline-block; 
+            transform-origin: center; 
+        }
+
+        .badge { 
+            display: block; 
+            width: 100%; 
+            text-align: center; 
+            padding: 2px 0; 
+            font-size: 9px; 
+            font-weight: 900; 
+            border-radius: 3px; 
+            text-transform: uppercase; 
+            margin-top: 2px;
+            box-sizing: border-box;
+        }
+
         .badge-new { background: #ffd700; color: #000; } 
         .badge-return { background: #1d4ed8; color: #fff; } 
         .badge-preset { background: #06b6d4; color: #fff; } 
@@ -176,7 +205,7 @@ HTML_TEMPLATE = """
         });
     }
 
-    // 🔥 仅支持纯英文单位 (B/M/K) 的解析逻辑
+    // 增强版数字解析：支持 亿/万/B/M/K
     function parseMixedNum(str) {
         if (!str) return -999999;
 
@@ -185,10 +214,18 @@ HTML_TEMPLATE = """
             s = s.replace('>', '').replace('<', ''); 
 
             let multi = 1;
-            if (s.includes('B')) { 
-                multi = 1000000000; 
-                s = s.replace('B', ''); 
+            if (s.includes('亿') || s.includes('B')) { 
+                multi = 100000000; 
+                s = s.replace('亿', '').replace('B', ''); 
             } 
+            else if (s.includes('万')) { 
+                multi = 10000; 
+                s = s.replace('万', ''); 
+            }
+            else if (s.includes('W')) { 
+                multi = 10000; 
+                s = s.replace('W', ''); 
+            }
             else if (s.includes('M')) { 
                 multi = 1000000; 
                 s = s.replace('M', ''); 
